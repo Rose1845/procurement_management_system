@@ -1,10 +1,10 @@
 package com.rose.procurement.supplier.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.rose.procurement.contract.entities.Contract;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -24,4 +24,6 @@ public class Supplier {
     private String phoneNumber;
     private String paymentTerms;
     private String termsAndConditions;
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    private List<Contract> contracts;
 }

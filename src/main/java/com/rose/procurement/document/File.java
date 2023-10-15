@@ -1,9 +1,7 @@
 package com.rose.procurement.document;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import com.rose.procurement.items.entity.Item;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -21,6 +19,8 @@ public class File {
     private String type;
     @Lob
     private byte[] data;
+    @OneToOne
+    private Item item;
     public File() {
     }
 

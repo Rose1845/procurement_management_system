@@ -3,6 +3,7 @@ package com.rose.procurement.items.entity;
 import com.rose.procurement.document.File;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class Item {
     private String itemDescription;
     private int quantity;
     private double unitPrice;
-    @OneToOne(mappedBy = "file")
+    @OneToOne
+    @JoinColumn(name = "file_id")
     private File itemImage;
 }

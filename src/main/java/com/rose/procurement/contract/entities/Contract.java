@@ -22,7 +22,8 @@ public class Contract {
     private LocalDate contractStartDate;
     private LocalDate contractEndDate;
     private String termsAndConditions;
-    @OneToOne(mappedBy = "vendor_id")
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
 }
