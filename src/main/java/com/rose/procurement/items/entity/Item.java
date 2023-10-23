@@ -1,10 +1,10 @@
 package com.rose.procurement.items.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.document.File;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -13,15 +13,18 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@Builder
 public class Item {
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long itemId;
     private String itemName;
     private String itemNumber;
     private String itemDescription;
     private int quantity;
     private double unitPrice;
-    @OneToOne
-    @JoinColumn(name = "file_id")
-    private File itemImage;
+    @ManyToOne
+    @JoinColumn(name = "categoryId")
+    @JsonBackReference
+    private Category category;
 }

@@ -1,20 +1,29 @@
 package com.rose.procurement.category.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.rose.procurement.items.entity.Item;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Builder
 @Setter
-@ToString
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long categoryId;
     private  String categoryName;
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Item> items;
+    @OneToMany(mappedBy = "category")
+    @JsonIgnore
+    private List<PurchaseOrder> purchaseOrders;
 }

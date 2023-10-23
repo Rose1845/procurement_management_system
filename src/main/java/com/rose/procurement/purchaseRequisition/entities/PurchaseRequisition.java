@@ -1,5 +1,6 @@
 package com.rose.procurement.purchaseRequisition.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,10 +22,9 @@ public class PurchaseRequisition {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long requisitionId;
-    private Long userId;
-    private String itemDescription;
-    private int quantity;
+    private String requisitionTitle;
     private String description;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateNeeded;
     @CreationTimestamp
     private Timestamp dateCreated;

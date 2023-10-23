@@ -19,8 +19,8 @@ public class File {
     private String type;
     @Lob
     private byte[] data;
-    @OneToOne
-    private Item item;
+//    @OneToOne
+//    private Item item;
     public File() {
     }
 
