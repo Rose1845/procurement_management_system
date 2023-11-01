@@ -1,6 +1,10 @@
 package com.rose.procurement.document;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,11 +22,11 @@ public class FileController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public String saveFile(@RequestParam("file") MultipartFile file){
         try {
-            String fileName = file.getOriginalFilename();
-            String contentType = file.getContentType();
-            byte[] fileContent = file.getBytes();
-            File savefile = new File(fileName,contentType,fileContent);
-            fileRepository.save(savefile);
+            File file1 = new File();
+            file1.setName(file.getOriginalFilename());
+            file1.setType(file.getContentType());
+            file1.setData(file.getBytes());
+            fileRepository.save(file1);
             return "File saved successfully";
         }
 
@@ -30,8 +34,17 @@ public class FileController {
             return "File not saved";
         }
     }
-    @GetMapping()
-    public Optional<File> getFile(@PathVariable String id ){
-       return fileRepository.findById(id);
+    @GetMapping("/download/{id}")
+    public ResponseEntity<?> downloadFile(@PathVariable Long id ){
+       File file = fileRepository.findById(id).orElse(null);
+       if(file != null){
+           HttpHeaders httpHeaders = new HttpHeaders();
+           httpHeaders.setContentType(MediaType.parseMediaType(file.getType()));
+           httpHeaders.setContentDisposition(ContentDisposition.attachment().filename(file.getName()).build());
+           ByteArrayResource byteArrayResource = new ByteArrayResource(file.getData());
+           return ResponseEntity.ok().headers(httpHeaders).body(byteArrayResource);
+       }else{
+           return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -40,8 +40,8 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
-    public Item getItemById(Long id) {
-        return itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + id));
+    public Item getItemById(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
     }
 }

@@ -1,8 +1,10 @@
 package com.rose.procurement.purchaseOrder.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.category.entity.Category;
+import com.rose.procurement.invoice.Invoice;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
@@ -31,7 +33,10 @@ public class PurchaseOrder {
     @JsonManagedReference
     private Category category;
     @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
-    @JsonManagedReference
+    @JsonIgnore
     @JoinColumn(name = "vendorId")
     private Supplier supplier;
+    @OneToOne(mappedBy = "purchaseOrder",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Invoice invoice;
 }

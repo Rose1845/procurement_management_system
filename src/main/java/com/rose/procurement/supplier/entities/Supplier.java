@@ -31,7 +31,7 @@ public class Supplier {
     private String termsAndConditions;
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Contract> contracts;
-    @OneToMany(mappedBy = "supplier",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "supplier",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrders;
 }

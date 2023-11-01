@@ -16,5 +16,5 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder,Lon
             "ON s.vendor_id = pos.vendor_id WHERE pos.purchase_order_id = :purchaseOrderId",
             nativeQuery = true)
     Optional<Supplier> findSuppliersByPurchaseOrderId(@Param("purchaseOrderId") Long purchaseOrderId);
-
+    Optional<PurchaseOrder> findByPurchaseOrderId(Long purchaseOrderId);
 }
