@@ -12,9 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 public class OcrModel {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    private Long id;
 
     private MultipartFile Image;
 
@@ -25,7 +22,6 @@ public class OcrModel {
         this.Image = Image;
 
     }
-
 
     public void setImage(MultipartFile image) {
         Image = image;
