@@ -8,7 +8,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.rose.procurement.OcrModel;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
