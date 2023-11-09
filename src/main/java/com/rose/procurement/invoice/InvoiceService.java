@@ -27,16 +27,15 @@ public class InvoiceService {
         }).collect(Collectors.toList());
     }
 
-    public Invoice createInvoice(Invoice invoiceDto){
+    public Invoice createInvoice(InvoiceDto invoiceDto){
         Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findByPurchaseOrderId(invoiceDto.getPurchaseOrder().getPurchaseOrderId());
         if(purchaseOrder.isEmpty()){
             throw new IllegalStateException("purchase order with id do not exists");
         }
         Invoice invoice = Invoice.builder()
-//                .invoiceId(invoiceDto.getInvoiceId())
                 .invoiceNumber(invoiceDto.getInvoiceNumber())
                 .dueDate(invoiceDto.getDueDate())
-                .totalAmount(invoiceDto.getTotalAmount())
+                .totalAmount(invoiceDto.getSubTotalAmount())
                 .purchaseOrder(purchaseOrder.get())
                 .build();
         return invoiceRepository.save(invoice);

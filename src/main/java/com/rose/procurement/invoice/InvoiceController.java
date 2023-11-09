@@ -13,7 +13,7 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
     @PostMapping
-    public Invoice createInvoice(@RequestBody Invoice invoiceDto){
+    public Invoice createInvoice(@RequestBody InvoiceDto invoiceDto){
         return invoiceService.createInvoice(invoiceDto);
     }
     @GetMapping

@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class InvoiceDto {
-//    private String invoiceId;
     private String invoiceNumber;
     private LocalDate dueDate;
     private double subTotalAmount;
