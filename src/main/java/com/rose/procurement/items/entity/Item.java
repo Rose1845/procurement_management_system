@@ -16,8 +16,8 @@ import lombok.*;
 @Builder
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long itemId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String itemId;
     private String itemName;
     private String itemNumber;
     private String itemDescription;

@@ -25,7 +25,11 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public Item getItemById(@PathVariable Long id) {
-        return itemService.getItemById(id);
+    public Item getItemById(@PathVariable("id") String itemId) {
+        return itemService.getItemById(itemId);
+    }
+    @DeleteMapping("{id}")
+    public String deleteItem(@PathVariable("id") String itemId){
+        return itemService.deleteItem(itemId);
     }
 }

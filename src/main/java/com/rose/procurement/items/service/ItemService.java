@@ -40,8 +40,15 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
-    public Item getItemById(Long itemId) {
+    public Item getItemById(String itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
+    }
+    public String  deleteItem(String itemId){
+        Optional<Item> item = itemRepository.findById(itemId);
+        if(item.isPresent()){
+            itemRepository.deleteById(itemId);
+        }
+        return "item deleted successfully";
     }
 }
