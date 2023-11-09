@@ -30,7 +30,6 @@ public class OcrController {
 
 
         OcrModel request = new OcrModel();
-//		request.setDestinationLanguage(destinationLanguage);
         request.setImage(image);
 
         ITesseract instance = new Tesseract();
@@ -50,14 +49,11 @@ public class OcrController {
             instance.setDatapath(tessDataPath);
 
             return instance.doOCR(newImage);
-
         } catch (TesseractException | IOException e) {
             System.err.println(e.getMessage());
             return "Error while reading image";
         }
-
     }
-
     public static File convert(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         convFile.createNewFile();
