@@ -1,6 +1,7 @@
 package com.rose.procurement.purchaseOrder.request;
 
 import com.rose.procurement.category.entity.Category;
+import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.ManyToMany;
@@ -21,7 +22,7 @@ public class PurchaseOrderRequest {
     private String purchaseOrderTitle;
     private LocalDate deliveryDate;
     private String termsAndConditions;
-    private String paymentTerms;
+    private PaymentType paymentType;
     private Category category;
     private Supplier supplier;
 }

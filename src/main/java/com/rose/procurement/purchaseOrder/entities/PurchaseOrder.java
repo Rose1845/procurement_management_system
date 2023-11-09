@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.category.entity.Category;
+import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.invoice.Invoice;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.supplier.entities.Supplier;
@@ -27,7 +28,8 @@ public class PurchaseOrder {
     private String purchaseOrderTitle;
     private LocalDate deliveryDate;
     private String termsAndConditions;
-    private String paymentTerms;
+    @Enumerated
+    private PaymentType paymentType;
     @ManyToOne(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     @JsonManagedReference

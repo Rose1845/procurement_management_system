@@ -46,12 +46,11 @@ private final PurchaseOrderRepository purchaseOrderRepository;
                 .purchaseOrderTitle(purchaseOrderRequest.getPurchaseOrderTitle())
                 .deliveryDate(purchaseOrderRequest.getDeliveryDate())
                 .termsAndConditions(purchaseOrderRequest.getTermsAndConditions())
-                .paymentTerms(purchaseOrderRequest.getPaymentTerms())
+                .paymentType(purchaseOrderRequest.getPaymentType())
                 .supplier(supplier.get())
                 .category(category.get())
                 .build();
 
-        // Additional validation or business logic can be added here
         return purchaseOrderRepository.save(purchaseOrder);
     }
     public Optional<Supplier> getSuppliersForPurchaseOrder(Long purchaseOrderId) {
@@ -67,7 +66,7 @@ private final PurchaseOrderRepository purchaseOrderRepository;
                 .contactInformation(supplierRequest.getContactInformation())
                 .contactPerson(supplierRequest.getContactPerson())
                 .email(supplierRequest.getEmail())
-                .paymentTerms(supplierRequest.getPaymentTerms())
+                .paymentType(supplierRequest.getPaymentTerm())
                 .phoneNumber(supplierRequest.getPhoneNumber())
                 .termsAndConditions(supplierRequest.getTermsAndConditions())
                 .build();
