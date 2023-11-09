@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SupplierService {
@@ -26,11 +27,9 @@ public class SupplierService {
                 .phoneNumber(supplierRequest.getPhoneNumber())
                 .contactInformation(supplierRequest.getContactInformation())
                 .contactPerson(supplierRequest.getContactPerson())
-                .paymentTerms(supplierRequest.getPaymentTerms())
+                .paymentType(supplierRequest.getPaymentTerm())
                 .build();
-
         return supplierRepository.save(supplier);
-
     }
     public List<Supplier> getAllSuppliers(){
 
@@ -48,11 +47,21 @@ public class SupplierService {
         supplier1.setAddress(supplierRequest.getAddress());
         supplier1.setEmail(supplierRequest.getEmail());
         supplier1.setContactPerson(supplierRequest.getContactPerson());
-        supplier1.setPaymentTerms(supplierRequest.getPaymentTerms());
+        supplier1.setPaymentType(supplierRequest.getPaymentTerm());
         supplier1.setContactInformation(supplierRequest.getContactInformation());
         supplier1.setPhoneNumber(supplierRequest.getPhoneNumber());
         supplier1.setTermsAndConditions(supplierRequest.getTermsAndConditions());
         return supplierRepository.save(supplier1);
+    }
+
+    public String deleteSupplier(Long vendorId){
+        Optional<Supplier> supplier = supplierRepository.findById(vendorId);
+        if(supplier.isPresent()){
+            supplierRepository.deleteById(vendorId);
+        }else {
+            return "suplier with id:" + vendorId + "do not exists";
+        }
+        return "supplier deleted successfully";
     }
 
 }

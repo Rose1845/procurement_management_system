@@ -7,8 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("pai/v1/suppliers")
+@RequestMapping("api/v1/suppliers")
 public class SupplierController {
     private final SupplierService supplierService;
 
@@ -19,7 +21,11 @@ public class SupplierController {
     public Supplier createSupplier(@RequestBody SupplierRequest supplierRequest){
         return supplierService.createSupplier(supplierRequest);
     }
+    @GetMapping
+    public List<Supplier> getAllSuppliers(){
+        return supplierService.getAllSuppliers();
 
+    }
     @GetMapping("/supplier/{id}")
     public ResponseEntity<Supplier> getSupplier(@PathVariable("id") Long vendorId) {
         Supplier supplier = supplierService.getSupplierById(vendorId);
@@ -32,5 +38,9 @@ public class SupplierController {
     @PutMapping("{id}")
     public Supplier updateSupplier(@PathVariable("id") Long vendorId , @RequestBody SupplierRequest supplierRequest){
         return supplierService.updateSupplier(vendorId, supplierRequest);
+    }
+    @DeleteMapping("{id}")
+    public String deleteSupplier(@PathVariable("id") Long vendorId){
+        return supplierService.deleteSupplier(vendorId);
     }
 }

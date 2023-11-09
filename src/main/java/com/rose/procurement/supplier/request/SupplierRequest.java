@@ -1,5 +1,7 @@
 package com.rose.procurement.supplier.request;
 
+import com.rose.procurement.enums.PaymentType;
+import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.Entity;
 import lombok.*;
 
@@ -11,9 +13,9 @@ public class SupplierRequest {
     private String name;
     private String contactPerson;
     private String contactInformation;
-    private String address;
+    private Address address;
     private String email;
     private String phoneNumber;
-    private String paymentTerms;
+    private PaymentType paymentTerm;
     private String termsAndConditions;
 }
