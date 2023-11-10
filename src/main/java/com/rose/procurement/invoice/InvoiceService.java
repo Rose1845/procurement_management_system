@@ -35,7 +35,7 @@ public class InvoiceService {
         Invoice invoice = Invoice.builder()
                 .invoiceNumber(invoiceDto.getInvoiceNumber())
                 .dueDate(invoiceDto.getDueDate())
-                .totalAmount(invoiceDto.getSubTotalAmount())
+                .totalAmount(invoiceDto.getTotalAmount())
                 .purchaseOrder(purchaseOrder.get())
                 .build();
         return invoiceRepository.save(invoice);

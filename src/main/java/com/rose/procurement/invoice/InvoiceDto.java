@@ -2,6 +2,8 @@ package com.rose.procurement.invoice;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,6 @@ import java.time.LocalDate;
 public class InvoiceDto {
     private String invoiceNumber;
     private LocalDate dueDate;
-    private double subTotalAmount;
+    private double totalAmount;
     private PurchaseOrder purchaseOrder;
 }
