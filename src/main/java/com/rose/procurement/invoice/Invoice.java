@@ -18,8 +18,8 @@ import java.time.LocalDate;
 @Builder
 public class Invoice {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long invoiceId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String invoiceId;
     private String invoiceNumber;
     private LocalDate dueDate;
     private double totalAmount;
