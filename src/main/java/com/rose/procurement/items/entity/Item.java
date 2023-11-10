@@ -1,9 +1,12 @@
 package com.rose.procurement.items.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.document.File;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
+import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,4 +30,8 @@ public class Item {
     @JoinColumn(name = "categoryId")
     @JsonBackReference
     private Category category;
+    @ManyToOne
+    @JoinColumn(name = "supplierId")
+    @JsonIgnore
+    private Supplier supplier;
 }
