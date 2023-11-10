@@ -1,8 +1,10 @@
 package com.rose.procurement.supplier.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.enums.PaymentType;
+import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.*;
@@ -43,6 +45,9 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier",fetch = FetchType.LAZY)
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrders;
+    @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Item> items;
 
 
 }
