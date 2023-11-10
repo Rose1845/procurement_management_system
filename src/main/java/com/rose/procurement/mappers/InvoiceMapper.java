@@ -10,9 +10,9 @@ import org.mapstruct.factory.Mappers;
 public interface InvoiceMapper {
     InvoiceMapper MAPPER = Mappers.getMapper(InvoiceMapper.class);
 
-    @Mapping(source = "totalAmount",target = "subTotalAmount")
+    @Mapping(source = "totalAmount",target = "TotalAmount")
     InvoiceDto mapToInvoiceDTo(Invoice invoice);
-    @Mapping(source = "subTotalAmount",target = "totalAmount")
+    @Mapping(source = "TotalAmount",target = "totalAmount")
 
     Invoice mapToInvoice(InvoiceDto invoiceDto);
 }
