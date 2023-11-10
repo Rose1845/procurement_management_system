@@ -25,4 +25,5 @@ public class PurchaseOrderRequest {
     private PaymentType paymentType;
     private Category category;
     private Supplier supplier;
+    private List<Item> items;
 }

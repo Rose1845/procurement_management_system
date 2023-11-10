@@ -30,15 +30,14 @@ public class PurchaseOrder {
     private String termsAndConditions;
     @Enumerated
     private PaymentType paymentType;
-    @ManyToOne(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    @JsonManagedReference
-    private Category category;
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
+   @ManyToOne(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+   @JoinColumn(name = "category_id")
+   @JsonIgnore
+  private Category category;
+   @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
+   @JoinColumn(name = "vendorId")
+     private  Supplier supplier;
+    @OneToOne(mappedBy = "purchaseOrder")
     @JsonIgnore
-    @JoinColumn(name = "vendorId")
-    private Supplier supplier;
-    @OneToOne(mappedBy = "purchaseOrder",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JsonBackReference
     private Invoice invoice;
 }

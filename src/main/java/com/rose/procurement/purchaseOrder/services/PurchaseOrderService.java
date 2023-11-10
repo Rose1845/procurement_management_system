@@ -3,7 +3,7 @@ package com.rose.procurement.purchaseOrder.services;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.repository.CategoryRepository;
 import com.rose.procurement.items.entity.Item;
-import com.rose.procurement.items.service.ItemService;
+import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import com.rose.procurement.purchaseOrder.request.PurchaseOrderRequest;
@@ -12,7 +12,6 @@ import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,11 +21,13 @@ public class PurchaseOrderService {
 private final PurchaseOrderRepository purchaseOrderRepository;
     private final SupplierRepository supplierRepository;
     private final CategoryRepository categoryRepository;
+    private final ItemRepository itemRepository;
 
-    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository) {
+    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository, ItemRepository itemRepository) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.supplierRepository = supplierRepository;
         this.categoryRepository = categoryRepository;
+        this.itemRepository = itemRepository;
     }
 
     public PurchaseOrder createPurchaseOrder(PurchaseOrderRequest purchaseOrderRequest) {
