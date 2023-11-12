@@ -1,6 +1,7 @@
 package com.rose.procurement.supplier.controller;
 
 import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import com.rose.procurement.supplier.services.SupplierService;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
     @PostMapping
-    public Supplier createSupplier(@RequestBody SupplierRequest supplierRequest){
+    public SupplierDto createSupplier(@RequestBody SupplierDto supplierRequest){
         return supplierService.createSupplier(supplierRequest);
     }
     @GetMapping

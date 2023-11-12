@@ -1,6 +1,8 @@
 package com.rose.procurement.supplier.services;
 
 import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.supplier.entities.SupplierDto;
+import com.rose.procurement.supplier.mappers.SupplierMapper;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import org.springframework.stereotype.Service;
@@ -12,12 +14,15 @@ import java.util.Optional;
 @Service
 public class SupplierService {
     private final SupplierRepository supplierRepository;
+    private final SupplierMapper supplierMapper;
 
-    public SupplierService(SupplierRepository supplierRepository) {
+    public SupplierService(SupplierRepository supplierRepository,
+                           SupplierMapper supplierMapper) {
         this.supplierRepository = supplierRepository;
+        this.supplierMapper = supplierMapper;
     }
 
-    public Supplier createSupplier(SupplierRequest supplierRequest) {
+    public SupplierDto createSupplier(SupplierDto supplierRequest) {
         Supplier supplier = Supplier
                 .builder()
                 .address(supplierRequest.getAddress())
@@ -27,9 +32,10 @@ public class SupplierService {
                 .phoneNumber(supplierRequest.getPhoneNumber())
                 .contactInformation(supplierRequest.getContactInformation())
                 .contactPerson(supplierRequest.getContactPerson())
-                .paymentType(supplierRequest.getPaymentTerm())
+                .paymentType(supplierRequest.getPaymentType())
                 .build();
-        return supplierRepository.save(supplier);
+        Supplier savedSupplier = supplierRepository.save(supplier);
+        return supplierMapper.toDto(savedSupplier);
     }
     public List<Supplier> getAllSuppliers(){
 

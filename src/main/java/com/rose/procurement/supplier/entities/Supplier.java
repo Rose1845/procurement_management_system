@@ -43,11 +43,10 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Contract> contracts;
     @OneToMany(mappedBy = "supplier",fetch = FetchType.LAZY)
-    @JsonIgnore
+//    @JsonIgnore
     private List<PurchaseOrder> purchaseOrders;
     @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JsonIgnore
+//    @JsonIgnore
     private List<Item> items;
-
 
 }
