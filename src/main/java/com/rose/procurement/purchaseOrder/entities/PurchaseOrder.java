@@ -32,12 +32,12 @@ public class PurchaseOrder {
     private PaymentType paymentType;
    @ManyToOne(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
    @JoinColumn(name = "category_id")
-   @JsonIgnore
+//   @JsonIgnore
   private Category category;
    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
    @JoinColumn(name = "vendorId")
      private  Supplier supplier;
     @OneToOne(mappedBy = "purchaseOrder")
-    @JsonIgnore
+//    @JsonIgnore
     private Invoice invoice;
 }

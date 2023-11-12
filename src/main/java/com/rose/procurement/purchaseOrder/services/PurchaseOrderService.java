@@ -5,6 +5,8 @@ import com.rose.procurement.category.repository.CategoryRepository;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
+import com.rose.procurement.purchaseOrder.mappers.PurchaseOrderMapper;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import com.rose.procurement.purchaseOrder.request.PurchaseOrderRequest;
 import com.rose.procurement.supplier.entities.Supplier;
@@ -21,16 +23,17 @@ public class PurchaseOrderService {
 private final PurchaseOrderRepository purchaseOrderRepository;
     private final SupplierRepository supplierRepository;
     private final CategoryRepository categoryRepository;
-    private final ItemRepository itemRepository;
+    private final PurchaseOrderMapper purchaseOrderMapper;
 
-    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository, ItemRepository itemRepository) {
+    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository,
+                                PurchaseOrderMapper purchaseOrderMapper) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.supplierRepository = supplierRepository;
         this.categoryRepository = categoryRepository;
-        this.itemRepository = itemRepository;
+        this.purchaseOrderMapper = purchaseOrderMapper;
     }
 
-    public PurchaseOrder createPurchaseOrder(PurchaseOrderRequest purchaseOrderRequest) {
+    public PurchaseOrderDto createPurchaseOrder(PurchaseOrderDto purchaseOrderRequest) {
         Optional<Supplier> supplier = supplierRepository.findByVendorId(purchaseOrderRequest.getSupplier().getVendorId());
         // Separating existing and new suppliers
       if(supplier.isEmpty()){
@@ -42,6 +45,7 @@ private final PurchaseOrderRepository purchaseOrderRepository;
             throw new IllegalStateException();
         }
 
+
         // Creating the purchase order with the selected suppliers and items
         PurchaseOrder purchaseOrder = PurchaseOrder.builder()
                 .purchaseOrderTitle(purchaseOrderRequest.getPurchaseOrderTitle())
@@ -51,8 +55,8 @@ private final PurchaseOrderRepository purchaseOrderRepository;
                 .supplier(supplier.get())
                 .category(category.get())
                 .build();
-
-        return purchaseOrderRepository.save(purchaseOrder);
+        PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+        return purchaseOrderMapper.toDto(savedPurchaseOrder);
     }
     public Optional<Supplier> getSuppliersForPurchaseOrder(Long purchaseOrderId) {
         return purchaseOrderRepository.findSuppliersByPurchaseOrderId(purchaseOrderId);
