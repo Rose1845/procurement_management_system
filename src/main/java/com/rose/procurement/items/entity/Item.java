@@ -28,10 +28,10 @@ public class Item {
     private double unitPrice;
     @ManyToOne
     @JoinColumn(name = "categoryId")
-    @JsonBackReference
+//    @JsonBackReference
     private Category category;
     @ManyToOne
     @JoinColumn(name = "supplierId")
-    @JsonIgnore
+//    @JsonIgnore
     private Supplier supplier;
 }
