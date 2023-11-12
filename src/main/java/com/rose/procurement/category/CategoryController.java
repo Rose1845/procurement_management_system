@@ -1,13 +1,13 @@
 package com.rose.procurement.category;
 
-import com.rose.procurement.category.entity.Category;
-import com.rose.procurement.category.request.CategoryRequest;
+import com.rose.procurement.category.dtos.CategoryDto;
 import com.rose.procurement.category.service.CategoryService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequestMapping("api/v1/category")
 public class CategoryController {
@@ -17,7 +17,12 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
     @PostMapping
-    public Category createCategory(@RequestBody CategoryRequest categoryRequest){
-        return categoryService.createCategory(categoryRequest);
+    public CategoryDto createCategory(@RequestBody CategoryDto  categoryDto){
+        log.info("category");
+        return categoryService.createCategory(categoryDto);
+    }
+    @GetMapping
+    public List<CategoryDto> getALlCategories(){
+        return categoryService.getAllCategories();
     }
 }

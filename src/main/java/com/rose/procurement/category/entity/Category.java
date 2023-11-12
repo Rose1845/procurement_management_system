@@ -20,10 +20,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long categoryId;
     private  String categoryName;
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+//    @JsonManagedReference
     private List<Item> items;
-    @OneToMany(mappedBy = "category")
-    @JsonIgnore
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+//    @JsonIgnore
     private List<PurchaseOrder> purchaseOrders;
 }
