@@ -14,31 +14,28 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService{
     private final CategoryRepository categoryRepository;
-    private final CategoryMapper categoryMapper;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.categoryMapper = categoryMapper;
     }
 
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto){
         log.info("Received category payload",categoryDto);
 
-//        Category category = categoryMapper.toEntity(categoryDto);
-//        category.setCategoryName(categoryDto.getCategoryName());
+        Category category = CategoryMapper.MAPPER.toEntity(categoryDto);
+        category.setCategoryName(categoryDto.getCategoryName());
 
-
-        Category category = Category.builder()
-                .categoryName(categoryDto.getCategoryName())
-                .build();
         Category savedCategory = categoryRepository.save(category);
-        return categoryMapper.toDto(savedCategory);
+        CategoryDto saveCategoryDto = CategoryMapper.MAPPER.toDto(savedCategory);
+        return saveCategoryDto;
     }
 
     @Override
     public List<CategoryDto> getAllCategories() {
-        return categoryRepository.findAll().stream().map(categoryMapper::toDto).collect(Collectors.toList());
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream().map(CategoryMapper.MAPPER::toDto).collect(Collectors.toList());
+//        return categoryRepository.findAll().stream().map(CategoryMapper.MAPPER.toDto()).collect(Collectors.toList());
     }
 
 
