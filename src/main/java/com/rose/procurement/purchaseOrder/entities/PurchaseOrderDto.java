@@ -1,6 +1,8 @@
 package com.rose.procurement.purchaseOrder.entities;
 
 import com.rose.procurement.category.entity.Category;
+import com.rose.procurement.contract.entities.Contract;
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.supplier.entities.Supplier;
 import lombok.Builder;
@@ -18,6 +20,8 @@ public class PurchaseOrderDto{
     private LocalDate deliveryDate;
     private String termsAndConditions;
     private PaymentType paymentType;
-    private Category category;
-    private Supplier supplier;
+    private ApprovalStatus approvalStatus;
+    private Contract contract;
+//    private Category category;
+//    private Supplier supplier;
 }
