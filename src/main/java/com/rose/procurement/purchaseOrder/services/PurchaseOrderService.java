@@ -2,45 +2,38 @@ package com.rose.procurement.purchaseOrder.services;
 
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.repository.CategoryRepository;
-import com.rose.procurement.items.entity.Item;
-import com.rose.procurement.items.repository.ItemRepository;
+import com.rose.procurement.contract.entities.Contract;
+import com.rose.procurement.contract.repository.ContractRepository;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
+import com.rose.procurement.purchaseOrder.mappers.PurchaseOrderMapper;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
-import com.rose.procurement.purchaseOrder.request.PurchaseOrderRequest;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
-import com.rose.procurement.supplier.request.SupplierRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PurchaseOrderService {
 
 private final PurchaseOrderRepository purchaseOrderRepository;
-    private final SupplierRepository supplierRepository;
-    private final CategoryRepository categoryRepository;
-    private final ItemRepository itemRepository;
+private final ContractRepository contractRepository;
+    private final PurchaseOrderMapper purchaseOrderMapper;
 
-    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, SupplierRepository supplierRepository, CategoryRepository categoryRepository, ItemRepository itemRepository) {
+    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, ContractRepository contractRepository,
+                                PurchaseOrderMapper purchaseOrderMapper) {
         this.purchaseOrderRepository = purchaseOrderRepository;
-        this.supplierRepository = supplierRepository;
-        this.categoryRepository = categoryRepository;
-        this.itemRepository = itemRepository;
+        this.contractRepository = contractRepository;
+        this.purchaseOrderMapper = purchaseOrderMapper;
     }
 
-    public PurchaseOrder createPurchaseOrder(PurchaseOrderRequest purchaseOrderRequest) {
-        Optional<Supplier> supplier = supplierRepository.findByVendorId(purchaseOrderRequest.getSupplier().getVendorId());
-        // Separating existing and new suppliers
-      if(supplier.isEmpty()){
-          throw new IllegalStateException();
-      }
-        Optional<Category> category = categoryRepository.findByCategoryId(purchaseOrderRequest.getCategory().getCategoryId());
-        // Separating existing and new suppliers
-        if(category.isEmpty()){
-            throw new IllegalStateException();
+    public PurchaseOrderDto createPurchaseOrder(PurchaseOrderDto purchaseOrderRequest) {
+        Optional<Contract> contract = contractRepository.findById(purchaseOrderRequest.getContract().getContractId());
+       if(contract.isEmpty()){
+           throw new IllegalStateException();
         }
+
 
         // Creating the purchase order with the selected suppliers and items
         PurchaseOrder purchaseOrder = PurchaseOrder.builder()
@@ -48,31 +41,14 @@ private final PurchaseOrderRepository purchaseOrderRepository;
                 .deliveryDate(purchaseOrderRequest.getDeliveryDate())
                 .termsAndConditions(purchaseOrderRequest.getTermsAndConditions())
                 .paymentType(purchaseOrderRequest.getPaymentType())
-                .supplier(supplier.get())
-                .category(category.get())
+                .contract(contract.get())
                 .build();
-
-        return purchaseOrderRepository.save(purchaseOrder);
+        PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+        return purchaseOrderMapper.toDto(savedPurchaseOrder);
     }
     public Optional<Supplier> getSuppliersForPurchaseOrder(Long purchaseOrderId) {
         return purchaseOrderRepository.findSuppliersByPurchaseOrderId(purchaseOrderId);
     }
-    public void addSupplierToPurchaseOrder(Long purchaseOrderId, SupplierRequest supplierRequest) {
-        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId)
-                .orElseThrow(() -> new RuntimeException("PurchaseOrder not found"));
 
-        Supplier supplier = Supplier.builder()
-                .name(supplierRequest.getName())
-                .address(supplierRequest.getAddress())
-                .contactInformation(supplierRequest.getContactInformation())
-                .contactPerson(supplierRequest.getContactPerson())
-                .email(supplierRequest.getEmail())
-                .paymentType(supplierRequest.getPaymentTerm())
-                .phoneNumber(supplierRequest.getPhoneNumber())
-                .termsAndConditions(supplierRequest.getTermsAndConditions())
-                .build();
-        purchaseOrder.getSupplier();
-        purchaseOrderRepository.save(purchaseOrder);
-    }
 
 }

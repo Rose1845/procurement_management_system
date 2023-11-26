@@ -6,7 +6,12 @@ import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -20,10 +25,18 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long categoryId;
     private  String categoryName;
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Item> items;
-    @OneToMany(mappedBy = "category")
-    @JsonIgnore
-    private List<PurchaseOrder> purchaseOrders;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
 }

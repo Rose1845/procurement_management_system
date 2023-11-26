@@ -1,16 +1,19 @@
 package com.rose.procurement.supplier.controller;
 
 import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import com.rose.procurement.supplier.services.SupplierService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/suppliers")
+@PreAuthorize(
+        "hasRole('ADMIN')"
+)
 public class SupplierController {
     private final SupplierService supplierService;
 
@@ -18,7 +21,7 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
     @PostMapping
-    public Supplier createSupplier(@RequestBody SupplierRequest supplierRequest){
+    public SupplierDto createSupplier(@RequestBody SupplierDto supplierRequest){
         return supplierService.createSupplier(supplierRequest);
     }
     @GetMapping
@@ -27,13 +30,8 @@ public class SupplierController {
 
     }
     @GetMapping("/supplier/{id}")
-    public ResponseEntity<Supplier> getSupplier(@PathVariable("id") Long vendorId) {
-        Supplier supplier = supplierService.getSupplierById(vendorId);
-        if (supplier != null) {
-            return new ResponseEntity<>(supplier, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public SupplierDto getSupplier(@PathVariable("id") Long vendorId) {
+       return supplierService.getSupplierById(vendorId);
     }
     @PutMapping("{id}")
     public Supplier updateSupplier(@PathVariable("id") Long vendorId , @RequestBody SupplierRequest supplierRequest){

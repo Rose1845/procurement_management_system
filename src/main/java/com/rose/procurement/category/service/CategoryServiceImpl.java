@@ -1,11 +1,17 @@
 package com.rose.procurement.category.service;
 
 import com.rose.procurement.category.entity.Category;
+import com.rose.procurement.category.dtos.CategoryDto;
+import com.rose.procurement.category.mappers.CategoryMapper;
 import com.rose.procurement.category.repository.CategoryRepository;
-import com.rose.procurement.category.request.CategoryRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
+@Slf4j
 public class CategoryServiceImpl implements CategoryService{
     private final CategoryRepository categoryRepository;
 
@@ -14,11 +20,22 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public Category createCategory(CategoryRequest categoryRequest){
-        Category category = Category.builder()
-                .categoryName(categoryRequest.getCategoryName())
-                .build();
-        return categoryRepository.save(category);
+    public CategoryDto createCategory(CategoryDto categoryDto){
+        log.info("Received category payload",categoryDto);
+
+        Category category = CategoryMapper.MAPPER.toEntity(categoryDto);
+        category.setCategoryName(categoryDto.getCategoryName());
+
+        Category savedCategory = categoryRepository.save(category);
+        CategoryDto saveCategoryDto = CategoryMapper.MAPPER.toDto(savedCategory);
+        return saveCategoryDto;
+    }
+
+    @Override
+    public List<CategoryDto> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream().map(CategoryMapper.MAPPER::toDto).collect(Collectors.toList());
+//        return categoryRepository.findAll().stream().map(CategoryMapper.MAPPER.toDto()).collect(Collectors.toList());
     }
 
 

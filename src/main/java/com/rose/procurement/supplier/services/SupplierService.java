@@ -1,6 +1,8 @@
 package com.rose.procurement.supplier.services;
 
 import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.supplier.entities.SupplierDto;
+import com.rose.procurement.supplier.mappers.SupplierMapper;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import org.springframework.stereotype.Service;
@@ -13,32 +15,36 @@ import java.util.Optional;
 public class SupplierService {
     private final SupplierRepository supplierRepository;
 
-    public SupplierService(SupplierRepository supplierRepository) {
+    public SupplierService(SupplierRepository supplierRepository
+                          ) {
         this.supplierRepository = supplierRepository;
     }
 
-    public Supplier createSupplier(SupplierRequest supplierRequest) {
-        Supplier supplier = Supplier
-                .builder()
-                .address(supplierRequest.getAddress())
-                .termsAndConditions(supplierRequest.getTermsAndConditions())
-                .email(supplierRequest.getEmail())
-                .name(supplierRequest.getName())
-                .phoneNumber(supplierRequest.getPhoneNumber())
-                .contactInformation(supplierRequest.getContactInformation())
-                .contactPerson(supplierRequest.getContactPerson())
-                .paymentType(supplierRequest.getPaymentTerm())
-                .build();
-        return supplierRepository.save(supplier);
+    public SupplierDto createSupplier(SupplierDto supplierRequest) {
+        Supplier supplier = SupplierMapper.MAPPER.toEntity(supplierRequest);
+        supplier.setAddress(supplierRequest.getAddress());
+        supplier.setTermsAndConditions(supplierRequest.getTermsAndConditions());
+        supplier.setEmail(supplierRequest.getEmail());
+        supplier.setName(supplierRequest.getName());
+        supplier.setPhoneNumber(supplierRequest.getPhoneNumber());
+        supplier.setContactInformation(supplierRequest.getContactInformation());
+        supplier.setContactPerson(supplierRequest.getContactPerson());
+        supplier.setPaymentType(supplierRequest.getPaymentType());
+        Supplier savedSupplier = supplierRepository.save(supplier);
+        SupplierDto supplierDto1 = SupplierMapper.MAPPER.toDto(savedSupplier);
+        return supplierDto1;
     }
     public List<Supplier> getAllSuppliers(){
-
         return new ArrayList<>(supplierRepository.findAll());
     }
 
-    public Supplier getSupplierById(Long vendorId) {
-        return supplierRepository.findByVendorId(vendorId)
-                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + vendorId));
+    public SupplierDto getSupplierById(Long vendorId) {
+        Supplier supplier =supplierRepository.findById(vendorId).get();
+        //return UserMapper.mapToUserDto(user);
+        //return modelMapper.map(user, UserDto.class);
+        return SupplierMapper.MAPPER.toDto(supplier);
+//        return supplierRepository.findByVendorId(vendorId)
+//                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + vendorId));
     }
 
     public Supplier updateSupplier(Long vendorId,SupplierRequest supplierRequest){

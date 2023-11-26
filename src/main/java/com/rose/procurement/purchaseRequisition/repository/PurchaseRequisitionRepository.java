@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PurchaseRequisitionRepository extends JpaRepository<PurchaseRequisition,Long> {
+    PurchaseRequisition findByRequisitionId(Long requisitionId);
 }

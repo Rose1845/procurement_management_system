@@ -10,7 +10,13 @@ import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -19,6 +25,7 @@ import java.util.List;
 @Getter
 @Builder
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -41,13 +48,18 @@ public class Supplier {
     private PaymentType paymentType;
     private String termsAndConditions;
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Contract> contracts;
-    @OneToMany(mappedBy = "supplier",fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<PurchaseOrder> purchaseOrders;
     @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JsonIgnore
+//    @JsonIgnore
     private List<Item> items;
-
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "created_by")
+    private String createdBy;
 
 }
