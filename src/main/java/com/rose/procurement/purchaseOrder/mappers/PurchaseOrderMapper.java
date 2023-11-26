@@ -7,7 +7,7 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PurchaseOrderMapper {
-    PurchaseOrderMapper INSTANCE = Mappers.getMapper(PurchaseOrderMapper.class);
+//    PurchaseOrderMapper INSTANCE = Mappers.getMapper(PurchaseOrderMapper.class);
 
     PurchaseOrder toEntity(PurchaseOrderDto purchaseOrderDto);
 
