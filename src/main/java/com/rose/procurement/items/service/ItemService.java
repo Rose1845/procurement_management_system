@@ -6,11 +6,11 @@ import com.rose.procurement.items.dtos.ItemDto;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.mappers.ItemMapper;
 import com.rose.procurement.items.repository.ItemRepository;
-import com.rose.procurement.items.request.ItemRequest;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,14 +20,12 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
     private final SupplierRepository supplierRepository;
-    private final ItemMapper itemMapper;
 
-    public ItemService(ItemRepository itemRepository, CategoryRepository categoryRepository, SupplierRepository supplierRepository,
-                       ItemMapper itemMapper) {
+    public ItemService(ItemRepository itemRepository, CategoryRepository categoryRepository, SupplierRepository supplierRepository
+                    ) {
         this.itemRepository = itemRepository;
         this.categoryRepository = categoryRepository;
         this.supplierRepository = supplierRepository;
-        this.itemMapper = itemMapper;
     }
 
     public ItemDto createItem(ItemDto itemRequest) {
@@ -39,26 +37,30 @@ public class ItemService {
         if(supplier.isEmpty()){
             throw  new IllegalStateException("category with id do not esist");
         }
-        Item item = Item.builder()
-                .itemDescription(itemRequest.getItemDescription())
-                .itemNumber(itemRequest.getItemNumber())
-                .itemName(itemRequest.getItemName())
-                .quantity(itemRequest.getQuantity())
-                .unitPrice(itemRequest.getUnitPrice())
-                .category(category.get())
-                .supplier(supplier.get())
-                .build();
-        Item savedItem = itemRepository.save(item);
-        return itemMapper.toDto(savedItem);
+        Item item1 = ItemMapper.MAPPER.toEntity(itemRequest);
+        item1.setItemNumber(itemRequest.getItemNumber());
+        item1.setItemName(itemRequest.getItemName());
+        item1.setQuantity(itemRequest.getQuantity());
+        item1.setUnitPrice(itemRequest.getUnitPrice());
+        item1.setCategory(category.get());
+        item1.setSupplier(supplier.get());
+        Item savedItem = itemRepository.save(item1);
+
+        return ItemMapper.MAPPER.toDto(savedItem);
     }
 
     public List<ItemDto> getAllItems() {
-        return itemRepository.findAll().stream().map(itemMapper::toDto).collect(Collectors.toList());
+
+        List<Item> items = itemRepository.findAll();
+        return items.stream().map(ItemMapper.MAPPER::toDto).collect(Collectors.toList());
+//        return itemRepository.findAll().stream().map(ItemMapper.MAPPER::toDto).collect(Collectors.toList());
     }
 
-    public Item getItemById(String itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
+    public ItemDto getItemById(String itemId) {
+        Item item = itemRepository.findById(itemId).get();
+        return ItemMapper.MAPPER.toDto(item);
+//        return itemRepository.findById(itemId)
+//                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
     }
     public String  deleteItem(String itemId){
         Optional<Item> item = itemRepository.findById(itemId);

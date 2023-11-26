@@ -14,37 +14,37 @@ import java.util.Optional;
 @Service
 public class SupplierService {
     private final SupplierRepository supplierRepository;
-    private final SupplierMapper supplierMapper;
 
-    public SupplierService(SupplierRepository supplierRepository,
-                           SupplierMapper supplierMapper) {
+    public SupplierService(SupplierRepository supplierRepository
+                          ) {
         this.supplierRepository = supplierRepository;
-        this.supplierMapper = supplierMapper;
     }
 
     public SupplierDto createSupplier(SupplierDto supplierRequest) {
-        Supplier supplier = Supplier
-                .builder()
-                .address(supplierRequest.getAddress())
-                .termsAndConditions(supplierRequest.getTermsAndConditions())
-                .email(supplierRequest.getEmail())
-                .name(supplierRequest.getName())
-                .phoneNumber(supplierRequest.getPhoneNumber())
-                .contactInformation(supplierRequest.getContactInformation())
-                .contactPerson(supplierRequest.getContactPerson())
-                .paymentType(supplierRequest.getPaymentType())
-                .build();
+        Supplier supplier = SupplierMapper.MAPPER.toEntity(supplierRequest);
+        supplier.setAddress(supplierRequest.getAddress());
+        supplier.setTermsAndConditions(supplierRequest.getTermsAndConditions());
+        supplier.setEmail(supplierRequest.getEmail());
+        supplier.setName(supplierRequest.getName());
+        supplier.setPhoneNumber(supplierRequest.getPhoneNumber());
+        supplier.setContactInformation(supplierRequest.getContactInformation());
+        supplier.setContactPerson(supplierRequest.getContactPerson());
+        supplier.setPaymentType(supplierRequest.getPaymentType());
         Supplier savedSupplier = supplierRepository.save(supplier);
-        return supplierMapper.toDto(savedSupplier);
+        SupplierDto supplierDto1 = SupplierMapper.MAPPER.toDto(savedSupplier);
+        return supplierDto1;
     }
     public List<Supplier> getAllSuppliers(){
-
         return new ArrayList<>(supplierRepository.findAll());
     }
 
-    public Supplier getSupplierById(Long vendorId) {
-        return supplierRepository.findByVendorId(vendorId)
-                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + vendorId));
+    public SupplierDto getSupplierById(Long vendorId) {
+        Supplier supplier =supplierRepository.findById(vendorId).get();
+        //return UserMapper.mapToUserDto(user);
+        //return modelMapper.map(user, UserDto.class);
+        return SupplierMapper.MAPPER.toDto(supplier);
+//        return supplierRepository.findByVendorId(vendorId)
+//                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + vendorId));
     }
 
     public Supplier updateSupplier(Long vendorId,SupplierRequest supplierRequest){
