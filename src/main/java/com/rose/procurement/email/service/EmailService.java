@@ -7,10 +7,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class EmailService{
 
-    private  JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
     @Value("odhiamborose466@gmail.com")
     private String emailFrom;
 
@@ -27,5 +26,7 @@ public class EmailService{
          simpleMailMessage.setSubject(subject);
         javaMailSender.send(simpleMailMessage);
    }
+
+
 
 }

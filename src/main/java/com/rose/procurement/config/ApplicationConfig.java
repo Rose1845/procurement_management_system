@@ -5,6 +5,7 @@ import com.rose.procurement.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -34,7 +35,10 @@ public class ApplicationConfig {
     return authProvider;
   }
 
-
+  @Bean
+  public AuditorAware<Integer> auditorAware() {
+    return  new AuditingConfig();
+  }
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
     return config.getAuthenticationManager();

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Bean;
                         email = "odhiamborose466@gmail.com",
                         url = "odhiamborose466@gmail.com"
                 ),
-                description = "OpenApi documentation for Spring Security",
+                description = "OpenApi documentation for Procurement Management System",
                 title = "OpenApi specification - nyaugenya",
                 version = "1.0",
                 license = @License(

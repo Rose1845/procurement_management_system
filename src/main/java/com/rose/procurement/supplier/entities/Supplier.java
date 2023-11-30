@@ -8,6 +8,7 @@ import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -51,7 +52,7 @@ public class Supplier {
     @JsonIgnore
     private List<Contract> contracts;
     @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-//    @JsonIgnore
+    @JsonIgnore
     private List<Item> items;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -59,7 +60,11 @@ public class Supplier {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @Column(name = "created_by")
-    private String createdBy;
+    @CreatedBy
+    @Column(
+            nullable = false,
+            updatable = false
+    )
+    private Integer createdBy;
 
 }

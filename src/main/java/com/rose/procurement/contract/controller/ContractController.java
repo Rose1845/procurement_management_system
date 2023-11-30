@@ -31,6 +31,10 @@ public class ContractController {
     public Optional<Contract> getContract(@PathVariable("id") String contractId){
         return contractService.getContract(contractId);
     }
+    @GetMapping("send-contract/{id}")
+    public Contract contractApproval(@PathVariable("id") String contractId){
+        return contractService.sendContractForApproval(contractId);
+    }
     @GetMapping("items/{id}")
     public Set<Item> getAllContractItems(@PathVariable("id") String contactId){
         return contractService.getContractItems(contactId);
@@ -42,6 +46,10 @@ public class ContractController {
     @PutMapping("{id}")
     public Contract updateContract(@PathVariable("id") String contractId,@RequestBody ContractDto contractRequest){
         return contractService.updateContract(contractId,contractRequest);
+    }
+    @PatchMapping("/{contractId}/approve")
+    public Contract approveContract(@PathVariable String contractId) {
+        return contractService.sendContractForApproval(contractId);
     }
 
 }
