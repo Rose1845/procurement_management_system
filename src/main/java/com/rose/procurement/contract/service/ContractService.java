@@ -94,7 +94,7 @@ public class ContractService {
         // Check if the contract is not already approved
         if (contract.getApprovalStatus() != ApprovalStatus.APPROVED) {
             // Send email to the supplier
-            sendApprovalEmailToSupplier(contract);
+            sendApprovalEmailToSupplier(contractId);
 
             // Update the contract status
             contract.setApprovalStatus(ApprovalStatus.APPROVED); // or whatever status is appropriate
@@ -107,19 +107,35 @@ public class ContractService {
         }
     }
 
-    private void sendApprovalEmailToSupplier(Contract contract) {
-        String updateLink = "http://localhost:8081/swagger-ui/index.html#/contract-controller/approveContract";
+    public Optional<Contract> sendApprovalEmailToSupplier(String contractId) {
+        Optional<Contract> contract1 = contractRepository.findById(contractId);
+        String editLink = "http://localhost:8081/api/v1/contract/edit-contract/" + contractId;
 
         // Specify the email content
         String subject = "Contract Approval Request";
         String text = "Dear Supplier, \n\n"
                 + "A contract requires your approval. Please review and take appropriate action.\n\n"
-                + "Contract Title: " + contract.getContractTitle() + "\n"
-                + "Contract Type: " + contract.getContractType() + "\n"
-                + "To approve or reject, click the following link: " + updateLink + "\n"
-                + "\n\nBest Regards,\nYour Company";
+                + "Contract Title: " + contract1.get().getContractTitle() + "\n"
+                + "Contract Type: " + contract1.get().getContractType() + "\n"
+                + "To approve or reject, click the following link: " + editLink + "\n"
+                + "\n\nBest Regards,\nProcureSwift Company";
 
         // Send the email
-        emailService.sendEmail(contract.getSupplier().getEmail(), subject, text);
+        emailService.sendEmail(contract1.get().getSupplier().getEmail(), subject, text);
+        return contract1;
     }
+
+    public Contract updateApprovalStatus(String contractId, ApprovalStatus approvalStatus) {
+        // Retrieve the existing contract from the database
+        Contract existingContract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new EntityNotFoundException("Contract not found with id: " + contractId));
+
+        // Update the approval status
+        existingContract.setApprovalStatus(approvalStatus);
+
+        // Save the updated contract in the database
+        return contractRepository.save(existingContract);
+    }
+
+
 }

@@ -51,7 +51,7 @@ public class PurchaseRequestService {
 
         if (optionalPurchaseRequest.isPresent()) {
             PurchaseRequest purchaseRequest = optionalPurchaseRequest.get();
-            purchaseRequest.setPurchaseOrder(purchaseOrder);
+            purchaseRequest.setSupplier(purchaseOrder.getSupplier());
             return purchaseRequestRepository.save(purchaseRequest);
         } else {
             // Handle the case where the purchase request with the given ID is not found

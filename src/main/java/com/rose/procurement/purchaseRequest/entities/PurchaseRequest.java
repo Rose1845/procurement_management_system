@@ -33,8 +33,9 @@ public class PurchaseRequest {
     private LocalDate dueDate;
     private String termsAndConditions;
     @OneToOne(mappedBy = "purchaseRequest")
+    @JoinColumn(name = "vendor_id")
     @JsonIgnore
-    private PurchaseOrder purchaseOrder;
+    private Supplier supplier;
     @Enumerated
     private ApprovalStatus approvalStatus;
     @ManyToOne
@@ -47,7 +48,6 @@ public class PurchaseRequest {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
     @Column(name = "created_by")
     private String createdBy;
 }

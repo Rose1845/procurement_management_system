@@ -6,6 +6,7 @@ import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
+import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -54,6 +55,12 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Item> items;
+    @OneToOne(fetch = FetchType.LAZY,orphanRemoval = true)
+    @JsonIgnore
+    private PurchaseRequest purchaseRequest;
+    @OneToMany(mappedBy = "supplier")
+    @JsonIgnore
+    private List<PurchaseOrder> purchaseOrder;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

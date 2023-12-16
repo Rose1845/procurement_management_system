@@ -22,6 +22,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -42,16 +43,23 @@ public class PurchaseOrder {
     @Enumerated
     private ApprovalStatus approvalStatus;
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "contract_id")
+    @JoinColumn(name = "supplier_id")
     @JsonIgnore
-    private Contract contract;
+    private Supplier supplier;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "order_items",
+            joinColumns = {
+                    @JoinColumn(name = "purchase_order_id",referencedColumnName = "purchaseOrderId")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "item_id",referencedColumnName = "itemId")
+            }
+    )@JsonIgnore
+    private Set<Item> items;
     @OneToOne(mappedBy = "purchaseOrder")
     @JsonIgnore
     private Invoice invoice;
-    @OneToOne(fetch = FetchType.LAZY,orphanRemoval = true)
-    @JoinColumn(name = "purchase_request_id")
-    @JsonIgnore
-    private PurchaseRequest purchaseRequest;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
