@@ -24,5 +24,6 @@ public class ItemDto {
     private int quantity;
     private double unitPrice;
     private Category category;
+    private double totalPrice;
     private Supplier supplier;
 }

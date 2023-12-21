@@ -18,5 +18,7 @@ public class PurchaseRequestDto {
     private String purchaseRequestTitle;
     private LocalDate dueDate;
     private String termsAndConditions;
+    private Supplier supplier;
     private Item item;
 }
+

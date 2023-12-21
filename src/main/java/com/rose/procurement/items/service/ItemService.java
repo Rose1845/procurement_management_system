@@ -44,6 +44,9 @@ public class ItemService {
         item1.setUnitPrice(itemRequest.getUnitPrice());
         item1.setCategory(category.get());
         item1.setSupplier(supplier.get());
+        // Calculate and set the total price
+        double totalPrice = item1.getQuantity() * item1.getUnitPrice();
+        item1.setTotalPrice(totalPrice);
         Item savedItem = itemRepository.save(item1);
 
         return ItemMapper.MAPPER.toDto(savedItem);

@@ -11,6 +11,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -25,6 +26,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -51,18 +53,14 @@ public class Contract {
     @JoinColumn(name = "supplier_id")
     @JsonIgnore
     private Supplier supplier;
-    @OneToMany(mappedBy = "contract")
-    @JsonIgnore
-    private List<PurchaseOrder> purchaseOrder;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
+    @CreatedBy
     @Column(name = "created_by")
-    private String createdBy;
+    private Integer createdBy;
 
 }

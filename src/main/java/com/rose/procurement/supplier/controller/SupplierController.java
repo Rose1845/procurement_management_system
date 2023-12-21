@@ -11,9 +11,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/suppliers")
-@PreAuthorize(
-        "hasRole('ADMIN')"
-)
+//@PreAuthorize(
+//        "hasRole('ADMIN')"
+//)
 public class SupplierController {
     private final SupplierService supplierService;
 

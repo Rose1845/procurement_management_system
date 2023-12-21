@@ -4,7 +4,10 @@ package com.rose.procurement.contract.controller;
 import com.rose.procurement.contract.dtos.ContractDto;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.service.ContractService;
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +34,10 @@ public class ContractController {
     public Optional<Contract> getContract(@PathVariable("id") String contractId){
         return contractService.getContract(contractId);
     }
+    @GetMapping("send-contract/{id}")
+    public Contract contractApproval(@PathVariable("id") String contractId){
+        return contractService.sendContractForApproval(contractId);
+    }
     @GetMapping("items/{id}")
     public Set<Item> getAllContractItems(@PathVariable("id") String contactId){
         return contractService.getContractItems(contactId);
@@ -42,6 +49,34 @@ public class ContractController {
     @PutMapping("{id}")
     public Contract updateContract(@PathVariable("id") String contractId,@RequestBody ContractDto contractRequest){
         return contractService.updateContract(contractId,contractRequest);
+    }
+    @PatchMapping("/{contractId}/approve")
+    public Contract approveContract(@PathVariable String contractId) {
+        return contractService.sendContractForApproval(contractId);
+    }
+    @GetMapping("/send-to-supplier/{id}")
+    public ResponseEntity<Optional<Contract>> sendContractToSupplier(@PathVariable("id") String contractId) {
+        Optional<Contract> sendContract = contractService.sendApprovalEmailToSupplier(contractId);
+        return ResponseEntity.ok(sendContract);
+    }
+
+    // Step 3: Edit Approval Status by Supplier
+    @PatchMapping("/edit-contract/{contractId}")
+    public ResponseEntity<Contract> editContractApprovalStatus(
+            @PathVariable String contractId,
+            @RequestParam String approvalStatus) {
+        // Implement logic to update the contract approval status
+        Contract updatedContract = contractService.updateApprovalStatus(contractId, ApprovalStatus.valueOf(approvalStatus));
+        return ResponseEntity.ok(updatedContract);
+    }
+
+    // Step 4: Alert Organization of Supplier's Response (This could be done asynchronously in a real application)
+    // This is just an example, you may want to use a message queue for real-world scenarios.
+    @Async
+    public void alertOrganizationOfSupplierResponse(String contractId, String supplierResponse) {
+        // Implement logic to send an alert/notification to the organization
+        // This can be an email, push notification, etc.
+        // OrganizationNotificationService.sendNotification(contractId, supplierResponse);
     }
 
 }

@@ -31,8 +31,7 @@ public class SupplierService {
         supplier.setContactPerson(supplierRequest.getContactPerson());
         supplier.setPaymentType(supplierRequest.getPaymentType());
         Supplier savedSupplier = supplierRepository.save(supplier);
-        SupplierDto supplierDto1 = SupplierMapper.MAPPER.toDto(savedSupplier);
-        return supplierDto1;
+        return SupplierMapper.MAPPER.toDto(savedSupplier);
     }
     public List<Supplier> getAllSuppliers(){
         return new ArrayList<>(supplierRepository.findAll());
