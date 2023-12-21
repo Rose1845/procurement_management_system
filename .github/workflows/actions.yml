@@ -1,4 +1,4 @@
-name: Build & Deploy Spring app
+name: Build & Deploy PMS
 
 on:
   push:
@@ -18,15 +18,15 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: 17
-#
-#      - name: Unit Tests
-#        run: mvn -B test --file pom.xml
-#
-#      - name: Build the application
-#        run: |
-#          mvn clean
-#          mvn -B package --file pom.xml
-#
+
+      - name: Unit Tests
+        run: mvn -B test --file pom.xml
+
+      - name: Build the application
+        run: |
+          mvn clean
+          mvn -B package --file pom.xml
+
 #      - name: Build Docker Image
 #        uses: docker/build-push-action@v2
 #        with:
