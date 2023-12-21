@@ -11,11 +11,13 @@ import com.rose.procurement.utils.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/v1/purchase-order")
@@ -41,6 +43,11 @@ public class PurchaseOrderController {
                                                                   @RequestParam(name = "pageSize") int pageSize){
         Page<PurchaseOrder> purchaseOrders = purchaseOrderService.findPurchaseOrderWithPagination(offSet,pageSize);
         return new ApiResponse<>(purchaseOrders.getTotalPages(),purchaseOrders);
+    }
+    @GetMapping("/{purchaseOrderId}/items")
+    public ResponseEntity<Set<Item>> getItemsForPurchaseOrder(@PathVariable Long purchaseOrderId) {
+        Set<Item> items = purchaseOrderService.getItemsForPurchaseOrder(purchaseOrderId);
+        return ResponseEntity.ok(items);
     }
 
    @GetMapping("/paginate-sorting")

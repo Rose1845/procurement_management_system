@@ -16,12 +16,10 @@ import java.util.Optional;
 public class PurchaseRequisitionService {
 
     private final PurchaseRequisitionRepository purchaseRequisitionRepository;
-    private final ItemRepository itemRepository;
 
-    public PurchaseRequisitionService(PurchaseRequisitionRepository purchaseRequisitionRepository,
-                                      ItemRepository itemRepository) {
+    public PurchaseRequisitionService(PurchaseRequisitionRepository purchaseRequisitionRepository
+                                     ) {
         this.purchaseRequisitionRepository = purchaseRequisitionRepository;
-        this.itemRepository = itemRepository;
     }
 
     public PurchaseRequisitionDto createPurchaseRequistion(PurchaseRequisitionDto purchaseRequisitionDto){
