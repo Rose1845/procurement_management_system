@@ -7,8 +7,8 @@ import com.rose.procurement.category.repository.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,15 +27,15 @@ public class CategoryServiceImpl implements CategoryService{
         category.setCategoryName(categoryDto.getCategoryName());
 
         Category savedCategory = categoryRepository.save(category);
-        CategoryDto saveCategoryDto = CategoryMapper.MAPPER.toDto(savedCategory);
-        return saveCategoryDto;
+        return CategoryMapper.MAPPER.toDto(savedCategory);
     }
 
     @Override
-    public List<CategoryDto> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        return categories.stream().map(CategoryMapper.MAPPER::toDto).collect(Collectors.toList());
+    public List<Category> getAllCategories() {
+//        List<Category> categories = categoryRepository.findAll();
+//        return categories.stream().map(CategoryMapper.MAPPER::toDto).collect(Collectors.toList());
 //        return categoryRepository.findAll().stream().map(CategoryMapper.MAPPER.toDto()).collect(Collectors.toList());
+        return new ArrayList<>(categoryRepository.findAll());
     }
 
 

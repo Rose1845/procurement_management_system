@@ -3,6 +3,7 @@ package com.rose.procurement.contract.dtos;
 import com.rose.procurement.items.dtos.ItemDto;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.supplier.entities.SupplierDto;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.*;
 
@@ -18,6 +19,8 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ContractDto{
     private String contractTitle;
     private String contractType;
@@ -25,6 +28,6 @@ public class ContractDto{
     private LocalDate contractEndDate;
     private String termsAndConditions;
     private Set<Item> items;
-    private Supplier supplier;
+    private Long vendorId;
 
 }

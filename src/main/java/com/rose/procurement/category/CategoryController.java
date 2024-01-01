@@ -1,6 +1,7 @@
 package com.rose.procurement.category;
 
 import com.rose.procurement.category.dtos.CategoryDto;
+import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class CategoryController {
         return categoryService.createCategory(categoryDto);
     }
     @GetMapping
-    public List<CategoryDto> getALlCategories(){
+    public List<Category> getAllCategories(){
         return categoryService.getAllCategories();
     }
 }

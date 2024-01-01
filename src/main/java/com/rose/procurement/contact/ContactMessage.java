@@ -15,9 +15,11 @@ import lombok.Setter;
 public class ContactMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     private String name;
+    private String title;
 
     @Email
     private String email;

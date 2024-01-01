@@ -23,7 +23,7 @@ public class ItemDto {
     private String itemDescription;
     private int quantity;
     private double unitPrice;
-    private Category category;
+    private Long categoryId;
     private double totalPrice;
-    private Supplier supplier;
+    private Long vendorId;
 }

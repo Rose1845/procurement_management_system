@@ -3,6 +3,7 @@ package com.rose.procurement.user.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rose.procurement.config.JwtService;
+import com.rose.procurement.user.Role;
 import com.rose.procurement.user.User;
 import com.rose.procurement.user.UserRepository;
 import com.rose.procurement.user.token.Token;
@@ -31,14 +32,12 @@ public class AuthenticationService {
 
   public AuthenticationResponse register(RegisterRequest request) {
 
-//    Optional<User> user1= repository.findByEmail(request.getEmail());
-//    if(user1.isPresent()){
       var user = User.builder()
               .firstname(request.getFirstname())
               .lastname(request.getLastname())
               .email(request.getEmail())
               .password(passwordEncoder.encode(request.getPassword()))
-              .role(request.getRole())
+              .role(Role.ADMIN)
               .build();
       var savedUser = repository.save(user);
       var jwtToken = jwtService.generateToken(user);
@@ -48,9 +47,7 @@ public class AuthenticationService {
               .accessToken(jwtToken)
               .refreshToken(refreshToken)
               .build();
-//    }else {
-//      throw new IllegalStateException("user with that email already exists");
-//    }
+
 
   }
 

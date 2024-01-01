@@ -14,12 +14,8 @@ import java.io.Serializable;
 @Data
 public class CategoryDto{
     private String categoryName;
-    public CategoryDto() {
-        // No-args constructor
-    }
 
-    // Public setter
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public CategoryDto() {
+        // Default constructor
     }
 }

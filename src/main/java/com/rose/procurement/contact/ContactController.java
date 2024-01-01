@@ -17,10 +17,7 @@ public class ContactController {
 
     @PostMapping("/message")
     public ResponseEntity<String> submitContactMessage(@RequestBody ContactMessage contactMessage) {
-        // Save the contact message to the database
         ContactMessage savedMessage = contactMessageService.saveContactMessage(contactMessage);
-
-        // You can add additional logic here, such as sending a confirmation email to the user
 
         return ResponseEntity.ok("Message submitted successfully");
     }

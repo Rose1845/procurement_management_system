@@ -16,7 +16,7 @@ public class ContactMessageService {
     public ContactMessage saveContactMessage(ContactMessage contactMessage) {
         String subject = "Contact Us";
         String text = "Hello \n\n" + contactMessage.getName()+ "," + "Thank you for contacting us" +
-                "We will get back to you soon.\n\n"
+                "We will get back to you soon.\n\n" + "Subject" + contactMessage.getTitle() + "\n"
                 + "Your Message " + contactMessage.getMessage() + "\n"
                 + "\n\nBest Regards,\nProcureSwift Company";
         emailService.sendEmail(contactMessage.getEmail(),subject,text);

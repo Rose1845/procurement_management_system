@@ -4,7 +4,6 @@ import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import com.rose.procurement.supplier.services.SupplierService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

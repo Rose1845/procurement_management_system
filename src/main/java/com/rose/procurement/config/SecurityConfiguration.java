@@ -12,6 +12,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
 
 import static com.rose.procurement.user.Permission.*;
 import static com.rose.procurement.user.Role.ADMIN;
@@ -37,7 +42,12 @@ public class SecurityConfiguration {
             "/webjars/**",
             "/api/newsletter/**",
             "/api/demo/**",
-            "/api/contact/**",
+            "/api/v1/contract/**",
+            "/api/v1/suppliers/**",
+            "/api/v1/purchase-order/**",
+            "/api/v1/category/**",
+            "/api/v1/items",
+            "/api/contact/message",
             "/swagger-ui.html"};
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -69,5 +79,22 @@ public class SecurityConfiguration {
         ;
 
         return http.build();
+    }
+
+
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+
+        corsConfiguration.setAllowCredentials(false);
+        corsConfiguration.setAllowedOrigins(Arrays.asList(CorsConfiguration.ALL));
+        corsConfiguration.setAllowedMethods(Arrays.asList(CorsConfiguration.ALL));
+        corsConfiguration.setAllowedHeaders(Arrays.asList(CorsConfiguration.ALL));
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        source.registerCorsConfiguration("http://localhost:3000/**", corsConfiguration);
+        source.registerCorsConfiguration("/api/**", corsConfiguration);
+        return new CorsFilter(source);
     }
 }

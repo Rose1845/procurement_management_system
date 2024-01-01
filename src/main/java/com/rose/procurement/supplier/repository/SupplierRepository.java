@@ -13,4 +13,5 @@ public interface SupplierRepository extends JpaRepository<Supplier,Long> {
 
     Optional<Supplier> findByVendorId(Long vendorId);
 
+    Optional<Supplier> findByVendorId(Supplier supplier);
 }

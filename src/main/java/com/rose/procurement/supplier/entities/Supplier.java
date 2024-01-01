@@ -27,7 +27,7 @@ import java.util.List;
 @Getter
 @Builder
 @Setter
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,11 +67,11 @@ public class Supplier {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @CreatedBy
-    @Column(
-            nullable = false,
-            updatable = false
-    )
-    private Integer createdBy;
+//    @CreatedBy
+//    @Column(
+//            nullable = false,
+//            updatable = false
+//    )
+//    private Integer createdBy;
 
 }

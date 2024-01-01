@@ -30,7 +30,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 public class PurchaseOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -66,7 +66,7 @@ public class PurchaseOrder {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @CreatedBy
-    @Column(name = "created_by")
-    private Integer createdBy;
+//    @CreatedBy
+//    @Column(name = "created_by")
+//    private Integer createdBy;
 }

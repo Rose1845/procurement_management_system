@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -41,7 +41,7 @@ public class Invoice {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @CreatedBy
-    @Column(name = "created_by")
-    private Integer createdBy;
+//    @CreatedBy
+//    @Column(name = "created_by")
+//    private Integer createdBy;
 }

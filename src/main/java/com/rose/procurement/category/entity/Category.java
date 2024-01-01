@@ -21,8 +21,7 @@ import java.util.List;
 @Getter
 @Builder
 @Setter
-@EntityListeners(AuditingEntityListener.class)
-
+//@EntityListeners(AuditingEntityListener.class)
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,12 +33,13 @@ public class Category {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @CreatedBy
-    @Column(name = "created_by")
-    private String createdBy;
-
+//    @CreatedBy
+//    @Column(
+//            nullable = false,
+//            updatable = false
+//    )
+//    private Integer createdBy;
 }

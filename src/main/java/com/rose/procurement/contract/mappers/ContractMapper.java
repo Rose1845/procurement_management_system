@@ -10,10 +10,14 @@ import java.util.List;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ContractMapper {
     ContractMapper MAPPER = Mappers.getMapper(ContractMapper.class);
-
-    Contract toEntity(ContractDto contractDto);
-
-    ContractDto toDto(Contract contract);
+    @Mappings({
+            @Mapping(target = "supplier.vendorId", source = "vendorId"),
+            // Add other mappings as needed
+    })    Contract toEntity(ContractDto contractDto);
+    @Mappings({
+            @Mapping(target = "vendorId", source = "supplier.vendorId"),
+            // Add other mappings as needed
+    })    ContractDto toDto(Contract contract);
 
     List<Contract> toEntityList(List<ContractDto> contractDtoList);
 

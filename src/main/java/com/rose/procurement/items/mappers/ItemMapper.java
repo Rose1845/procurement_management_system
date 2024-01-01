@@ -9,15 +9,15 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper
-//@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ItemMapper {
     ItemMapper MAPPER = Mappers.getMapper(ItemMapper.class);
 
-//    @Mapping(source = "category.categoryId", target = "category.categoryId")
-//    @Mapping(source = "supplier.vendorId", target = "supplier.vendorId")
+    @Mapping(source = "vendorId", target = "supplier.vendorId")
+    @Mapping(source = "categoryId", target = "category.categoryId")
     Item toEntity(ItemDto itemDto);
-
+    @Mapping(source = "supplier.vendorId", target = "vendorId")
+    @Mapping(source = "category.categoryId", target = "categoryId")
     ItemDto toDto(Item item);
 //    List<Item> toEntityList(List<ItemDto>itemDtoList);
 //

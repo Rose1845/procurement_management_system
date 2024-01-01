@@ -19,7 +19,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAllItems() {
+    public List<Item> getAllItems() {
 //        return itemService.getAllItems();
         return itemService.getAllItems();
     }

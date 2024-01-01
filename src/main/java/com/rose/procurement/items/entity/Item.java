@@ -14,6 +14,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+//@EntityListeners(AuditingEntityListener.class)
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,7 +36,7 @@ public class Item {
     private String itemNumber;
     private String itemDescription;
     @Min(1)
-    private int quantity;
+    private int quantity=1;
     private double unitPrice;
     private double totalPrice;
     @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
@@ -60,13 +62,15 @@ public class Item {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @Column(name = "created_by")
-    private String createdBy;
+//    @CreatedBy
+//    @Column(
+//            nullable = false,
+//            updatable = false
+//    )
+//    private Integer createdBy = 1;
 
     @Transient // This annotation indicates that the field should not be persisted in the database
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

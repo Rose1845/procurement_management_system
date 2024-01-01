@@ -8,14 +8,17 @@ import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@Slf4j
 public class ContractService {
     private final SupplierRepository supplierRepository;
     private final ContractRepository contractRepository;
@@ -28,10 +31,15 @@ public class ContractService {
         this.emailService = emailService;
     }
     public ContractDto createContract(ContractDto contractRequest) {
-        Optional<Supplier> supplier = supplierRepository.findByVendorId(contractRequest.getSupplier().getVendorId());
-        if(supplier.isEmpty()){
-            throw new IllegalStateException("supplier with id doesnot exists");
-        }
+//        if (contractRequest.getSupplier().getVendorId() == null) {
+//            throw new IllegalArgumentException("Supplier must be provided in the contract request");
+//        }
+
+        Optional<Supplier> supplier = supplierRepository.findById(contractRequest.getVendorId());
+
+//        if (supplier.isEmpty()) {
+//            throw new IllegalStateException("Supplier with id does not exist");
+//        }
 
         Contract contract1 = ContractMapper.MAPPER.toEntity(contractRequest);
         contract1.setContractEndDate(contractRequest.getContractEndDate());
@@ -39,10 +47,14 @@ public class ContractService {
         contract1.setContractStartDate(contractRequest.getContractStartDate());
         contract1.setTermsAndConditions(contractRequest.getTermsAndConditions());
         contract1.setContractType(contractRequest.getContractType());
-        contract1.setSupplier(supplier.get());
+        contract1.setApprovalStatus(ApprovalStatus.PENDING);
+//        supplier.ifPresent(contract1.getSupplier().getVendorId());
+//        contract1.setSupplier(supplier.get());
+        supplier.ifPresent(contract1::setSupplier);
         Set<Item> items = new HashSet<>(contract1.getItems());
         contract1.setItems(new HashSet<>(items));
         Contract savedCOntract = contractRepository.save(contract1);
+        log.info("contract data",savedCOntract);
         return ContractMapper.MAPPER.toDto(savedCOntract);
     }
 
@@ -69,21 +81,25 @@ public class ContractService {
         return  contractRepository.findById(contractId);
     }
 
-    public Contract updateContract(String contractId,ContractDto contractRequest) {
-        Contract contract = contractRepository.findById(contractId).orElseThrow();
-            contract.setContractEndDate(contractRequest.getContractEndDate());
-            contract.setContractTitle(contractRequest.getContractTitle());
-            contract.setContractType(contractRequest.getContractType());
-            contract.setSupplier(contractRequest.getSupplier());
-            contract.setTermsAndConditions(contractRequest.getTermsAndConditions());
-            contract.setContractStartDate(contractRequest.getContractStartDate());
-        return contractRepository.save(contract);
-
-    }
+//    public Contract updateContract(String contractId,ContractDto contractRequest) {
+//        Contract contract = contractRepository.findById(contractId).orElseThrow();
+//            contract.setContractEndDate(contractRequest.getContractEndDate());
+//            contract.setContractTitle(contractRequest.getContractTitle());
+//            contract.setContractType(contractRequest.getContractType());
+//            contract.setSupplier(contractRequest.getSupplier().getVendorId());
+//            contract.setTermsAndConditions(contractRequest.getTermsAndConditions());
+//            contract.setContractStartDate(contractRequest.getContractStartDate());
+//        return contractRepository.save(contract);
+//
+//    }
 
 
     public Set<Item> getContractItems(String contractId) {
-        return contractRepository.findItemsByContractId(contractId);
+        Contract contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new EntityNotFoundException("contract  not found with id: " + contractId));
+
+        return contract.getItems();
+//        return contractRepository.findItemsByContractId(contractId);
     }
      /** send email to supplier for contract approval **/
     public Contract sendContractForApproval(String contractId) {
