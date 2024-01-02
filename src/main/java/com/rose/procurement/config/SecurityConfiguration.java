@@ -40,11 +40,14 @@ public class SecurityConfiguration {
             "/configuration/security",
             "/swagger-ui/**",
             "/webjars/**",
-            "/api/newsletter/**",
+            "api/newsletter/subscribe",
             "/api/demo/**",
             "/api/v1/contract/**",
             "/api/v1/suppliers/**",
             "/api/v1/purchase-order/**",
+            "/api/v1/purchase-request/**",
+            "/api/v1/purchase-requisition/**",
+             "/api/v1/invoices/**",
             "/api/v1/category/**",
             "/api/v1/items",
             "/api/contact/message",
@@ -60,11 +63,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/api/v1/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                .requestMatchers(GET, "/api/v1/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                                .requestMatchers(POST, "/api/v1/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-                                .requestMatchers(PUT, "/api/v1/suppliers/**","/api/v1/purchase-order/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
-                                .requestMatchers(DELETE, "/api/v1/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
+                                .requestMatchers("/test**").hasAnyRole(ADMIN.name(), MANAGER.name())
+                                .requestMatchers(GET, "/test/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
+                                .requestMatchers(POST, "/test/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
+                                .requestMatchers(PUT, "/test/suppliers/**","/api/v1/purchase-order/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
+                                .requestMatchers(DELETE, "/test/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
                                 .anyRequest()
                                 .authenticated()
                 )
@@ -80,8 +83,6 @@ public class SecurityConfiguration {
 
         return http.build();
     }
-
-
 
     @Bean
     public CorsFilter corsFilter() {

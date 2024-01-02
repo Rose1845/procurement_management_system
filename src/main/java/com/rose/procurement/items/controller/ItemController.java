@@ -20,7 +20,6 @@ public class ItemController {
 
     @GetMapping
     public List<Item> getAllItems() {
-//        return itemService.getAllItems();
         return itemService.getAllItems();
     }
 

@@ -11,6 +11,8 @@ import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -32,8 +34,14 @@ public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long vendorId;
+    @NotNull
+    @NotBlank
     private String name;
+    @NotNull
+    @NotBlank
     private String contactPerson;
+    @NotNull
+    @NotBlank
     private String contactInformation;
     @Embedded
     @AttributeOverrides({
@@ -44,10 +52,16 @@ public class Supplier {
     })
     private Address address;
     @Email
+    @NotNull
+    @NotBlank
     private String email;
+    @NotNull
+    @NotBlank
     private String phoneNumber;
     @Enumerated
     private PaymentType paymentType;
+    @NotNull
+    @NotBlank
     private String termsAndConditions;
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore

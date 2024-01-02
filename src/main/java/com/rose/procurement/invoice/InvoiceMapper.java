@@ -7,8 +7,9 @@ import org.mapstruct.factory.Mappers;
 public interface InvoiceMapper {
     InvoiceMapper MAPPER= Mappers.getMapper(InvoiceMapper.class);
     @Mapping(target = "invoiceId", ignore = true)
+    @Mapping(source="purchaseOrderId",target = "purchaseOrder.purchaseOrderId")
     Invoice toEntity(InvoiceDto invoiceDto);
-
+    @Mapping(source="purchaseOrder.purchaseOrderId",target = "purchaseOrderId")
     InvoiceDto toDto(Invoice invoice);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

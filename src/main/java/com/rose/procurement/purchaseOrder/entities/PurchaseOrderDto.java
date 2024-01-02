@@ -24,6 +24,6 @@ public class PurchaseOrderDto{
     private PaymentType paymentType;
     private ApprovalStatus approvalStatus;
     private Set<Item> items;
-     private Supplier supplier;
+     private Long vendorId;
 }
 

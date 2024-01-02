@@ -53,10 +53,10 @@ public class Item {
     @JoinColumn(name = "supplierId")
     @JsonIgnore
     private Supplier supplier;
-    @OneToMany(mappedBy = "item")
+    @ManyToMany(mappedBy = "items")
     @JsonIgnore
-    private List<PurchaseRequest> purchaseRequests;
-    @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
+    private Set<PurchaseRequest> purchaseRequests;
+    @ManyToMany(mappedBy = "items")
     @JsonIgnore
     private Set<PurchaseRequisition> purchaseRequisitions;
     @CreationTimestamp

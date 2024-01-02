@@ -36,17 +36,13 @@ private final SupplierRepository supplierRepository;
     }
 
     public PurchaseOrderDto createPurchaseOrder(PurchaseOrderDto purchaseOrderRequest) {
-        Optional<Supplier> supplier = supplierRepository.findByVendorId(purchaseOrderRequest.getSupplier().getVendorId());
-       if(supplier.isEmpty()){
-           throw new IllegalStateException();
-        }
-
+        Optional<Supplier> supplier = supplierRepository.findById(purchaseOrderRequest.getVendorId());
         PurchaseOrder purchaseOrder = PurchaseOrderMapper.MAPPER.toEntity(purchaseOrderRequest);
        purchaseOrder.setPurchaseOrderTitle(purchaseOrderRequest.getPurchaseOrderTitle());
-       purchaseOrder.setSupplier(supplier.get());
+        supplier.ifPresent(purchaseOrder::setSupplier);
        purchaseOrder.setTermsAndConditions(purchaseOrderRequest.getTermsAndConditions());
        purchaseOrder.setApprovalStatus(ApprovalStatus.PENDING);
-       purchaseOrder.setPaymentType(PaymentType.MPESA);
+       purchaseOrder.setPaymentType(purchaseOrderRequest.getPaymentType());
         Set<Item> items = new HashSet<>(purchaseOrder.getItems());
         purchaseOrder.setItems(new HashSet<>(items));
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate());
@@ -74,13 +70,13 @@ private final SupplierRepository supplierRepository;
         Optional<PurchaseOrder> purchaseOrder= purchaseOrderRepository.findById(purchaseOrderId);
         if(purchaseOrder.isPresent()){
             purchaseOrder.get().setPurchaseOrderTitle(purchaseOrderDto.getPurchaseOrderTitle());
-            purchaseOrder.get().setSupplier(purchaseOrderDto.getSupplier());
             purchaseOrder.get().setApprovalStatus(purchaseOrderDto.getApprovalStatus());
             purchaseOrder.get().setPaymentType(purchaseOrderDto.getPaymentType());
             purchaseOrder.get().setTermsAndConditions(purchaseOrderDto.getTermsAndConditions());
             purchaseOrder.get().setDeliveryDate(purchaseOrderDto.getDeliveryDate());
             purchaseOrder.get().setItems(purchaseOrderDto.getItems());
-            purchaseOrder.get().setSupplier(purchaseOrderDto.getSupplier());
+            Supplier supplier = supplierRepository.findById(purchaseOrderDto.getVendorId()).orElseThrow(()->new RuntimeException("no supplier with id"+ purchaseOrderDto.getVendorId()));
+            purchaseOrder.get().setSupplier(supplier);
             purchaseOrder.get().setUpdatedAt(LocalDate.now().atStartOfDay());
         }
         else {

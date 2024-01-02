@@ -9,6 +9,7 @@ import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -33,11 +34,17 @@ public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String contractId;
+    @NotNull
+    @NotBlank
     private String contractTitle;
+    @NotNull
+    @NotBlank
     private String contractType;
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @PastOrPresent
     private LocalDate contractStartDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @FutureOrPresent
     private LocalDate contractEndDate;
     private String termsAndConditions;
     @Enumerated

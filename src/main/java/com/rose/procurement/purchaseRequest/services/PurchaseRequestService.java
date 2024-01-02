@@ -10,8 +10,10 @@ import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PurchaseRequestService {
@@ -25,12 +27,11 @@ public class PurchaseRequestService {
     }
 
     public PurchaseRequestDto createPurchaseRequest(PurchaseRequestDto purchaseRequest) {
-        Optional<Item> item = itemRepository.findById(purchaseRequest.getItem().getItemId());
         PurchaseRequest purchaseRequest1 = PurchaseRequestMapper.INSTANCE.toEntity(purchaseRequest);
         purchaseRequest1.setPurchaseRequestTitle(purchaseRequest1.getPurchaseRequestTitle());
         purchaseRequest1.setDueDate(purchaseRequest.getDueDate());
-        purchaseRequest1.setItem(item.get());
-        PurchaseRequest savedPrequest = purchaseRequestRepository.save(purchaseRequest1);
+        Set<Item> items = new HashSet<>(purchaseRequest1.getItems());
+        purchaseRequest1.setItems(new HashSet<>(items));        PurchaseRequest savedPrequest = purchaseRequestRepository.save(purchaseRequest1);
         PurchaseRequestDto savedDTo = PurchaseRequestMapper.INSTANCE.toDto(savedPrequest);
         // Additional logic or validation can be added here before saving
         return savedDTo;

@@ -12,6 +12,10 @@ import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -35,8 +39,15 @@ public class PurchaseOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long purchaseOrderId;
+    @NotNull
+    @NotBlank
     private String purchaseOrderTitle;
+    @NotNull
+    @NotBlank
+    @FutureOrPresent
     private LocalDate deliveryDate;
+    @NotNull
+    @NotBlank
     private String termsAndConditions;
     @Enumerated
     private PaymentType paymentType;

@@ -81,17 +81,18 @@ public class ContractService {
         return  contractRepository.findById(contractId);
     }
 
-//    public Contract updateContract(String contractId,ContractDto contractRequest) {
-//        Contract contract = contractRepository.findById(contractId).orElseThrow();
-//            contract.setContractEndDate(contractRequest.getContractEndDate());
-//            contract.setContractTitle(contractRequest.getContractTitle());
-//            contract.setContractType(contractRequest.getContractType());
-//            contract.setSupplier(contractRequest.getSupplier().getVendorId());
-//            contract.setTermsAndConditions(contractRequest.getTermsAndConditions());
-//            contract.setContractStartDate(contractRequest.getContractStartDate());
-//        return contractRepository.save(contract);
-//
-//    }
+    public Contract updateContract(String contractId,ContractDto contractRequest) {
+        Contract contract = contractRepository.findById(contractId).orElseThrow();
+            contract.setContractEndDate(contractRequest.getContractEndDate());
+            contract.setContractTitle(contractRequest.getContractTitle());
+            contract.setContractType(contractRequest.getContractType());
+            Supplier supplier = supplierRepository.findById(contractRequest.getVendorId()).orElseThrow(()->new RuntimeException("no supplier with id"+ contractRequest.getVendorId()));
+            contract.setSupplier(supplier);
+            contract.setTermsAndConditions(contractRequest.getTermsAndConditions());
+            contract.setContractStartDate(contractRequest.getContractStartDate());
+        return contractRepository.save(contract);
+
+    }
 
 
     public Set<Item> getContractItems(String contractId) {

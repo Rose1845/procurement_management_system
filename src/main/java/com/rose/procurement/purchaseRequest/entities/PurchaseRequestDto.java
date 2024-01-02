@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * DTO for {@link PurchaseRequest}
@@ -19,6 +20,6 @@ public class PurchaseRequestDto {
     private LocalDate dueDate;
     private String termsAndConditions;
     private Supplier supplier;
-    private Item item;
+    private Set<Item> items;
 }
 

@@ -8,6 +8,7 @@ import java.util.Optional;
 @Service
 public class SubscriberService {
     private final SubscriberRepository subscriberRepository;
+
     private final EmailService emailService;
 
     public SubscriberService(SubscriberRepository subscriberRepository, EmailService emailService) {

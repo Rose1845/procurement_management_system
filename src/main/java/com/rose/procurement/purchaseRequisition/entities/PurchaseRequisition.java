@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -27,9 +30,14 @@ public class PurchaseRequisition {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long requisitionId;
+    @NotNull
+    @NotBlank
     private String requisitionTitle;
+    @NotNull
+    @NotBlank
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @FutureOrPresent
     private LocalDate dateNeeded;
     @CreationTimestamp
     private Timestamp dateCreated;
@@ -39,7 +47,7 @@ public class PurchaseRequisition {
             @JoinTable(
                   name = "requisition_items",
                     joinColumns = {
-                          @JoinColumn(name = "purchase_request_id",referencedColumnName = "requisitionId")
+                          @JoinColumn(name = "purchase_requisition_id",referencedColumnName = "requisitionId")
                     },
                     inverseJoinColumns = {
                           @JoinColumn(name = "item_id",referencedColumnName = "itemId")
@@ -55,6 +63,6 @@ public class PurchaseRequisition {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "created_by")
-    private String createdBy;
+//    @Column(name = "created_by")
+//    private String createdBy;
 }

@@ -22,15 +22,28 @@ public class SupplierDto{
     @NotNull
     @NotEmpty
     @NotBlank
-   private String name;
+    private String name;
+    @NotNull
+    @NotBlank
     private String contactPerson;
+    @NotNull
+    @NotBlank
     private String contactInformation;
     @NotNull
+    @NotBlank
     private Address address;
     @Email
+    @NotNull
+    @NotBlank
     private String email;
+    @NotNull
+    @NotBlank
     private String phoneNumber;
+    @NotNull
+    @NotBlank
     private  PaymentType paymentType;
     @NotNull
+    @NotBlank
     private String termsAndConditions;
 }
+

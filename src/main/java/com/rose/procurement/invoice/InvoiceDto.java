@@ -15,5 +15,5 @@ public class InvoiceDto{
     private String invoiceNumber;
     private LocalDate dueDate;
     private double totalAmount;
-    private  PurchaseOrder purchaseOrder;
+    private  Long purchaseOrderId;
 }

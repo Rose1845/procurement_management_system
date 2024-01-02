@@ -10,10 +10,11 @@ import org.mapstruct.factory.Mappers;
 public interface PurchaseOrderMapper {
     PurchaseOrderMapper MAPPER = Mappers.getMapper(PurchaseOrderMapper.class);
 
+    @Mapping(source = "vendorId", target = "supplier.vendorId")
     PurchaseOrder toEntity(PurchaseOrderDto purchaseOrderDto);
 
+    @Mapping(source = "supplier.vendorId",target = "vendorId")
     PurchaseOrderDto toDto(PurchaseOrder purchaseOrder);
-
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     PurchaseOrder partialUpdate(PurchaseOrderDto purchaseOrderDto, @MappingTarget PurchaseOrder purchaseOrder);
 }

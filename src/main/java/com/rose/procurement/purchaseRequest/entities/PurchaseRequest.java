@@ -9,6 +9,9 @@ import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -17,6 +20,7 @@ import org.springframework.data.annotation.CreatedBy;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -24,13 +28,19 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@Table(name = "_purchase_request")
 public class PurchaseRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long purchaseRequestId;
+    @NotNull
+    @NotBlank
     private String purchaseRequestTitle;
+    @NotNull
+    @NotBlank
+    @FutureOrPresent
     private LocalDate dueDate;
+    @NotNull
+    @NotBlank
     private String termsAndConditions;
     @OneToOne(mappedBy = "purchaseRequest")
     @JoinColumn(name = "vendor_id")
@@ -38,16 +48,26 @@ public class PurchaseRequest {
     private Supplier supplier;
     @Enumerated
     private ApprovalStatus approvalStatus;
-    @ManyToOne
-    @JoinColumn(name = "item_id")
+    @ManyToMany( fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "request_items",
+            joinColumns = {
+                    @JoinColumn(name = "purchase_request_id",referencedColumnName = "purchaseRequestId")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "item_id",referencedColumnName = "itemId")
+            }
+    )
     @JsonIgnore
-    private Item item;
+    private Set<Item> items;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @Column(name = "created_by")
-    private String createdBy;
+//    @Column(name = "created_by")
+//    private String createdBy;
 }
+
+
