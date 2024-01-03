@@ -4,6 +4,7 @@ import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import com.rose.procurement.supplier.services.SupplierService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,13 +21,12 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
     @PostMapping
-    public SupplierDto createSupplier(@RequestBody SupplierDto supplierRequest){
+    public SupplierDto createSupplier(@RequestBody @Valid SupplierDto supplierRequest){
         return supplierService.createSupplier(supplierRequest);
     }
     @GetMapping
     public List<Supplier> getAllSuppliers(){
         return supplierService.getAllSuppliers();
-
     }
     @GetMapping("/supplier/{id}")
     public SupplierDto getSupplier(@PathVariable("id") Long vendorId) {
