@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.supplier.entities.Supplier;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,12 +20,24 @@ import lombok.NoArgsConstructor;
 //@JsonIdentityInfo(generator = ObjectIdGenerators)
 //@NoArgsConstructor
 public class ItemDto {
+    @NotBlank
+    @NotNull
     private String itemName;
+    @NotBlank
+    @NotNull
     private String itemNumber;
+    @NotBlank
+    @NotNull
     private String itemDescription;
+    @NotNull
     private int quantity;
+    @NotNull
     private double unitPrice;
+    @NotNull
     private Long categoryId;
+    @NotNull
     private double totalPrice;
+    @NotNull
     private Long vendorId;
+
 }

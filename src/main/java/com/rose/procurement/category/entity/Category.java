@@ -28,8 +28,6 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long categoryId;
-    @NotNull
-    @NotBlank
     private  String categoryName;
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonManagedReference

@@ -5,8 +5,11 @@ import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import com.rose.procurement.supplier.services.SupplierService;
 import jakarta.validation.Valid;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 
@@ -24,6 +27,9 @@ public class SupplierController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SupplierDto createSupplier(@RequestBody @Valid SupplierDto supplierRequest){
+//        if(result.hasErrors()){
+//            throw new MethodArgumentNotValidException((MethodParameter) null, result);
+//        }
         return supplierService.createSupplier(supplierRequest);
     }
     @GetMapping

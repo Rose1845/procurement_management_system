@@ -3,6 +3,7 @@ package com.rose.procurement.purchaseRequisition.controller;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisition;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisitionDto;
 import com.rose.procurement.purchaseRequisition.services.PurchaseRequisitionService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class PurchaseRequisitionController {
     }
 
     @PostMapping
-    public PurchaseRequisitionDto createPurchaseRequisition(@RequestBody PurchaseRequisitionDto purchaseRequisitionDto){
+    public PurchaseRequisitionDto createPurchaseRequisition(@RequestBody @Valid PurchaseRequisitionDto purchaseRequisitionDto){
         return purchaseRequisitionService.createPurchaseRequistion(purchaseRequisitionDto);
     }
 

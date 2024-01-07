@@ -8,6 +8,7 @@ import com.rose.procurement.purchaseOrder.services.PurchaseOrderService;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.services.SupplierService;
 import com.rose.procurement.utils.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ public class PurchaseOrderController {
     }
 
     @PostMapping
-    public PurchaseOrderDto createPurchaseOrder(@RequestBody PurchaseOrderDto purchaseOrderRequest) {
+    public PurchaseOrderDto createPurchaseOrder(@RequestBody @Valid PurchaseOrderDto purchaseOrderRequest) {
         return purchaseOrderService.createPurchaseOrder(purchaseOrderRequest);
     }
 

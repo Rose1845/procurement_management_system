@@ -30,14 +30,9 @@ public class PurchaseRequisition {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long requisitionId;
-    @NotNull
-    @NotBlank
     private String requisitionTitle;
-    @NotNull
-    @NotBlank
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @FutureOrPresent
     private LocalDate dateNeeded;
     @CreationTimestamp
     private Timestamp dateCreated;

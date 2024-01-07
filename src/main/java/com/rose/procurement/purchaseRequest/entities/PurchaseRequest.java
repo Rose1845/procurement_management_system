@@ -32,15 +32,8 @@ public class PurchaseRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long purchaseRequestId;
-    @NotNull
-    @NotBlank
     private String purchaseRequestTitle;
-    @NotNull
-    @NotBlank
-    @FutureOrPresent
     private LocalDate dueDate;
-    @NotNull
-    @NotBlank
     private String termsAndConditions;
     @OneToOne(mappedBy = "purchaseRequest")
     @JoinColumn(name = "vendor_id")

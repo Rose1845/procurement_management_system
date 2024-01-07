@@ -3,6 +3,7 @@ package com.rose.procurement.category;
 import com.rose.procurement.category.dtos.CategoryDto;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
     @PostMapping
-    public CategoryDto createCategory(@RequestBody CategoryDto  categoryDto){
+    public CategoryDto createCategory(@RequestBody @Valid CategoryDto  categoryDto){
         log.info("category");
         return categoryService.createCategory(categoryDto);
     }

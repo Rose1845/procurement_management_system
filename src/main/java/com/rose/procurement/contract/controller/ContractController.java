@@ -6,6 +6,7 @@ import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.service.ContractService;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class ContractController {
         this.contractService = contractService;
     }
     @PostMapping
-    public ContractDto createContract(@RequestBody ContractDto contractRequest){
+    public ContractDto createContract(@RequestBody @Valid ContractDto contractRequest){
         return contractService.createContract(contractRequest);
     }
     @GetMapping

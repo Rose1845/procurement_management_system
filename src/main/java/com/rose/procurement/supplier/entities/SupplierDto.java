@@ -30,7 +30,6 @@ public class SupplierDto{
     @NotBlank
     private String contactInformation;
     @NotNull
-    @NotBlank
     private Address address;
     @Email
     @NotNull
@@ -40,10 +39,8 @@ public class SupplierDto{
     @NotBlank
     private String phoneNumber;
     @NotNull
-    @NotBlank
     private  PaymentType paymentType;
     @NotNull
-    @NotBlank
     private String termsAndConditions;
 }
 

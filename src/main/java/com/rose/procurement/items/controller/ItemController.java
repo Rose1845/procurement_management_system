@@ -3,6 +3,7 @@ package com.rose.procurement.items.controller;
 import com.rose.procurement.items.dtos.ItemDto;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.service.ItemService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class ItemController {
         this.itemService = itemService;
     }
     @PostMapping
-    public ItemDto createItem(@RequestBody ItemDto itemRequest) {
+    public ItemDto createItem(@RequestBody @Valid ItemDto itemRequest) {
         return itemService.createItem(itemRequest);
     }
 

@@ -34,17 +34,11 @@ public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String contractId;
-    @NotNull
-    @NotBlank
     private String contractTitle;
-    @NotNull
-    @NotBlank
     private String contractType;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @PastOrPresent
     private LocalDate contractStartDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @FutureOrPresent
     private LocalDate contractEndDate;
     private String termsAndConditions;
     @Enumerated

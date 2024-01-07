@@ -34,14 +34,11 @@ public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long vendorId;
-    @NotNull
-    @NotBlank
+
     private String name;
-    @NotNull
-    @NotBlank
+
     private String contactPerson;
-    @NotNull
-    @NotBlank
+
     private String contactInformation;
     @Embedded
     @AttributeOverrides({
@@ -51,17 +48,11 @@ public class Supplier {
             @AttributeOverride(name = "location", column = @Column(name = "location"))
     })
     private Address address;
-    @Email
-    @NotNull
-    @NotBlank
     private String email;
-    @NotNull
-    @NotBlank
     private String phoneNumber;
     @Enumerated
     private PaymentType paymentType;
-    @NotNull
-    @NotBlank
+
     private String termsAndConditions;
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore

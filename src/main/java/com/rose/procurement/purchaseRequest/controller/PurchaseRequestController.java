@@ -5,6 +5,7 @@ import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
 import com.rose.procurement.purchaseRequest.services.PurchaseRequestService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class PurchaseRequestController {
     }
 
     @PostMapping
-    public PurchaseRequestDto createPurchaseRequest(@RequestBody PurchaseRequestDto purchaseRequest) {
+    public PurchaseRequestDto createPurchaseRequest(@RequestBody @Valid  PurchaseRequestDto purchaseRequest) {
         return purchaseRequestService.createPurchaseRequest(purchaseRequest);
     }
 
