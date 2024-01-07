@@ -35,13 +35,6 @@ public class AppExceptionHandler {
         return errorBuilder;
     }
 
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(MysqlE.class)
-//    public Map<String, String> handleBusinessException(UsernameNotFoundException ex) {
-//        Map<String, String> errorMap = new HashMap<>();
-//        errorMap.put("errorMessage", ex.getMessage());
-//        return errorMap;
-//    }
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(UsernameNotFoundException.class)
     public Map<String, String> handleBusinessException(UsernameNotFoundException ex) {
