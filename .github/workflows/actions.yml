@@ -24,8 +24,7 @@ jobs:
 
       - name: Build the application
         run: |
-          mvn clean
-          mvn -B package --file pom.xml
+          mvn clean install
 
       - name: Build Docker Image
         uses: docker/build-push-action@v2
