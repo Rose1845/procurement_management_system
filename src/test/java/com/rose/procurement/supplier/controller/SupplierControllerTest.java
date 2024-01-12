@@ -65,7 +65,7 @@ class SupplierControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(supplierDto)));
         response.andDo(print()).
-                andExpect(status().isOk());
+                andExpect(status().isCreated());
     }
 
     @Test

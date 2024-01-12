@@ -25,7 +25,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContractDto{
+public class ContractDto{;
     @NotNull
     @NotBlank
     private String contractTitle;
@@ -33,21 +33,17 @@ public class ContractDto{
     @NotBlank
     private String contractType;
     @NotNull
-    @NotBlank
     @PastOrPresent
     private LocalDate contractStartDate;
     @NotNull
-    @NotBlank
     @FutureOrPresent
     private LocalDate contractEndDate;
     @NotNull
     @NotBlank
     private String termsAndConditions;
     @NotNull
-    @NotBlank
     private Set<Item> items;
     @NotNull
-    @NotBlank
     private Long vendorId;
 
 }

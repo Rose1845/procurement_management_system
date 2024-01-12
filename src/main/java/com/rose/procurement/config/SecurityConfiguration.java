@@ -50,6 +50,7 @@ public class SecurityConfiguration {
              "/api/v1/invoices/**",
             "/api/v1/category/**",
             "/api/v1/items",
+            "/api/v1/roles/**",
             "/api/contact/message",
             "/swagger-ui.html"};
     private final JwtAuthenticationFilter jwtAuthFilter;

@@ -37,7 +37,7 @@ public class SupplierController {
         return supplierService.getAllSuppliers();
     }
     @GetMapping("/supplier/{id}")
-    public SupplierDto getSupplier(@PathVariable("id") Long vendorId) {
+    public Supplier getSupplier(@PathVariable("id") Long vendorId) {
        return supplierService.getSupplierById(vendorId);
     }
     @PutMapping("{id}")

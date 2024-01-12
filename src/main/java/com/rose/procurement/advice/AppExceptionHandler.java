@@ -43,15 +43,15 @@ public class AppExceptionHandler {
         return errorMap;
     }
 
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(ValidientException.class)
-//    public Map<String, String> handleValidientException(ValidientException ex) {
-//        Map<String, String> errorMap = new HashMap<>();
-//        errorMap.put("errorMessage", ex.getMessage() != null ? ex.getMessage() : "Internal server error");
-//        errorMap.put("metadata-info", ex.getMetadata() != null ? ex.getMetadata().toString() : "");
-//        errorMap.put("statusCode", ex.getStatusCode() != null ? ex.getStatusCode().toString() : Integer.valueOf("400").toString());
-//        return errorMap;
-//    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ProcureException.class)
+    public Map<String, String> handleValidientException(ProcureException ex) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("errorMessage", ex.getMessage() != null ? ex.getMessage() : "Internal server error");
+        errorMap.put("metadata-info", ex.getMetadata() != null ? ex.getMetadata().toString() : "");
+        errorMap.put("statusCode", ex.getStatusCode() != null ? ex.getStatusCode().toString() : Integer.valueOf("400").toString());
+        return errorMap;
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)

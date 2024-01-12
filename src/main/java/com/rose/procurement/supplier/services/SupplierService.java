@@ -5,6 +5,7 @@ import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.mappers.SupplierMapper;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.supplier.request.SupplierRequest;
+import com.rose.procurement.utils.address.Address;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,12 +22,18 @@ public class SupplierService {
     }
 
     public SupplierDto createSupplier(SupplierDto supplierRequest) {
+        Address address = new Address();
+        address.setBox(supplierRequest.getAddress().getBox());
+        address.setCity(supplierRequest.getAddress().getCity());
+        address.setCountry(supplierRequest.getAddress().getCountry());
+        address.setLocation(supplierRequest.getAddress().getLocation());
         Supplier supplier = SupplierMapper.MAPPER.toEntity(supplierRequest);
         supplier.setAddress(supplierRequest.getAddress());
         supplier.setTermsAndConditions(supplierRequest.getTermsAndConditions());
         supplier.setEmail(supplierRequest.getEmail());
         supplier.setName(supplierRequest.getName());
         supplier.setPhoneNumber(supplierRequest.getPhoneNumber());
+        supplier.setAddress(address);
         supplier.setContactInformation(supplierRequest.getContactInformation());
         supplier.setContactPerson(supplierRequest.getContactPerson());
         supplier.setPaymentType(supplierRequest.getPaymentType());
@@ -37,11 +44,12 @@ public class SupplierService {
         return new ArrayList<>(supplierRepository.findAll());
     }
 
-    public SupplierDto getSupplierById(Long vendorId) {
+    public Supplier getSupplierById(Long vendorId) {
         Supplier supplier =supplierRepository.findById(vendorId).get();
         //return UserMapper.mapToUserDto(user);
         //return modelMapper.map(user, UserDto.class);
-        return SupplierMapper.MAPPER.toDto(supplier);
+        return supplier;
+//        return SupplierMapper.MAPPER.toDto(supplier);
 //        return supplierRepository.findByVendorId(vendorId)
 //                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + vendorId));
     }

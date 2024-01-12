@@ -8,7 +8,6 @@ import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
-import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -76,13 +75,12 @@ public class ContractService {
         return "contract deleted successfully";
     }
     public Optional<Contract> getContract(String contractId){
-
-
         return  contractRepository.findById(contractId);
     }
 
     public Contract updateContract(String contractId,ContractDto contractRequest) {
         Contract contract = contractRepository.findById(contractId).orElseThrow();
+
             contract.setContractEndDate(contractRequest.getContractEndDate());
             contract.setContractTitle(contractRequest.getContractTitle());
             contract.setContractType(contractRequest.getContractType());
@@ -91,10 +89,7 @@ public class ContractService {
             contract.setTermsAndConditions(contractRequest.getTermsAndConditions());
             contract.setContractStartDate(contractRequest.getContractStartDate());
         return contractRepository.save(contract);
-
     }
-
-
     public Set<Item> getContractItems(String contractId) {
         Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new EntityNotFoundException("contract  not found with id: " + contractId));
@@ -153,6 +148,4 @@ public class ContractService {
         // Save the updated contract in the database
         return contractRepository.save(existingContract);
     }
-
-
 }
