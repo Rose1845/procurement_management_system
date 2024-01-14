@@ -1,5 +1,6 @@
 package com.rose.procurement.user.roles.controllers;
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.user.roles.entity.Role;
 import com.rose.procurement.user.roles.requests.CreateRoleRequest;
 import com.rose.procurement.user.roles.services.RoleService;
@@ -20,34 +21,26 @@ import java.util.Optional;
 @RequestMapping("/api/v1/roles")
 public class RoleController {
     private final RoleService roleService;
-    @SneakyThrows
     @GetMapping
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Optional<Optional<List<Role>>>> getRoles() {
         return ResponseEntity.ok().body(Optional.ofNullable(roleService.findRoles()));
     }
-    @SneakyThrows
     @GetMapping("/create")
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Optional<Role>> createRole(
             @RequestBody @Valid CreateRoleRequest request
-    ) {
+    ) throws ProcureException {
         return ResponseEntity.ok().body(Optional.ofNullable(roleService.createRole(request)));
     }
-    @SneakyThrows
     @GetMapping("/{roleId}/get")
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Optional<Optional<Role>>> findRoleById(
             @PathVariable @NotBlank @NotNull Long roleId
-    ) {
+    ) throws ProcureException {
         return ResponseEntity.ok().body(Optional.ofNullable(roleService.findRoleById(roleId)));
     }
-    @SneakyThrows
     @PostMapping("/role/{roleName}/get")
-//    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Optional<Optional<Role>>> findRoleById(
             @PathVariable @NotBlank @NotNull String roleName
-    ) {
+    ) throws ProcureException {
         return ResponseEntity.ok().body(Optional.of(Optional.ofNullable(roleService.findRoleByName(roleName))));
     }
 }

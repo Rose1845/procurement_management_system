@@ -1,6 +1,7 @@
 package com.rose.procurement.contract.controller;
 
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.contract.dtos.ContractDto;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.service.ContractService;
@@ -35,10 +36,10 @@ public class ContractController {
     public Optional<Contract> getContract(@PathVariable("id") String contractId){
         return contractService.getContract(contractId);
     }
-    @GetMapping("send-contract/{id}")
-    public Contract contractApproval(@PathVariable("id") String contractId){
-        return contractService.sendContractForApproval(contractId);
-    }
+//    @GetMapping("send-contract/{id}")
+//    public Contract contractApproval(@PathVariable("id") String contractId) throws ProcureException {
+//        return contractService.sendContractForApproval(contractId);
+//    }
     @GetMapping("items/{id}")
     public Set<Item> getAllContractItems(@PathVariable("id") String contactId){
         return contractService.getContractItems(contactId);
@@ -48,13 +49,13 @@ public class ContractController {
         return contractService.deleteContract(contractId);
     }
     @PutMapping("{id}")
-    public Contract updateContract(@PathVariable("id") String contractId,@RequestBody ContractDto contractRequest){
+    public Contract updateContract(@PathVariable("id") String contractId,@RequestBody ContractDto contractRequest) throws ProcureException {
         return contractService.updateContract(contractId,contractRequest);
     }
-    @PatchMapping("/{contractId}/approve")
-    public Contract approveContract(@PathVariable String contractId) {
-        return contractService.sendContractForApproval(contractId);
-    }
+//    @PatchMapping("/{contractId}/approve")
+//    public Contract approveContract(@PathVariable String contractId) throws ProcureException {
+//        return contractService.sendContractForApproval(contractId);
+//    }
     @GetMapping("/send-to-supplier/{id}")
     public ResponseEntity<Optional<Contract>> sendContractToSupplier(@PathVariable("id") String contractId) {
         Optional<Contract> sendContract = contractService.sendApprovalEmailToSupplier(contractId);
@@ -65,7 +66,7 @@ public class ContractController {
     @PatchMapping("/edit-contract/{contractId}")
     public ResponseEntity<Contract> editContractApprovalStatus(
             @PathVariable String contractId,
-            @RequestParam String approvalStatus) {
+            @RequestParam String approvalStatus) throws ProcureException {
         // Implement logic to update the contract approval status
         Contract updatedContract = contractService.updateApprovalStatus(contractId, ApprovalStatus.valueOf(approvalStatus));
         return ResponseEntity.ok(updatedContract);

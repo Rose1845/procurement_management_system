@@ -1,5 +1,6 @@
 package com.rose.procurement.contract.service;
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.contract.dtos.ContractDto;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.mappers.ContractMapper;
@@ -78,9 +79,8 @@ public class ContractService {
         return  contractRepository.findById(contractId);
     }
 
-    public Contract updateContract(String contractId,ContractDto contractRequest) {
-        Contract contract = contractRepository.findById(contractId).orElseThrow();
-
+    public Contract updateContract(String contractId,ContractDto contractRequest) throws ProcureException {
+        Contract contract = contractRepository.findById(contractId).orElseThrow(()-> new ProcureException("contract id do not exists"));
             contract.setContractEndDate(contractRequest.getContractEndDate());
             contract.setContractTitle(contractRequest.getContractTitle());
             contract.setContractType(contractRequest.getContractType());
@@ -98,26 +98,26 @@ public class ContractService {
 //        return contractRepository.findItemsByContractId(contractId);
     }
      /** send email to supplier for contract approval **/
-    public Contract sendContractForApproval(String contractId) {
-        // Retrieve the contract from the database
-        Contract contract = contractRepository.findById(contractId)
-                .orElseThrow(() -> new EntityNotFoundException("Contract not found with id: " + contractId));
-
-        // Check if the contract is not already approved
-        if (contract.getApprovalStatus() != ApprovalStatus.APPROVED) {
-            // Send email to the supplier
-            sendApprovalEmailToSupplier(contractId);
-
-            // Update the contract status
-            contract.setApprovalStatus(ApprovalStatus.APPROVED); // or whatever status is appropriate
-
-            // Save the updated contract to the database
-            return contractRepository.save(contract);
-        } else {
-            // Contract is already approved, handle accordingly (throw an exception or return null, for example)
-            return null;
-        }
-    }
+//    public Contract sendContractForApproval(String contractId) throws ProcureException {
+//        // Retrieve the contract from the database
+//        Contract contract = contractRepository.findById(contractId)
+//                .orElseThrow(() -> new ProcureException("Contract not found with id: " + contractId));
+//
+//        // Check if the contract is not already approved
+//        if (contract.getApprovalStatus() != ApprovalStatus.APPROVED) {
+//            // Send email to the supplier
+//            sendApprovalEmailToSupplier(contractId);
+//
+//            // Update the contract status
+//            contract.setApprovalStatus(ApprovalStatus.APPROVED); // or whatever status is appropriate
+//
+//            // Save the updated contract to the database
+//            return contractRepository.save(contract);
+//        } else {
+//            // Contract is already approved, handle accordingly (throw an exception or return null, for example)
+//            return null;
+//        }
+//    }
 
     public Optional<Contract> sendApprovalEmailToSupplier(String contractId) {
         Optional<Contract> contract1 = contractRepository.findById(contractId);
@@ -137,10 +137,9 @@ public class ContractService {
         return contract1;
     }
 
-    public Contract updateApprovalStatus(String contractId, ApprovalStatus approvalStatus) {
+    public Contract updateApprovalStatus(String contractId, ApprovalStatus approvalStatus) throws ProcureException {
         // Retrieve the existing contract from the database
-        Contract existingContract = contractRepository.findById(contractId)
-                .orElseThrow(() -> new EntityNotFoundException("Contract not found with id: " + contractId));
+        Contract existingContract = contractRepository.findById(contractId).orElseThrow(()->new ProcureException("id already exists"));
 
         // Update the approval status
         existingContract.setApprovalStatus(approvalStatus);
