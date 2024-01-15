@@ -1,5 +1,7 @@
 package com.rose.procurement.invoice;
 
+import com.rose.procurement.advice.ProcureException;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +16,7 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
     @PostMapping
-    public InvoiceDto createInvoice(@RequestBody InvoiceDto invoiceDto){
+    public InvoiceDto createInvoice(@RequestBody @Valid InvoiceDto invoiceDto) throws ProcureException {
         return invoiceService.createInvoice(invoiceDto);
     }
     @GetMapping("/byInvoiceId/{invoiceId}")

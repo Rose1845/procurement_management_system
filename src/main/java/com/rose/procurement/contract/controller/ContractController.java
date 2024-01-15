@@ -36,6 +36,10 @@ public class ContractController {
     public Optional<Contract> getContract(@PathVariable("id") String contractId){
         return contractService.getContract(contractId);
     }
+    @GetMapping("/contract-with-items/{id}")
+    public Optional<Contract> getContractWithItems(@PathVariable("id") String contractId){
+        return contractService.getContractWithItems(contractId);
+    }
 //    @GetMapping("send-contract/{id}")
 //    public Contract contractApproval(@PathVariable("id") String contractId) throws ProcureException {
 //        return contractService.sendContractForApproval(contractId);

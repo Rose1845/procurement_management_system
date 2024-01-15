@@ -43,7 +43,7 @@ public class Contract {
     private String termsAndConditions;
     @Enumerated
     private ApprovalStatus approvalStatus;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "contract_items",
             joinColumns = {

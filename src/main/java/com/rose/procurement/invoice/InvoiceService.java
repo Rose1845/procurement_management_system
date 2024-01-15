@@ -1,5 +1,6 @@
 package com.rose.procurement.invoice;
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import jakarta.transaction.Transactional;
@@ -29,22 +30,20 @@ public class InvoiceService {
         return invoiceRepository.findById(invoiceId);
     }
 
-    @Transactional
-    public InvoiceDto createInvoice(InvoiceDto invoiceDto){
+    public InvoiceDto createInvoice(InvoiceDto invoiceDto) throws ProcureException {
         Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findByPurchaseOrderId(invoiceDto.getPurchaseOrderId());
+        if(purchaseOrder.isEmpty()){
+            throw ProcureException.builder().metadata("create-invoice").message("purchase order with id do not exists").build();
+        }
         Invoice invoiceDto1 = invoiceMapper.toEntity(invoiceDto);
         invoiceDto1.setInvoiceNumber(invoiceDto.getInvoiceNumber());
         invoiceDto1.setDueDate(invoiceDto.getDueDate());
         invoiceDto1.setTotalAmount(invoiceDto.getTotalAmount());
         purchaseOrder.ifPresent(invoiceDto1::setPurchaseOrder);
-//        Invoice invoice = Invoice.builder()
-//                .invoiceNumber(invoiceDto.getInvoiceNumber())
-//                .dueDate(invoiceDto.getDueDate())
-//                .totalAmount(invoiceDto.getTotalAmount())
-//                .purchaseOrder(purchaseOrder.get())
-//                .build();
+
         Invoice savedInvoice = invoiceRepository.save(invoiceDto1);
         return invoiceMapper.toDto(savedInvoice);
     }
+
 
 }

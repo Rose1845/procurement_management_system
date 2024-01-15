@@ -90,6 +90,9 @@ public class ContractService {
             contract.setContractStartDate(contractRequest.getContractStartDate());
         return contractRepository.save(contract);
     }
+    public Optional<Contract> getContractWithItems(String contractId) {
+        return contractRepository.findByIdWithItems(contractId);
+    }
     public Set<Item> getContractItems(String contractId) {
         Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new EntityNotFoundException("contract  not found with id: " + contractId));
@@ -122,7 +125,9 @@ public class ContractService {
     public Optional<Contract> sendApprovalEmailToSupplier(String contractId) {
         Optional<Contract> contract1 = contractRepository.findById(contractId);
         String editLink = "http://localhost:8081/api/v1/contract/edit-contract/" + contractId;
-
+        if(contract1.isPresent()){
+            Set<Item> items = contract1.get().getItems();
+        }
         // Specify the email content
         String subject = "Contract Approval Request";
         String text = "Dear Supplier, \n\n"

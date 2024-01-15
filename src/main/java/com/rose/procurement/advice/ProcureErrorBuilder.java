@@ -12,7 +12,6 @@ import java.util.List;
 @Data
 @Builder
 public class ProcureErrorBuilder {
-
     private List<String> fields;
     private List<String> errors;
     private List<String> codes;

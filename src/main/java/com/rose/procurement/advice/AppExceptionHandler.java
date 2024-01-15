@@ -45,7 +45,7 @@ public class AppExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ProcureException.class)
-    public Map<String, String> handleValidientException(ProcureException ex) {
+    public Map<String, String> handleProcureException(ProcureException ex) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("errorMessage", ex.getMessage() != null ? ex.getMessage() : "Internal server error");
         errorMap.put("metadata-info", ex.getMetadata() != null ? ex.getMetadata().toString() : "");

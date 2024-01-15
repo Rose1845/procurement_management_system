@@ -31,15 +31,9 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String invoiceId;
-    @NotNull
-    @NotBlank
     private String invoiceNumber;
-    @NotNull
-    @NotBlank
-    @FutureOrPresent
     private LocalDate dueDate;
     @NotNull
-    @NotBlank
     private double totalAmount;
     @OneToOne(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
     @JoinColumn(name = "purchase_order_id")
