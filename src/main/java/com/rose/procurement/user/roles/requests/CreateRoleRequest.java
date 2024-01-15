@@ -20,7 +20,5 @@ public class CreateRoleRequest {
     @NotBlank
     private String description;
     @NotNull
-    @NotEmpty
-    @NotBlank
     private Boolean isDefault;
 }

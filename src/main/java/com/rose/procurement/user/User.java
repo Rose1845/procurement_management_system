@@ -1,6 +1,7 @@
 package com.rose.procurement.user;
 
 import com.rose.procurement.user.token.Token;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,7 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.service.annotation.GetExchange;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Builder
@@ -29,6 +32,12 @@ public class User implements UserDetails {
 
   @Enumerated(EnumType.STRING)
   private Role role;
+//  @ManyToMany(fetch = FetchType.EAGER,cascade ={CascadeType.MERGE,CascadeType.REFRESH})
+//  @JoinTable(name = "user_with_roles",
+//          joinColumns = {@JoinColumn(name = "user_side_id")},
+//          inverseJoinColumns = {@JoinColumn(name = "role_side_id")})
+//  @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+//  private Set<Role> roles=new HashSet<>();
 
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;

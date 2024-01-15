@@ -8,9 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +23,7 @@ public class RoleController {
     public ResponseEntity<Optional<Optional<List<Role>>>> getRoles() {
         return ResponseEntity.ok().body(Optional.ofNullable(roleService.findRoles()));
     }
-    @GetMapping("/create")
+    @PostMapping("/create")
     public ResponseEntity<Optional<Role>> createRole(
             @RequestBody @Valid CreateRoleRequest request
     ) throws ProcureException {
@@ -33,7 +31,7 @@ public class RoleController {
     }
     @GetMapping("/{roleId}/get")
     public ResponseEntity<Optional<Optional<Role>>> findRoleById(
-            @PathVariable @NotBlank @NotNull Long roleId
+            @PathVariable  @NotNull Long roleId
     ) throws ProcureException {
         return ResponseEntity.ok().body(Optional.ofNullable(roleService.findRoleById(roleId)));
     }
@@ -42,5 +40,9 @@ public class RoleController {
             @PathVariable @NotBlank @NotNull String roleName
     ) throws ProcureException {
         return ResponseEntity.ok().body(Optional.of(Optional.ofNullable(roleService.findRoleByName(roleName))));
+    }
+    @GetMapping("initialize-roles")
+    public Optional<List<Role>> initializeRoles() throws ProcureException {
+        return roleService.initializeRoles();
     }
 }

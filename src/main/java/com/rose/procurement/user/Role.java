@@ -16,7 +16,6 @@ import static com.rose.procurement.user.Permission.*;
 @RequiredArgsConstructor
 public enum Role {
 
-  USER(Collections.emptySet()),
   ADMIN(
           Set.of(
                   ADMIN_READ,

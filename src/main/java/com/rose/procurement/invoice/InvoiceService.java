@@ -44,6 +44,9 @@ public class InvoiceService {
         Invoice savedInvoice = invoiceRepository.save(invoiceDto1);
         return invoiceMapper.toDto(savedInvoice);
     }
+    public Object getInvoiceDetailsByInvoiceId(String invoiceId) {
+        return invoiceRepository.findInvoiceDetailsByInvoiceId(invoiceId);
+    }
 
 
 }

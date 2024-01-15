@@ -2,6 +2,7 @@ package com.rose.procurement.invoice;
 
 import com.rose.procurement.advice.ProcureException;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,5 +27,15 @@ public class InvoiceController {
     @GetMapping
     public List<Invoice> getAll(){
         return invoiceService.getAllInvoices();
+    }
+    @GetMapping("/invoice-details/{invoiceId}")
+    public ResponseEntity<Object> getInvoiceDetails(@PathVariable("invoiceId") String invoiceId) {
+        Object invoiceDetails = invoiceService.getInvoiceDetailsByInvoiceId(invoiceId);
+
+        if (invoiceDetails != null) {
+            return ResponseEntity.ok(invoiceDetails);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
