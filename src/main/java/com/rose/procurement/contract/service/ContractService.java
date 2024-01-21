@@ -155,4 +155,29 @@ public class ContractService {
         // Save the updated contract in the database
         return contractRepository.save(existingContract);
     }
+
+    public Optional<ContractDto> cloneContract(String contractId) {
+        Optional<Contract> originalContractOptional = contractRepository.findByIdWithItems(contractId);
+
+        return originalContractOptional.map(originalContract -> {
+            // Create a deep copy of the original contract
+            Contract clonedContract = Contract.builder()
+                    .contractTitle(originalContract.getContractTitle())
+                    .contractType(originalContract.getContractType())
+                    .contractStartDate(originalContract.getContractStartDate())
+                    .contractEndDate(originalContract.getContractEndDate())
+                    .termsAndConditions(originalContract.getTermsAndConditions())
+                    .approvalStatus(ApprovalStatus.PENDING) // Set approval status for the clone
+                    .items(originalContract.getItems()) // Copy items
+                    .supplier(originalContract.getSupplier()) // Copy supplier
+                    .createdAt(null) // Reset creation timestamp
+                    .updatedAt(null) // Reset update timestamp
+                    .build();
+
+            // Save the cloned contract
+            Contract savedClonedContract = contractRepository.save(clonedContract);
+
+            return contractMapper.toDto(savedClonedContract);
+        });
+    }
 }

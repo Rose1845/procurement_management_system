@@ -4,6 +4,7 @@ import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +32,11 @@ public class InvoiceService {
 
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) throws ProcureException {
         Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findByPurchaseOrderId(invoiceDto.getPurchaseOrderId());
+
         if(purchaseOrder.isEmpty()){
             throw ProcureException.builder().metadata("create-invoice").message("purchase order with id do not exists").build();
         }
+
         Invoice invoiceDto1 = invoiceMapper.toEntity(invoiceDto);
         invoiceDto1.setInvoiceNumber(invoiceDto.getInvoiceNumber());
         invoiceDto1.setDueDate(invoiceDto.getDueDate());
@@ -43,8 +46,11 @@ public class InvoiceService {
         Invoice savedInvoice = invoiceRepository.save(invoiceDto1);
         return invoiceMapper.toDto(savedInvoice);
     }
-    public List<Object> getInvoiceDetailsByInvoiceId(String invoiceId) {
-        return invoiceRepository.findInvoiceDetailsByInvoiceId(invoiceId);
+
+    public InvoiceDto getInvoiceWithDetails(String invoiceId) {
+        return invoiceRepository.findInvoiceWithDetailsById(invoiceId)
+                .map(invoiceMapper::toDto)
+                .orElseThrow(() -> new NotFoundException("Invoice not found with ID: " + invoiceId));
     }
     public List<Object[]> getInvoiceDetails1ByInvoiceId(String invoiceId) {
         return invoiceRepository.findInvoiceDetails1ByInvoiceId(invoiceId);

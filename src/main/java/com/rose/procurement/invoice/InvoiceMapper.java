@@ -8,7 +8,9 @@ public interface InvoiceMapper {
     InvoiceMapper MAPPER= Mappers.getMapper(InvoiceMapper.class);
     @Mapping(target = "invoiceId", ignore = true)
     @Mapping(source="purchaseOrderId",target = "purchaseOrder.purchaseOrderId")
+//    @Mapping(target = "items", source = "purchaseOrder.items")
     Invoice toEntity(InvoiceDto invoiceDto);
+
     @Mapping(source="purchaseOrder.purchaseOrderId",target = "purchaseOrderId")
     InvoiceDto toDto(Invoice invoice);
 

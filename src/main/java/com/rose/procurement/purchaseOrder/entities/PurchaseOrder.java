@@ -46,7 +46,7 @@ public class PurchaseOrder {
     private PaymentType paymentType;
     @Enumerated
     private ApprovalStatus approvalStatus;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "supplier_id")
     @JsonIgnore
     private Supplier supplier;

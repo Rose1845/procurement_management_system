@@ -32,14 +32,9 @@ public class InvoiceController {
         return invoiceService.getAllInvoices();
     }
     @GetMapping("/invoice-details/{invoiceId}")
-    public ResponseEntity<List<Object>> getInvoiceDetails(@PathVariable("invoiceId") String invoiceId) {
-        Object invoiceDetails = invoiceService.getInvoiceDetailsByInvoiceId(invoiceId);
-
-        if (invoiceDetails != null) {
-            return ResponseEntity.ok(Collections.singletonList(invoiceDetails));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<InvoiceDto> getInvoiceWithDetails(@PathVariable String invoiceId) {
+        InvoiceDto invoiceDto = invoiceService.getInvoiceWithDetails(invoiceId);
+        return ResponseEntity.ok(invoiceDto);
     }
     @GetMapping("/{invoiceId}")
     public ResponseEntity<List<InvoiceDetailsDTO>> getInvoiceDetails1(@PathVariable("invoiceId") String invoiceId) {

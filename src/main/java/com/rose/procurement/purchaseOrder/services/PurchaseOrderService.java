@@ -1,7 +1,7 @@
 package com.rose.procurement.purchaseOrder.services;
 
 import com.rose.procurement.contract.dtos.ContractDto;
-import com.rose.procurement.contract.entities.Contract;
+import com.rose.procurement.contract.service.ContractService;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
@@ -15,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -27,12 +25,13 @@ public class PurchaseOrderService {
 private final PurchaseOrderRepository purchaseOrderRepository;
 private final SupplierRepository supplierRepository;
     private final PurchaseOrderMapper purchaseOrderMapper;
-
+    private final ContractService contractService;
     public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository,
-                                SupplierRepository supplierRepository, PurchaseOrderMapper purchaseOrderMapper) {
+                                SupplierRepository supplierRepository, PurchaseOrderMapper purchaseOrderMapper, ContractService contractService) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.supplierRepository = supplierRepository;
         this.purchaseOrderMapper = purchaseOrderMapper;
+        this.contractService = contractService;
     }
 
     public PurchaseOrderDto createPurchaseOrder(PurchaseOrderDto purchaseOrderRequest) {
@@ -119,4 +118,21 @@ private final SupplierRepository supplierRepository;
     public Optional<PurchaseOrder> findPurchaseOrderById(Long purchaseOrderId) {
         return purchaseOrderRepository.findById(purchaseOrderId);
     }
+
+
+//    public Optional<PurchaseOrderDto> createPurchaseOrderFromClonedContract(String contractId) {
+//        Optional<ContractDto> clonedContractOptional = contractService.cloneContract(contractId);
+//
+//        return clonedContractOptional.map(clonedContract -> {
+//            // Create a new PurchaseOrder based on the cloned contract
+//            PurchaseOrder purchaseOrder = PurchaseOrder.builder()
+//                    .contractId(clonedContract.getContractId())
+//                    .build();
+//
+//            // Save the new PurchaseOrder
+//            PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
+//
+//            return purchaseOrderMapper.toDto(savedPurchaseOrder);
+//        });
+//    }
 }

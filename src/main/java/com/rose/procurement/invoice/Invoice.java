@@ -35,7 +35,7 @@ public class Invoice {
     private LocalDate dueDate;
     @NotNull
     private double totalAmount;
-    @OneToOne(cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "purchase_order_id")
 //    @JsonIgnore
     private PurchaseOrder purchaseOrder;
