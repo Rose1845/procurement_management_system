@@ -1,5 +1,6 @@
 package com.rose.procurement.newsletter;
 
+import com.rose.procurement.advice.ProcureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,7 @@ public class NewsletterController {
     }
 
     @PostMapping("/subscribe")
-    public ResponseEntity<String> subscribeToNewsletter(@RequestParam String email) {
+    public ResponseEntity<String> subscribeToNewsletter(@RequestParam String email) throws ProcureException {
         Subscriber subscriber = subscriberService.subscribe(email);
         return ResponseEntity.ok("Subscribed successfully");
     }

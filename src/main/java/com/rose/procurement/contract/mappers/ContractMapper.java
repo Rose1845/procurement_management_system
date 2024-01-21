@@ -19,8 +19,10 @@ public interface ContractMapper {
             // Add other mappings as needed
     })    ContractDto toDto(Contract contract);
 
+    @Mapping(target = "items", source = "items") // Add this mapping for items
     List<Contract> toEntityList(List<ContractDto> contractDtoList);
 
+    @Mapping(target = "items", source = "items") // Add this mapping for items
     List<ContractDto> toDtoList(List<Contract> contractList);
 //    ContractMapper MAPPER = Mappers.getMapper(ContractMapper.class);
 //    Contract toEntity(ContractDto contractDto);

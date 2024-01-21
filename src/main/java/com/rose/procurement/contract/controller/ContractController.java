@@ -36,9 +36,11 @@ public class ContractController {
     public Optional<Contract> getContract(@PathVariable("id") String contractId){
         return contractService.getContract(contractId);
     }
-    @GetMapping("/contract-with-items/{id}")
-    public Optional<Contract> getContractWithItems(@PathVariable("id") String contractId){
-        return contractService.getContractWithItems(contractId);
+    @GetMapping("/contract-items/{contractId}")
+    public ResponseEntity<ContractDto> getContractWithItems(@PathVariable String contractId) {
+        return contractService.getContractWithItems(contractId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 //    @GetMapping("send-contract/{id}")
 //    public Contract contractApproval(@PathVariable("id") String contractId) throws ProcureException {

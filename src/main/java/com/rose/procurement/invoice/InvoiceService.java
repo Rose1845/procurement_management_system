@@ -3,7 +3,6 @@ package com.rose.procurement.invoice;
 import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,9 +43,11 @@ public class InvoiceService {
         Invoice savedInvoice = invoiceRepository.save(invoiceDto1);
         return invoiceMapper.toDto(savedInvoice);
     }
-    public Object getInvoiceDetailsByInvoiceId(String invoiceId) {
+    public List<Object> getInvoiceDetailsByInvoiceId(String invoiceId) {
         return invoiceRepository.findInvoiceDetailsByInvoiceId(invoiceId);
     }
-
+    public List<Object[]> getInvoiceDetails1ByInvoiceId(String invoiceId) {
+        return invoiceRepository.findInvoiceDetails1ByInvoiceId(invoiceId);
+    }
 
 }

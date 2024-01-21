@@ -1,5 +1,6 @@
 package com.rose.procurement.newsletter;
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.email.service.EmailService;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,11 @@ public class SubscriberService {
         this.emailService = emailService;
     }
 
-    public Subscriber subscribe(String email) {
+    public Subscriber subscribe(String email) throws ProcureException {
         // Check if the subscriber already exists
         Optional<Subscriber> existingSubscriber = subscriberRepository.findByEmail(email);
         if (existingSubscriber.isPresent()) {
-            throw new RuntimeException("Subscriber with this email already exists");
+            throw  ProcureException.builder().message("subscriber already exists with that email").metadata("subscriber").build();
         }
         String subject = "Subscribing to out Newsletter";
         String text = "Hello, \n\n" + "Thank you for contacting us" +

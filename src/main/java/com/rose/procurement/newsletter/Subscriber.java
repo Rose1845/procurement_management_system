@@ -21,6 +21,5 @@ public class Subscriber {
     @Column(unique = true)
     private String email;
 
-
     // Constructors, getters, and setters
 }

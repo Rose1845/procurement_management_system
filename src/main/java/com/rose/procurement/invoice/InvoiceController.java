@@ -5,6 +5,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,13 +32,53 @@ public class InvoiceController {
         return invoiceService.getAllInvoices();
     }
     @GetMapping("/invoice-details/{invoiceId}")
-    public ResponseEntity<Object> getInvoiceDetails(@PathVariable("invoiceId") String invoiceId) {
+    public ResponseEntity<List<Object>> getInvoiceDetails(@PathVariable("invoiceId") String invoiceId) {
         Object invoiceDetails = invoiceService.getInvoiceDetailsByInvoiceId(invoiceId);
 
         if (invoiceDetails != null) {
-            return ResponseEntity.ok(invoiceDetails);
+            return ResponseEntity.ok(Collections.singletonList(invoiceDetails));
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/{invoiceId}")
+    public ResponseEntity<List<InvoiceDetailsDTO>> getInvoiceDetails1(@PathVariable("invoiceId") String invoiceId) {
+        List<Object[]> result = invoiceService.getInvoiceDetails1ByInvoiceId(invoiceId);
+
+        List<InvoiceDetailsDTO> invoiceDetailsList = new ArrayList<>();
+
+        for (Object[] outerArray : result) {
+            for (Object innerArray : outerArray) {
+                Object[] row = (Object[]) innerArray;
+
+                InvoiceDetailsDTO invoiceDetailsDTO = new InvoiceDetailsDTO();
+                invoiceDetailsDTO.setInvoiceId((String) row[0]);
+                invoiceDetailsDTO.setInvoiceTimestamp((LocalDateTime) row[1]);
+                invoiceDetailsDTO.setInvoiceDate((String) row[2]);
+                invoiceDetailsDTO.setPurchaseOrderNumber((String) row[3]);
+                invoiceDetailsDTO.setSupplierId((int) row[4]);
+                invoiceDetailsDTO.setPurchaseOrderTimestamp((LocalDateTime) row[5]);
+                invoiceDetailsDTO.setOrderItemsQuantity((int) row[6]);
+                invoiceDetailsDTO.setItemQuantity((int) row[7]);
+                invoiceDetailsDTO.setItemDiscount((int) row[8]);
+                invoiceDetailsDTO.setItemDate((LocalDateTime) row[9]);
+                invoiceDetailsDTO.setSupplierName((String) row[10]);
+                invoiceDetailsDTO.setSupplierBox((String) row[11]);
+                invoiceDetailsDTO.setSupplierCountry((String) row[12]);
+                invoiceDetailsDTO.setSupplierCity((String) row[13]);
+                invoiceDetailsDTO.setSupplierLocation((String) row[14]);
+
+                // Add mappings for other fields
+
+                invoiceDetailsList.add(invoiceDetailsDTO);
+            }
+        }
+
+        if (!invoiceDetailsList.isEmpty()) {
+            return ResponseEntity.ok(invoiceDetailsList);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

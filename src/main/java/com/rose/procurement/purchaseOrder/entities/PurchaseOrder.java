@@ -39,15 +39,8 @@ public class PurchaseOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long purchaseOrderId;
-    @NotNull
-    @NotBlank
     private String purchaseOrderTitle;
-    @NotNull
-    @NotBlank
-    @FutureOrPresent
     private LocalDate deliveryDate;
-    @NotNull
-    @NotBlank
     private String termsAndConditions;
     @Enumerated
     private PaymentType paymentType;

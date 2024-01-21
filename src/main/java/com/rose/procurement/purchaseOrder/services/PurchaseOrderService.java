@@ -1,10 +1,8 @@
 package com.rose.procurement.purchaseOrder.services;
 
+import com.rose.procurement.contract.dtos.ContractDto;
 import com.rose.procurement.contract.entities.Contract;
-import com.rose.procurement.contract.mappers.ContractMapper;
-import com.rose.procurement.contract.repository.ContractRepository;
 import com.rose.procurement.enums.ApprovalStatus;
-import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
@@ -17,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -101,5 +101,22 @@ private final SupplierRepository supplierRepository;
 
         return purchaseOrder.getItems();
     }
+    public Optional<PurchaseOrderDto> getPurchaseOrderWithItems( Long purchaseOrderId) {
+        Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findByIdWithItems(purchaseOrderId);
+        return purchaseOrder.map(purchaseOrderMapper::toDto);
+    }
 
+    public List<Object[]> findPurchaseOrderDetailsByPurchaseOrderId(Long purchaseOrderId){
+        return purchaseOrderRepository.findPurchaseOrderDetailsByPurchaseOrderId(purchaseOrderId);
+    }
+    public List<PurchaseOrder> findPurchaseOrdersByMonth(int month){
+        return purchaseOrderRepository.findPurchaseOrdersByMonth(month);
+    }
+    public PurchaseOrder getPurchaseOrderByPurchaseOrderTitle(String purchaseOrderTitle){
+        return purchaseOrderRepository.findByPurchaseOrderTitle(purchaseOrderTitle);
+    }
+
+    public Optional<PurchaseOrder> findPurchaseOrderById(Long purchaseOrderId) {
+        return purchaseOrderRepository.findById(purchaseOrderId);
+    }
 }

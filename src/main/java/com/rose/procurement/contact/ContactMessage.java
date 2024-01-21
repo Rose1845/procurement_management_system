@@ -17,13 +17,10 @@ public class ContactMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long id;
-
     private String name;
     private String title;
-
     @Email
     private String email;
-
     @Column(columnDefinition = "TEXT")
     private String message;
 

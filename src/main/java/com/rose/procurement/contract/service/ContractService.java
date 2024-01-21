@@ -23,12 +23,14 @@ public class ContractService {
     private final SupplierRepository supplierRepository;
     private final ContractRepository contractRepository;
     private final EmailService emailService;
+    private final ContractMapper contractMapper;
 
     public ContractService(SupplierRepository supplierRepository, ContractRepository contractRepository,
-                           ItemRepository itemRepository, EmailService emailService) {
+                           ItemRepository itemRepository, EmailService emailService, ContractMapper contractMapper) {
         this.supplierRepository = supplierRepository;
         this.contractRepository = contractRepository;
         this.emailService = emailService;
+        this.contractMapper = contractMapper;
     }
     public ContractDto createContract(ContractDto contractRequest) {
 //        if (contractRequest.getSupplier().getVendorId() == null) {
@@ -90,8 +92,9 @@ public class ContractService {
             contract.setContractStartDate(contractRequest.getContractStartDate());
         return contractRepository.save(contract);
     }
-    public Optional<Contract> getContractWithItems(String contractId) {
-        return contractRepository.findByIdWithItems(contractId);
+    public Optional<ContractDto> getContractWithItems(String contractId) {
+        Optional<Contract> contractOptional = contractRepository.findByIdWithItems(contractId);
+        return contractOptional.map(contractMapper::toDto);
     }
     public Set<Item> getContractItems(String contractId) {
         Contract contract = contractRepository.findById(contractId)

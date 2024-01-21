@@ -18,7 +18,6 @@ public class ContactController {
     @PostMapping("/message")
     public ResponseEntity<String> submitContactMessage(@RequestBody ContactMessage contactMessage) {
         ContactMessage savedMessage = contactMessageService.saveContactMessage(contactMessage);
-
         return ResponseEntity.ok("Message submitted successfully");
     }
 }
