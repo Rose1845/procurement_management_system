@@ -1,16 +1,27 @@
 package com.rose.procurement.supplier.services;
 
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.supplier.entities.SupplierCsvRepresentation;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.mappers.SupplierMapper;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import com.rose.procurement.utils.address.Address;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class SupplierService {
@@ -77,4 +88,59 @@ public class SupplierService {
         return "supplier deleted successfully";
     }
 
+    public Integer uploadSuppliers(MultipartFile file) {
+        Set<SupplierDto> suppliers = parseCsv(file);
+        supplierRepository.saveAll(convertToEntities(suppliers));
+        return suppliers.size();
+    }
+
+    private Set<SupplierDto> parseCsv(MultipartFile file) {
+        try(Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            HeaderColumnNameMappingStrategy<SupplierCsvRepresentation> headerColumnNameMappingStrategy = new HeaderColumnNameMappingStrategy<>();
+            headerColumnNameMappingStrategy.setType(SupplierCsvRepresentation.class);
+            CsvToBean<SupplierCsvRepresentation> csvToBean = new CsvToBeanBuilder<SupplierCsvRepresentation>(reader).withMappingStrategy(headerColumnNameMappingStrategy).withIgnoreEmptyLine(true)
+                    .withIgnoreLeadingWhiteSpace(true).build();
+           return csvToBean.parse().stream().map(csvLine -> SupplierDto.builder()
+                            .email(csvLine.getEmail())
+                    .name(csvLine.getName())
+                    .contactInformation(csvLine.getContactInformation())
+                   .contactPerson(csvLine.getContactPerson())
+                    .phoneNumber(csvLine.getPhoneNumber())
+                    .termsAndConditions(csvLine.getTermsAndConditions())
+                    .paymentType(csvLine.getPaymentType())
+                    .address(new Address(
+                            csvLine.getP_o_box(),
+                            csvLine.getCountry(),
+                            csvLine.getCity(),
+                            csvLine.getLocation()
+                    ))
+                    .build()).collect(Collectors.toSet());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Set<Supplier> convertToEntities(Set<SupplierDto> supplierDtos) {
+        return supplierDtos.stream()
+                .map(this::convertToEntity)
+                .collect(Collectors.toSet());
+    }
+
+    private Supplier convertToEntity(SupplierDto supplierDTO) {
+        return Supplier.builder()
+                .name(supplierDTO.getName())
+                .contactPerson(supplierDTO.getContactPerson())
+                .contactInformation(supplierDTO.getContactInformation())
+                .address(new Address(
+                        supplierDTO.getAddress().getBox(),
+                        supplierDTO.getAddress().getCountry(),
+                        supplierDTO.getAddress().getCity(),
+                        supplierDTO.getAddress().getLocation()
+                ))
+                .email(supplierDTO.getEmail())
+                .phoneNumber(supplierDTO.getPhoneNumber())
+                .paymentType(supplierDTO.getPaymentType())
+                .termsAndConditions(supplierDTO.getTermsAndConditions())
+                .build();
+    }
 }

@@ -7,9 +7,12 @@ import com.rose.procurement.supplier.services.SupplierService;
 import jakarta.validation.Valid;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,6 +34,11 @@ public class SupplierController {
 //            throw new MethodArgumentNotValidException((MethodParameter) null, result);
 //        }
         return supplierService.createSupplier(supplierRequest);
+    }
+    @PostMapping(value = "upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<Integer> uploadSuppliers(@RequestPart("file")MultipartFile file){
+        return ResponseEntity.ok(supplierService.uploadSuppliers(file));
+
     }
     @GetMapping
     public List<Supplier> getAllSuppliers(){

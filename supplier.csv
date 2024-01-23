@@ -1,0 +1,5 @@
+name,contact_person,contact_info,box,city,location,country,email,phone_number,payment_type,terms
+Supplier1,John Doe,123 Main St,PO Box 456,New York,Downtown,USA,supplier1@example.com,1234567890,MPESA,Net 30 Days
+Supplier2,Jane Smith,456 Oak St,PO Box 789,Los Angeles,Uptown,USA,supplier2@example.com,9876543210,PAYPAL,Net 15 Days
+Supplier3,Bob Johnson,789 Elm St,PO Box 123,Chicago,Suburb,USA,supplier3@example.com,5678901234,MPESA,Net 45 Days
+Supplier4,Alice Brown,321 Pine St,PO Box 234,San Francisco,Downtown,USA,supplier4@example.com,3456789012,MPESA,Net 60 Days
