@@ -10,13 +10,11 @@ import com.rose.procurement.supplier.mappers.SupplierMapper;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.supplier.request.SupplierRequest;
 import com.rose.procurement.utils.address.Address;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -142,5 +140,13 @@ public class SupplierService {
                 .paymentType(supplierDTO.getPaymentType())
                 .termsAndConditions(supplierDTO.getTermsAndConditions())
                 .build();
+    }
+
+    public InputStreamResource generateTemplate() {
+        // Create a CSV string with header and placeholder values for a single supplier
+        String csvTemplate = "name,contact_person,contact_info,box,city,location,country,email,phone_number,payment_type,terms";
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(csvTemplate.getBytes());
+        return new InputStreamResource(inputStream);
     }
 }

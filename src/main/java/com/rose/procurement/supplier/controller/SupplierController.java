@@ -6,6 +6,8 @@ import com.rose.procurement.supplier.request.SupplierRequest;
 import com.rose.procurement.supplier.services.SupplierService;
 import jakarta.validation.Valid;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,18 @@ public class SupplierController {
     ResponseEntity<Integer> uploadSuppliers(@RequestPart("file")MultipartFile file){
         return ResponseEntity.ok(supplierService.uploadSuppliers(file));
 
+    }
+    @GetMapping("/template/download/single")
+    public ResponseEntity<InputStreamResource> downloadSingleSupplierTemplate() {
+        InputStreamResource resource = supplierService.generateTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=single_supplier_template.csv");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(resource);
     }
     @GetMapping
     public List<Supplier> getAllSuppliers(){
