@@ -46,7 +46,7 @@ public class InvoiceService {
         return invoiceMapper.toDto(savedInvoice);
     }
 
-    public Optional<Invoice> getInvoiceWithDetails(String invoiceId) {
+    public List<?> getInvoiceWithDetails(String invoiceId) {
         return invoiceRepository.findInvoiceWithDetailsById(invoiceId);
     }
     public List<Object[]> getInvoiceDetails1ByInvoiceId(String invoiceId) {

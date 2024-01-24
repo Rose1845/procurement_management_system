@@ -55,6 +55,6 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder,Lon
     List<PurchaseOrder> findPurchaseOrdersByMonth(@Param("month") int month);
 
     PurchaseOrder findByPurchaseOrderTitle(String purchaseOrderTitle);
-    @Query("SELECT p FROM PurchaseOrder p LEFT JOIN  p.items WHERE p.purchaseOrderId = :purchaseOrderId")
+    @Query("SELECT p FROM PurchaseOrder p LEFT JOIN FETCH p.items LEFT JOIN FETCH p.supplier WHERE p.purchaseOrderId = :purchaseOrderId")
     Optional<PurchaseOrder> findByIdWithItems(@Param("purchaseOrderId") Long purchaseOrderId);
 }

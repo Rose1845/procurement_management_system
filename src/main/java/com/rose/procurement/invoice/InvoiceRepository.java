@@ -10,22 +10,39 @@ import java.util.Optional;
 
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice,String> {
-    @Query(value = "SELECT inv.*, " +
-            "po.purchase_order_id as purchaseOrder_purchaseOrderId, " +
-            "po.purchase_order_title as purchaseOrder_purchaseOrderTitle, " +
-            "po.delivery_date as purchaseOrder_deliveryDate, " +
-            "po.terms_and_conditions as purchaseOrder_termsAndConditions, " +
-            "s.vendor_id as supplier_vendorId, " +
-            "s.name as supplier_supplierName, " +
-            "it.item_id as item_itemId, " +
-            "it.item_name as item_itemName " +
-            "FROM invoice inv " +
-            "LEFT JOIN purchase_order po ON inv.purchase_order_id = po.purchase_order_id " +
-            "LEFT JOIN supplier s ON po.supplier_id = s.vendor_id " +
-            "LEFT JOIN order_items oi ON po.purchase_order_id = oi.purchase_order_id " +
-            "LEFT JOIN item it ON oi.item_id = it.item_id " +
-            "WHERE inv.invoice_id = :invoiceId", nativeQuery = true)
-    Optional<Invoice> findInvoiceWithDetailsById(@Param("invoiceId") String invoiceId);
+//    @Query(value = "SELECT " +
+//            "inv.*, " +
+//            "po.purchase_order_id as purchaseOrder_purchaseOrderId " +
+//            "FROM invoice inv " +
+//            "LEFT JOIN purchase_order po ON inv.purchase_order_id = po.purchase_order_id " +
+//            "WHERE inv.invoice_id = :invoiceId;" +
+//            "SELECT " +
+//            "po.*, " +
+//            "s.vendor_id as supplier_vendorId, " +
+//            "s.name as supplier_supplierName " +
+//            "FROM purchase_order po " +
+//            "LEFT JOIN supplier s ON po.supplier_id = s.vendor_id " +
+//            "WHERE po.purchase_order_id = (SELECT purchase_order_id FROM invoice WHERE invoice_id = :invoiceId);" +
+//            "SELECT " +
+//            "it.* " +
+//            "FROM item it " +
+//            "LEFT JOIN order_items oi ON it.item_id = oi.item_id " +
+//            "WHERE oi.purchase_order_id = (SELECT purchase_order_id FROM invoice WHERE invoice_id = :invoiceId);", nativeQuery = true)
+//    Optional<Invoice> findInvoiceWithDetailsById(@Param("invoiceId") String invoiceId);
+
+//    @Query("SELECT p FROM PurchaseOrder p LEFT JOIN FETCH p.items LEFT JOIN FETCH p.supplier WHERE p.purchaseOrderId = :purchaseOrderId")
+
+//    @Query("SELECT i, po " +
+//            "FROM Invoice i " +
+//            "LEFT JOIN i.purchaseOrder po  " +
+//            "LEFT JOIN po.items it " +
+//            "LEFT JOIN po.supplier s " +
+//            "WHERE i.invoiceId = :invoiceId")
+@Query("SELECT i, po, s, it FROM Invoice i " +
+        "LEFT JOIN i.purchaseOrder po " +
+        "LEFT JOIN po.supplier s " +
+        "LEFT JOIN po.items it " +
+        "WHERE i.invoiceId = :invoiceId")List<?> findInvoiceWithDetailsById(@Param("invoiceId") String invoiceId);
 
 
     @Query(value = "SELECT\n" +
