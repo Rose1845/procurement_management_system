@@ -1,5 +1,6 @@
 package com.rose.procurement.org;
 
+import com.rose.procurement.user.User;
 import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,4 +19,7 @@ public class Organization {
     private String phoneNumber;
     @Embedded
     private Address address;
+    @ManyToOne
+    @JoinColumn(name = "admin_user_id")
+    private User adminUser;
 }

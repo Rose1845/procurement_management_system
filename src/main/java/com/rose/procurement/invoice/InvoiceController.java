@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +31,9 @@ public class InvoiceController {
         return invoiceService.getAllInvoices();
     }
     @GetMapping("/invoice-details/{invoiceId}")
-    public ResponseEntity<InvoiceDto> getInvoiceWithDetails(@PathVariable String invoiceId) {
-        InvoiceDto invoiceDto = invoiceService.getInvoiceWithDetails(invoiceId);
-        return ResponseEntity.ok(invoiceDto);
+    public ResponseEntity<Optional<Invoice>> getInvoiceWithDetails(@PathVariable String invoiceId) {
+        Optional<Invoice> invoice = invoiceService.getInvoiceWithDetails(invoiceId);
+        return ResponseEntity.ok(invoice);
     }
     @GetMapping("/{invoiceId}")
     public ResponseEntity<List<InvoiceDetailsDTO>> getInvoiceDetails1(@PathVariable("invoiceId") String invoiceId) {

@@ -146,6 +146,7 @@ public class SupplierService {
         // Create a CSV string with header and placeholder values for a single supplier
         String csvTemplate = "name,contact_person,contact_info,box,city,location,country,email,phone_number,payment_type,terms";
 
+        // Convert the CSV string to InputStreamResource
         ByteArrayInputStream inputStream = new ByteArrayInputStream(csvTemplate.getBytes());
         return new InputStreamResource(inputStream);
     }

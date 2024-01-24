@@ -4,7 +4,6 @@ import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +46,8 @@ public class InvoiceService {
         return invoiceMapper.toDto(savedInvoice);
     }
 
-    public InvoiceDto getInvoiceWithDetails(String invoiceId) {
-        return invoiceRepository.findInvoiceWithDetailsById(invoiceId)
-                .map(invoiceMapper::toDto)
-                .orElseThrow(() -> new NotFoundException("Invoice not found with ID: " + invoiceId));
+    public Optional<Invoice> getInvoiceWithDetails(String invoiceId) {
+        return invoiceRepository.findInvoiceWithDetailsById(invoiceId);
     }
     public List<Object[]> getInvoiceDetails1ByInvoiceId(String invoiceId) {
         return invoiceRepository.findInvoiceDetails1ByInvoiceId(invoiceId);
