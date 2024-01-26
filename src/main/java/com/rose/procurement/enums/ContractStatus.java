@@ -5,5 +5,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ContractStatus {
     OPEN,
-    EXPIRED
+    EXPIRED,
+    ISSUED,
+    INDELIVERY,
+    FULLYRECEIVED,
+    CLOSED
 }

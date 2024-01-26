@@ -1,6 +1,5 @@
 package com.rose.procurement.purchaseOrder.services;
 
-import com.rose.procurement.contract.dtos.ContractDto;
 import com.rose.procurement.contract.service.ContractService;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
@@ -11,11 +10,16 @@ import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -50,20 +54,6 @@ private final SupplierRepository supplierRepository;
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
         return purchaseOrderMapper.toDto(savedPurchaseOrder);
 
-        // Creating the purchase order with the selected suppliers and items
-//        PurchaseOrder purchaseOrder1 = PurchaseOrder.builder()
-//
-//                .purchaseOrderTitle(purchaseOrderRequest.getPurchaseOrderTitle())
-//                .deliveryDate(purchaseOrderRequest.getDeliveryDate())
-//                .termsAndConditions(purchaseOrderRequest.getTermsAndConditions())
-//                .approvalStatus(ApprovalStatus.valueOf(purchaseOrderRequest.getApprovalStatus().name()))
-//                .paymentType(PaymentType.valueOf(purchaseOrderRequest.getPaymentType().name()))
-//                .supplier(supplier.get())
-//                .items(new HashSet<>(p))
-//        Set<Item> items = new HashSet<>(purchaseOrder.getItems())
-//        purchaseOrder.setItems(new HashSet<>(items));
-//        PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
-//        return purchaseOrderMapper.toDto(savedPurchaseOrder);
     }
    public PurchaseOrder updatePurchaseOrder(Long purchaseOrderId, PurchaseOrderDto purchaseOrderDto){
         Optional<PurchaseOrder> purchaseOrder= purchaseOrderRepository.findById(purchaseOrderId);
@@ -120,19 +110,15 @@ private final SupplierRepository supplierRepository;
     }
 
 
-//    public Optional<PurchaseOrderDto> createPurchaseOrderFromClonedContract(String contractId) {
-//        Optional<ContractDto> clonedContractOptional = contractService.cloneContract(contractId);
-//
-//        return clonedContractOptional.map(clonedContract -> {
-//            // Create a new PurchaseOrder based on the cloned contract
-//            PurchaseOrder purchaseOrder = PurchaseOrder.builder()
-//                    .contractId(clonedContract.getContractId())
-//                    .build();
-//
-//            // Save the new PurchaseOrder
-//            PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
-//
-//            return purchaseOrderMapper.toDto(savedPurchaseOrder);
-//        });
-//    }
+public String exportReport(Long purchaseOrderId) throws FileNotFoundException, JRException {
+        Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
+    File fIle = ResourceUtils.getFile("purchase_order.jrxml");
+    JasperReport jasperReport = JasperCompileManager.compileReport(fIle.getAbsolutePath());
+    JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singleton(purchaseOrder));
+    Map<String,Object> parameters = new HashMap<>();
+    parameters.put("purchaseOrderId",purchaseOrderId);
+    JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,parameters,dataSource);
+    JasperExportManager.exportReportToPdf(jasperPrint);
+    return "generated";
+}
 }

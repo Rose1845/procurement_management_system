@@ -2,20 +2,20 @@ package com.rose.procurement.supplier.controller;
 
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
-import com.rose.procurement.supplier.request.SupplierRequest;
+import com.rose.procurement.supplier.services.ReportService;
 import com.rose.procurement.supplier.services.SupplierService;
 import jakarta.validation.Valid;
-import org.springframework.core.MethodParameter;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,9 +25,12 @@ import java.util.List;
 //)
 public class SupplierController {
     private final SupplierService supplierService;
+    private final ReportService reportService;
 
-    public SupplierController(SupplierService supplierService) {
+
+    public SupplierController(SupplierService supplierService, ReportService reportService) {
         this.supplierService = supplierService;
+        this.reportService = reportService;
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -63,11 +66,21 @@ public class SupplierController {
        return supplierService.getSupplierById(vendorId);
     }
     @PutMapping("{id}")
-    public Supplier updateSupplier(@PathVariable("id") Long vendorId , @RequestBody SupplierRequest supplierRequest){
+    public Supplier updateSupplier(@PathVariable("id") Long vendorId , @RequestBody SupplierDto supplierRequest){
         return supplierService.updateSupplier(vendorId, supplierRequest);
     }
     @DeleteMapping("{id}")
     public String deleteSupplier(@PathVariable("id") Long vendorId){
         return supplierService.deleteSupplier(vendorId);
     }
+    @DeleteMapping
+    public String deleteSupplier(){
+        return supplierService.deleteAll();
+    }
+
+    @GetMapping("/report/{format}")
+    public String generatePurchaseOrderReport(@PathVariable("format") String format) throws JRException, FileNotFoundException {
+        return reportService.exportReport(format);
+    }
 }
+

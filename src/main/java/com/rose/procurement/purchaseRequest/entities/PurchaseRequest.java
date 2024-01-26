@@ -35,7 +35,7 @@ public class PurchaseRequest {
     private String purchaseRequestTitle;
     private LocalDate dueDate;
     private String termsAndConditions;
-    @OneToOne(mappedBy = "purchaseRequest")
+    @ManyToOne()
     @JoinColumn(name = "vendor_id")
     @JsonIgnore
     private Supplier supplier;

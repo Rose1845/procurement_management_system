@@ -22,6 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -60,9 +61,9 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Item> items;
-    @OneToOne(fetch = FetchType.LAZY,orphanRemoval = true)
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY,orphanRemoval = true)
     @JsonIgnore
-    private PurchaseRequest purchaseRequest;
+    private List<PurchaseRequest> purchaseRequests;
     @OneToMany(mappedBy = "supplier")
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrder;

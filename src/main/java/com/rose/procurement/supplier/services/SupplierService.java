@@ -3,12 +3,12 @@ package com.rose.procurement.supplier.services;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
+import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierCsvRepresentation;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.mappers.SupplierMapper;
 import com.rose.procurement.supplier.repository.SupplierRepository;
-import com.rose.procurement.supplier.request.SupplierRequest;
 import com.rose.procurement.utils.address.Address;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class SupplierService {
         supplier.setAddress(address);
         supplier.setContactInformation(supplierRequest.getContactInformation());
         supplier.setContactPerson(supplierRequest.getContactPerson());
-        supplier.setPaymentType(supplierRequest.getPaymentType());
+        supplier.setPaymentType(PaymentType.valueOf(String.valueOf(supplierRequest.getPaymentType().name().toUpperCase())));
         Supplier savedSupplier = supplierRepository.save(supplier);
         return SupplierMapper.MAPPER.toDto(savedSupplier);
     }
@@ -63,13 +63,13 @@ public class SupplierService {
 //                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + vendorId));
     }
 
-    public Supplier updateSupplier(Long vendorId,SupplierRequest supplierRequest){
+    public Supplier updateSupplier(Long vendorId,SupplierDto supplierRequest){
         Supplier supplier1 = supplierRepository.findByVendorId(vendorId).orElseThrow(()-> new IllegalStateException("supplier do not exist"));
         supplier1.setName(supplierRequest.getName());
         supplier1.setAddress(supplierRequest.getAddress());
         supplier1.setEmail(supplierRequest.getEmail());
         supplier1.setContactPerson(supplierRequest.getContactPerson());
-        supplier1.setPaymentType(supplierRequest.getPaymentTerm());
+        supplier1.setPaymentType(PaymentType.valueOf(supplierRequest.getPaymentType().name().toUpperCase()));
         supplier1.setContactInformation(supplierRequest.getContactInformation());
         supplier1.setPhoneNumber(supplierRequest.getPhoneNumber());
         supplier1.setTermsAndConditions(supplierRequest.getTermsAndConditions());
@@ -84,6 +84,10 @@ public class SupplierService {
             return "suplier with id:" + vendorId + "do not exists";
         }
         return "supplier deleted successfully";
+    }
+    public String deleteAll(){
+        supplierRepository.deleteAll();
+        return "deleted all suppliers";
     }
 
     public Integer uploadSuppliers(MultipartFile file) {
