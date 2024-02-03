@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("api/v1/items")
 public class ItemController {
@@ -19,6 +21,10 @@ public class ItemController {
         return itemService.createItem(itemRequest);
     }
 
+    @GetMapping("/item-details/{id}")
+    public Optional<ItemDto> getItemDetails(@PathVariable("id") String itemId){
+        return itemService.getItemDetails(itemId);
+    }
     @GetMapping
     public List<Item> getAllItems() {
         return itemService.getAllItems();

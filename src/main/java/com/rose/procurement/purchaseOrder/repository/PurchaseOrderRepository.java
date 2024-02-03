@@ -53,8 +53,31 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder,Lon
 
     @Query("SELECT po FROM PurchaseOrder po WHERE MONTH(po.createdAt) = :month")
     List<PurchaseOrder> findPurchaseOrdersByMonth(@Param("month") int month);
-
     PurchaseOrder findByPurchaseOrderTitle(String purchaseOrderTitle);
-    @Query("SELECT p FROM PurchaseOrder p LEFT JOIN FETCH p.items LEFT JOIN FETCH p.supplier WHERE p.purchaseOrderId = :purchaseOrderId")
+    @Query("SELECT p FROM PurchaseOrder p LEFT JOIN FETCH p.items  LEFT JOIN FETCH p.supplier WHERE p.purchaseOrderId = :purchaseOrderId")
     Optional<PurchaseOrder> findByIdWithItems(@Param("purchaseOrderId") Long purchaseOrderId);
+//@Query(value = "SELECT po.purchase_order_title AS po_name, po.created_by AS po_created_by, po.approval_status AS po_status, " +
+//        "po.payment_type AS po_payment_terms, po.terms_and_conditions AS po_terms_and_conditions, " +
+//        "s.name AS supplier_name, it.* " +
+//        "FROM purchase_order po " +
+//        "LEFT JOIN supplier s ON po.supplier_id = s.vendor_id " +
+//        "LEFT JOIN order_items oi ON po.purchase_order_id = oi.purchase_order_id " +
+//        "LEFT JOIN item it ON oi.item_id = it.item_id " +
+//        "WHERE po.purchase_order_id = :purchaseOrderId", nativeQuery = true)
+//Optional<PurchaseOrder> findByIdWithItems(@Param("purchaseOrderId") Long purchaseOrderId);
+
+//@Query(value = "SELECT po.purchase_order_id, po.purchase_order_title, po.created_by, po.approval_status, " +
+//        "po.payment_type, po.terms_and_conditions, " +
+//        "i.item_name, i.quantity, i.total_price, i.item_number, i.unit_price, " +
+//        "s.name AS supplier_name,\n" +
+//        "    s.p_o_box AS supplier_address_box,\n" +
+//        "    s.country AS supplier_address_country,\n" +
+//        "    s.city AS supplier_address_city,\n" +
+//        "    s.location AS supplier_address_location\n" +
+//        "FROM purchase_order po\n" +
+//        "JOIN order_items oi ON po.purchase_order_id = oi.purchase_order_id\n" +
+//        "JOIN item i ON oi.item_id = i.item_id\n" +
+//        "JOIN supplier s ON po.supplier_id = s.vendor_id\n" +
+//        "WHERE po.purchase_order_id  = :purchaseOrderId" ,nativeQuery = true)
+//Optional<PurchaseOrder> findByIdWithItems(@Param("purchaseOrderId") Long purchaseOrderId);
 }

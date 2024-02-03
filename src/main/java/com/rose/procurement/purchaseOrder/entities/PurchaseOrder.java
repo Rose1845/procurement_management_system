@@ -34,10 +34,10 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-//@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)
 public class PurchaseOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long purchaseOrderId;
     private String purchaseOrderTitle;
     private LocalDate deliveryDate;
@@ -50,7 +50,7 @@ public class PurchaseOrder {
     @JoinColumn(name = "supplier_id")
     @JsonIgnore
     private Supplier supplier;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "order_items",
             joinColumns = {
@@ -70,7 +70,7 @@ public class PurchaseOrder {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-//    @CreatedBy
-//    @Column(name = "created_by")
-//    private Integer createdBy;
+    @CreatedBy
+    @Column(name = "created_by")
+    private Integer createdBy;
 }

@@ -1,5 +1,6 @@
 package com.rose.procurement.purchaseRequisition.services;
 
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
@@ -28,7 +29,7 @@ public class PurchaseRequisitionService {
         purchaseRequisition.setDescription(purchaseRequisitionDto.getDescription());
         purchaseRequisition.setDateNeeded(purchaseRequisitionDto.getDateNeeded());
         purchaseRequisition.setItems(purchaseRequisitionDto.getItems());
-        purchaseRequisition.setApprovalStatus(purchaseRequisitionDto.getApprovalStatus());
+        purchaseRequisition.setApprovalStatus(ApprovalStatus.PENDING);
         PurchaseRequisition savedpurchaseR = purchaseRequisitionRepository.save(purchaseRequisition);
         PurchaseRequisitionDto saveDto = PurchaseRequisitionMapper.MAPPER.toDto(savedpurchaseR);
         return saveDto;

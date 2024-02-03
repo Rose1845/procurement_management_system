@@ -30,7 +30,7 @@ public class PurchaseOrderController {
     public PurchaseOrderDto createPurchaseOrder(@RequestBody @Valid PurchaseOrderDto purchaseOrderRequest) {
         return purchaseOrderService.createPurchaseOrder(purchaseOrderRequest);
     }
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public Optional<PurchaseOrder> getPurchaseOrderById(@PathVariable("id") Long purchaseOrderId){
         return purchaseOrderService.findPurchaseOrderById(purchaseOrderId);
     }
@@ -39,7 +39,7 @@ public class PurchaseOrderController {
     public List<PurchaseOrder> getAllPO(){
         return purchaseOrderService.getAllOrders();
     }
-    @GetMapping("/order-items/{id}")
+    @GetMapping("/get/order-items/{id}")
     public Optional<PurchaseOrderDto> getPurchaseOrderWithItems(@PathVariable("id") Long purchaseOrderId) {
         return purchaseOrderService.getPurchaseOrderWithItems(purchaseOrderId);
     }
@@ -66,8 +66,8 @@ public class PurchaseOrderController {
                 purchaseOrderService.findAllPurchaseOrderWithPaginationAndSorting(offSet,pageSize,field);
         return new ApiResponse<>(purchaseOrders.getSize(),purchaseOrders);
     }
-    @GetMapping("{purchaseOrderTitle}")
-    public PurchaseOrder getPurchaseOrderByPurchaseOrderTitle(@PathVariable("purchaseOrderTitle") String purchaseOrderTitle){
+    @GetMapping("/title")
+    public PurchaseOrder getPurchaseOrderByPurchaseOrderTitle(@RequestParam("title") String purchaseOrderTitle){
         return purchaseOrderService.getPurchaseOrderByPurchaseOrderTitle(purchaseOrderTitle);
 
     }

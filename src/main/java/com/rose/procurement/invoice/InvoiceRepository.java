@@ -42,7 +42,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice,String> {
         "LEFT JOIN i.purchaseOrder po " +
         "LEFT JOIN po.supplier s " +
         "LEFT JOIN po.items it " +
-        "WHERE i.invoiceId = :invoiceId")List<?> findInvoiceWithDetailsById(@Param("invoiceId") String invoiceId);
+        "WHERE i.invoiceId = :invoiceId")
+List<?> findInvoiceWithDetailsById(@Param("invoiceId") String invoiceId);
 
 
     @Query(value = "SELECT\n" +

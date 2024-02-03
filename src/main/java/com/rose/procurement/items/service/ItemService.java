@@ -1,14 +1,12 @@
 package com.rose.procurement.items.service;
 
 import com.rose.procurement.category.entity.Category;
-import com.rose.procurement.category.mappers.CategoryMapper;
 import com.rose.procurement.category.repository.CategoryRepository;
 import com.rose.procurement.items.dtos.ItemDto;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.mappers.ItemMapper;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.supplier.entities.Supplier;
-import com.rose.procurement.supplier.mappers.SupplierMapper;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -24,12 +21,14 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryRepository categoryRepository;
     private final SupplierRepository supplierRepository;
+    private final ItemMapper itemMapper;
 
-    public ItemService(ItemRepository itemRepository, CategoryRepository categoryRepository, SupplierRepository supplierRepository
-                    ) {
+    public ItemService(ItemRepository itemRepository, CategoryRepository categoryRepository, SupplierRepository supplierRepository,
+                       ItemMapper itemMapper) {
         this.itemRepository = itemRepository;
         this.categoryRepository = categoryRepository;
         this.supplierRepository = supplierRepository;
+        this.itemMapper = itemMapper;
     }
 
     public ItemDto createItem(ItemDto itemRequest) {
@@ -68,5 +67,9 @@ public class ItemService {
             itemRepository.deleteById(itemId);
         }
         return "item deleted successfully";
+    }
+    public Optional<ItemDto> getItemDetails(String itemId) {
+        Optional<Item> item = itemRepository.findItemDetailsById(itemId);
+        return item.map(itemMapper::toDto);
     }
 }

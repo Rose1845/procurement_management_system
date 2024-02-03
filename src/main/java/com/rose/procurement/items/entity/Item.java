@@ -27,7 +27,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-//@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -65,12 +65,12 @@ public class Item {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-//    @CreatedBy
-//    @Column(
-//            nullable = false,
-//            updatable = false
-//    )
-//    private Integer createdBy = 1;
+    @CreatedBy
+    @Column(
+            nullable = false,
+            updatable = false
+    )
+    private Integer createdBy;
 
     @Transient // This annotation indicates that the field should not be persisted in the database
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

@@ -24,7 +24,7 @@ public class InvoiceController {
         return invoiceService.createInvoice(invoiceDto);
     }
     @GetMapping("/byInvoiceId/{invoiceId}")
-    public Optional<Invoice> getInvoicesByInvoiceId(@PathVariable String invoiceId) {
+    public Optional<InvoiceDto> getInvoicesByInvoiceId(@PathVariable String invoiceId) {
         return invoiceService.getInvoicesByInvoiceId(invoiceId);
     }
     @GetMapping

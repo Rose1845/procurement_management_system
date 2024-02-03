@@ -29,7 +29,7 @@ public class ContractController {
         return contractService.createContract(contractRequest);
     }
     @GetMapping
-    public List<ContractDto> getAllContracts(){
+    public List<Contract> getAllContracts(){
         return contractService.getAllContracts();
     }
     @GetMapping("{id}")

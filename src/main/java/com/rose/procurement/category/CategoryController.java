@@ -5,7 +5,12 @@ import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,8 +28,37 @@ public class CategoryController {
         log.info("category");
         return categoryService.createCategory(categoryDto);
     }
+    @GetMapping("{id}")
+    public Category getCategoryById(@PathVariable("id") Long categoryId){
+        return categoryService.getCategoryById(categoryId);
+    }
     @GetMapping
     public List<Category> getAllCategories(){
         return categoryService.getAllCategories();
+    }
+    @DeleteMapping("{id}")
+    public String deleteCategory(@PathVariable("id") Long vendorId){
+        return categoryService.deleteCategory(vendorId);
+    }
+    @PutMapping("{id}")
+    public Category updateCategory(@PathVariable("id") Long vendorId, CategoryDto categoryDto){
+        return categoryService.updateCategory(vendorId,categoryDto);
+    }
+    @PostMapping(value = "upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<Integer> uploadSuppliers(@RequestPart("file") MultipartFile file){
+        return ResponseEntity.ok(categoryService.uploadCategories(file));
+
+    }
+    @GetMapping("/template/download/single")
+    public ResponseEntity<InputStreamResource> downloadSingleSupplierTemplate() {
+        InputStreamResource resource = categoryService.generateTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=single_category_template.csv");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(resource);
     }
 }

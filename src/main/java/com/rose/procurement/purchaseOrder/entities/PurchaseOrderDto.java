@@ -14,13 +14,14 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * DTO for {@link PurchaseOrder}
  */
 @Data
 @Builder
-public class PurchaseOrderDto{
+public class PurchaseOrderDto {
     @NotNull
     @NotBlank
     private String purchaseOrderTitle;
@@ -32,7 +33,6 @@ public class PurchaseOrderDto{
     private String termsAndConditions;
     @NotNull
     private PaymentType paymentType;
-    @NotNull
     private ApprovalStatus approvalStatus;
     @NotNull
     private Set<Item> items;

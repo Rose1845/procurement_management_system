@@ -33,15 +33,7 @@ public class ContractService {
         this.contractMapper = contractMapper;
     }
     public ContractDto createContract(ContractDto contractRequest) {
-//        if (contractRequest.getSupplier().getVendorId() == null) {
-//            throw new IllegalArgumentException("Supplier must be provided in the contract request");
-//        }
-
         Optional<Supplier> supplier = supplierRepository.findById(contractRequest.getVendorId());
-
-//        if (supplier.isEmpty()) {
-//            throw new IllegalStateException("Supplier with id does not exist");
-//        }
 
         Contract contract1 = ContractMapper.MAPPER.toEntity(contractRequest);
         contract1.setContractEndDate(contractRequest.getContractEndDate());
@@ -50,8 +42,6 @@ public class ContractService {
         contract1.setTermsAndConditions(contractRequest.getTermsAndConditions());
         contract1.setContractType(contractRequest.getContractType());
         contract1.setApprovalStatus(ApprovalStatus.PENDING);
-//        supplier.ifPresent(contract1.getSupplier().getVendorId());
-//        contract1.setSupplier(supplier.get());
         supplier.ifPresent(contract1::setSupplier);
         Set<Item> items = new HashSet<>(contract1.getItems());
         contract1.setItems(new HashSet<>(items));
@@ -60,14 +50,9 @@ public class ContractService {
         return ContractMapper.MAPPER.toDto(savedCOntract);
     }
 
-    public List<ContractDto> getAllContracts(){
-        List<ContractDto> contractDtos = new ArrayList<>();
-        List<Contract> students = contractRepository.findAll();
-        students.forEach(student -> {
-            ContractDto contractDto = ContractMapper.MAPPER.toDto(student);
-            contractDtos.add(contractDto);
-        });
-        return contractDtos;  }
+    public List<Contract> getAllContracts(){
+        return new ArrayList<>(contractRepository.findAll());
+    }
     public String deleteContract(String contractId){
         Optional<Contract> contract = contractRepository.findById(contractId);
         if(contract.isPresent()){

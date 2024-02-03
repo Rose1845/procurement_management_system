@@ -23,13 +23,13 @@ import java.util.List;
 @Getter
 @Builder
 @Setter
-//@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long categoryId;
     private  String categoryName;
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Item> items;
     @CreationTimestamp
@@ -38,10 +38,11 @@ public class Category {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-//    @CreatedBy
-//    @Column(
-//            nullable = false,
-//            updatable = false
-//    )
-//    private Integer createdBy;
+    @CreatedBy
+    @Column(
+            nullable = false,
+            updatable = false
+    )
+    private Integer createdBy;
 }
+

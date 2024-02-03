@@ -87,10 +87,9 @@ private final SupplierRepository supplierRepository;
     public Set<Item> getItemsForPurchaseOrder(Long purchaseOrderId) {
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId)
                 .orElseThrow(() -> new EntityNotFoundException("PurchaseOrder not found with id: " + purchaseOrderId));
-
         return purchaseOrder.getItems();
     }
-    public Optional<PurchaseOrderDto> getPurchaseOrderWithItems( Long purchaseOrderId) {
+    public Optional<PurchaseOrderDto> getPurchaseOrderWithItems(Long purchaseOrderId) {
         Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findByIdWithItems(purchaseOrderId);
         return purchaseOrder.map(purchaseOrderMapper::toDto);
     }

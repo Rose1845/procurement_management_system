@@ -28,7 +28,6 @@ public class PurchaseRequisitionDto {
     @NotNull
     @FutureOrPresent
     private LocalDate dateNeeded;
-    @NotNull
     private ApprovalStatus approvalStatus;
     @NotNull
     private Set<Item> items;

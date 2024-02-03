@@ -31,7 +31,7 @@ public class PurchaseRequestDto {
     @NotBlank
     private String termsAndConditions;
     @NotNull
-    private Supplier supplier;
+    private Long vendorId;
     @NotNull
     private Set<Item> items;
 }

@@ -13,7 +13,6 @@ import com.rose.procurement.utils.address.Address;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,10 +53,9 @@ public class SupplierService {
     }
 
     public Supplier getSupplierById(Long vendorId) {
-        Supplier supplier =supplierRepository.findById(vendorId).get();
         //return UserMapper.mapToUserDto(user);
         //return modelMapper.map(user, UserDto.class);
-        return supplier;
+        return supplierRepository.findById(vendorId).get();
 //        return SupplierMapper.MAPPER.toDto(supplier);
 //        return supplierRepository.findByVendorId(vendorId)
 //                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + vendorId));

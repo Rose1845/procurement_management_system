@@ -8,9 +8,13 @@ import org.mapstruct.factory.Mappers;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PurchaseRequestMapper {
     PurchaseRequestMapper INSTANCE = Mappers.getMapper(PurchaseRequestMapper.class);
-
+   @Mappings({
+           @Mapping(target = "supplier.vendorId",source = "vendorId")
+   })
     PurchaseRequest toEntity(PurchaseRequestDto purchaseRequestDto);
-
+    @Mappings({
+            @Mapping(target = "vendorId",source = "supplier.vendorId")
+    })
     PurchaseRequestDto toDto(PurchaseRequest purchaseRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

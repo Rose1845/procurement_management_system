@@ -29,7 +29,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-//@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)
 public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -64,8 +64,8 @@ public class Contract {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-//    @CreatedBy
-//    @Column(name = "created_by")
-//    private Integer createdBy;
+    @CreatedBy
+    @Column(name = "created_by")
+    private Integer createdBy;
 
 }

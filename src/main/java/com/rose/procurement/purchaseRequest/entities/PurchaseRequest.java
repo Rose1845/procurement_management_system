@@ -16,6 +16,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class PurchaseRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,8 +61,9 @@ public class PurchaseRequest {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-//    @Column(name = "created_by")
-//    private String createdBy;
+    @CreatedBy
+    @Column(name = "created_by")
+    private Integer createdBy;
 }
 
 
