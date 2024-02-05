@@ -27,6 +27,7 @@ public class SupplierOffer {
     private BigDecimal unitPrice;
 
     public SupplierOffer(Supplier supplier) {
+
         this.supplier = supplier;
     }
 }

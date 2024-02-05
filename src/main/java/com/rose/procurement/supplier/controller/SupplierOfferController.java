@@ -1,5 +1,6 @@
 package com.rose.procurement.supplier.controller;
 
+import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierOffer;
 import com.rose.procurement.supplier.services.SupplierOfferService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,9 @@ public class SupplierOfferController {
     }
     @PostMapping("/{id}")
     public SupplierOffer addSupplierOffer(
-            @PathVariable("id") String itemId,
+            @PathVariable("id") Long purchaseRequestId ,
             @RequestBody SupplierOffer supplierOffer) {
-        return supplierOfferService.addSupplierOffer(itemId, supplierOffer);
+        return supplierOfferService.addSupplierOffer(purchaseRequestId, supplierOffer);
     }
 
     // Other methods as needed

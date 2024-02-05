@@ -88,9 +88,9 @@ public class PurchaseRequestService {
                 // Set default values or leave them null for suppliers to fill in
                 // This could include unit price, delivery time, etc.
 //                supplierOffer.setUnitPrice();
-                supplierOfferService.addSupplierOffer(purchaseRequestItem.getItemId(), supplierOffer);
+                supplierOfferService.addSupplierOffer(purchaseRequestId,supplierOffer);
+                emailService.sendEmail(supplier.getEmail(),"Purchase Request Offer","PLease check the offer");
             }
-            emailService.sendEmail(supplier.getEmail(),"Purchase Request Offer","PLease check the offer");
         }
 
 

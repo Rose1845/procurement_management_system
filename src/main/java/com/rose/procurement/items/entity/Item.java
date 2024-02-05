@@ -65,6 +65,7 @@ public class Item {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<SupplierOffer> supplierOffers;
     @UpdateTimestamp
     @Column(name = "updated_at")
