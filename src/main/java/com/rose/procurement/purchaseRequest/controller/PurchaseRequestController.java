@@ -33,11 +33,10 @@ public class PurchaseRequestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PurchaseRequest> getPurchaseRequestById(@PathVariable Long id) {
-        Optional<PurchaseRequest> purchaseRequest = purchaseRequestService.getPurchaseRequestById(id);
+    public Optional<PurchaseRequestDto> getPurchaseRequestById(@PathVariable Long id) {
+       return purchaseRequestService.getPurchaseRequestById(id);
 
-        return purchaseRequest.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
     }
 
     // Endpoint to associate a Purchase Order with a Purchase Request
@@ -48,6 +47,12 @@ public class PurchaseRequestController {
         PurchaseRequest updatedPurchaseRequest = purchaseRequestService.createPurchaseOrder(purchaseRequestId, purchaseOrder);
         return new ResponseEntity<>(updatedPurchaseRequest, HttpStatus.OK);
     }
+    @PostMapping("/{purchaseRequestId}")
+    public ResponseEntity<String> submitPurchaseRequestToSuppliers(
+            @PathVariable Long purchaseRequestId) {
+        purchaseRequestService.submitPurchaseRequestToSuppliers(purchaseRequestId);
+        return ResponseEntity.ok("Purchase request submitted to suppliers successfully.");
+    }
 
 
-        }
+}

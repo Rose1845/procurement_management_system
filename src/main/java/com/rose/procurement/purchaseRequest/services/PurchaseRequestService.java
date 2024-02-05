@@ -1,5 +1,6 @@
 package com.rose.procurement.purchaseRequest.services;
 
+import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
@@ -8,7 +9,8 @@ import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
 import com.rose.procurement.purchaseRequest.mappers.PurchaseRequestMapper;
 import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository;
 import com.rose.procurement.supplier.entities.Supplier;
-import com.rose.procurement.supplier.repository.SupplierRepository;
+import com.rose.procurement.supplier.entities.SupplierOffer;
+import com.rose.procurement.supplier.services.SupplierOfferService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -20,24 +22,28 @@ import java.util.Set;
 @Service
 public class PurchaseRequestService {
     private final PurchaseRequestRepository purchaseRequestRepository;
-    private final SupplierRepository supplierRepository ;
+    private final PurchaseRequestMapper purchaseRequestMapper ;
+    private final SupplierOfferService supplierOfferService;
+    private final EmailService emailService;
 
     public PurchaseRequestService(PurchaseRequestRepository purchaseRequestRepository,
-                                 SupplierRepository supplierRepository) {
+                                  PurchaseRequestMapper purchaseRequestMapper, SupplierOfferService supplierOfferService, EmailService emailService) {
         this.purchaseRequestRepository = purchaseRequestRepository;
-        this.supplierRepository = supplierRepository;
+        this.purchaseRequestMapper = purchaseRequestMapper;
+        this.supplierOfferService = supplierOfferService;
+        this.emailService = emailService;
     }
 
     public PurchaseRequestDto createPurchaseRequest(PurchaseRequestDto purchaseRequest) {
-        Optional<Supplier> supplier = supplierRepository.findById(purchaseRequest.getVendorId());
 
         PurchaseRequest purchaseRequest1 = PurchaseRequestMapper.INSTANCE.toEntity(purchaseRequest);
         purchaseRequest1.setPurchaseRequestTitle(purchaseRequest1.getPurchaseRequestTitle());
         purchaseRequest1.setDueDate(purchaseRequest.getDueDate());
-        supplier.ifPresent(purchaseRequest1::setSupplier);
         purchaseRequest1.setApprovalStatus(ApprovalStatus.PENDING);
         Set<Item> items = new HashSet<>(purchaseRequest1.getItems());
-        purchaseRequest1.setItems(new HashSet<>(items));       
+        purchaseRequest1.setItems(new HashSet<>(items));
+        Set<Supplier> suppliers = new HashSet<>(purchaseRequest1.getSuppliers());
+        purchaseRequest1.setSuppliers(new HashSet<>(suppliers));
         PurchaseRequest savedPrequest = purchaseRequestRepository.save(purchaseRequest1);
         PurchaseRequestDto savedDTo = PurchaseRequestMapper.INSTANCE.toDto(savedPrequest);
         // Additional logic or validation can be added here before saving
@@ -49,8 +55,9 @@ public class PurchaseRequestService {
     }
 
     // Get a purchase request by ID
-    public Optional<PurchaseRequest> getPurchaseRequestById(Long purchaseRequestId) {
-        return purchaseRequestRepository.findById(purchaseRequestId);
+    public Optional<PurchaseRequestDto> getPurchaseRequestById(Long purchaseRequestId) {
+        Optional<PurchaseRequest> purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId);
+        return purchaseRequest.map(purchaseRequestMapper::toDto);
     }
 
     // Associate a Purchase Order with a Purchase Request
@@ -59,12 +66,37 @@ public class PurchaseRequestService {
 
         if (optionalPurchaseRequest.isPresent()) {
             PurchaseRequest purchaseRequest = optionalPurchaseRequest.get();
-            purchaseRequest.setSupplier(purchaseOrder.getSupplier());
+//            purchaseRequest.setSuppliers(purchaseOrder.ge);
             return purchaseRequestRepository.save(purchaseRequest);
         } else {
             // Handle the case where the purchase request with the given ID is not found
             throw new EntityNotFoundException("Purchase Request not found with ID: " + purchaseRequestId);
         }
+    }
+
+    public void submitPurchaseRequestToSuppliers(Long purchaseRequestId) {
+        // Retrieve the purchase request by ID
+        PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId)
+                .orElseThrow(() -> new RuntimeException("Purchase request not found"));
+
+        // Validate that the purchase request is in a valid state for submission
+        for (Supplier supplier : purchaseRequest.getSuppliers()) {
+            // For each item in the purchase request, create a placeholder supplier offer
+            for (Item purchaseRequestItem : purchaseRequest.getItems()) {
+                SupplierOffer supplierOffer = new SupplierOffer();
+                supplierOffer.setItem(purchaseRequestItem);
+                // Set default values or leave them null for suppliers to fill in
+                // This could include unit price, delivery time, etc.
+//                supplierOffer.setUnitPrice();
+                supplierOfferService.addSupplierOffer(purchaseRequestItem.getItemId(), supplierOffer);
+            }
+            emailService.sendEmail(supplier.getEmail(),"Purchase Request Offer","PLease check the offer");
+        }
+
+
+        // Update the purchase request status or perform any other necessary actions
+
+        // You might want to notify suppliers via email, messaging, etc.
     }
 
 

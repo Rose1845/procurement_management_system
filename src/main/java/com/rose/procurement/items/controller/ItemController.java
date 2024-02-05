@@ -38,4 +38,11 @@ public class ItemController {
     public String deleteItem(@PathVariable("id") String itemId){
         return itemService.deleteItem(itemId);
     }
+
+    @PostMapping("/{purchaseRequestId}")
+    public Item addPurchaseRequestItem(
+            @PathVariable Long purchaseRequestId,
+            @RequestBody Item purchaseRequestItem) {
+        return itemService.addPurchaseRequestItem(purchaseRequestId, purchaseRequestItem);
+    }
 }

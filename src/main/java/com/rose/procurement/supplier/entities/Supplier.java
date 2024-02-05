@@ -20,7 +20,9 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -59,12 +61,14 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Item> items;
-    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY,orphanRemoval = true)
+    @ManyToMany(mappedBy = "suppliers")
     @JsonIgnore
-    private List<PurchaseRequest> purchaseRequests;
+    private Set<PurchaseRequest> purchaseRequests;
     @OneToMany(mappedBy = "supplier")
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrder;
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
+    private Set<SupplierOffer> supplierOffers = new HashSet<>();
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

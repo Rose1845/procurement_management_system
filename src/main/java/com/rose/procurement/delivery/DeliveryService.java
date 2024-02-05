@@ -48,7 +48,7 @@ public class DeliveryService {
             DeliveryItem deliveryItem = new DeliveryItem();
             deliveryItem.setItem(orderItem);
             deliveryItem.setDelivery(delivery1);
-            deliveryItem.setQuantityReceived(deliveryItem.getQuantityReceived()); // Default to zero, update as needed
+            deliveryItem.setQuantityReceived(deliveryItem.getQuantityReceived());
             deliveryItems.add(deliveryItem);
         }
         delivery1.setDeliveryItems(deliveryItems);

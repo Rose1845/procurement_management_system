@@ -37,10 +37,18 @@ public class PurchaseRequest {
     private String purchaseRequestTitle;
     private LocalDate dueDate;
     private String termsAndConditions;
-    @ManyToOne()
-    @JoinColumn(name = "vendor_id")
+    @ManyToMany( fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "request_suppliers",
+            joinColumns = {
+                    @JoinColumn(name = "purchase_request_id",referencedColumnName = "purchaseRequestId")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "vendor_id",referencedColumnName = "vendorId")
+            }
+    )
     @JsonIgnore
-    private Supplier supplier;
+    private Set<Supplier> suppliers;
     @Enumerated
     private ApprovalStatus approvalStatus;
     @ManyToMany( fetch = FetchType.LAZY)
