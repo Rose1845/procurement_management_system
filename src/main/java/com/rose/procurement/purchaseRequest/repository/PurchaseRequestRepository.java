@@ -12,5 +12,4 @@ import java.util.Optional;
 @Repository
 public interface PurchaseRequestRepository extends JpaRepository<PurchaseRequest,Long> {
 
-
 }

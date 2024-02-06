@@ -67,7 +67,7 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier")
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrder;
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "suppliers", cascade = CascadeType.ALL)
     private Set<SupplierOffer> supplierOffers = new HashSet<>();
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

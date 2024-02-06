@@ -31,8 +31,7 @@ public class SupplierOfferService {
     }
      SupplierOffer supplierOffer1 = new SupplierOffer();
      supplierOffer1.setUnitPrice(supplierOffer.getUnitPrice());
-//     supplierOffer.setSupplier(supplier);
-
+     supplierOffer.setSuppliers(purchaseRequest.get().getSuppliers());
         return supplierOfferRepository.save(supplierOffer);
     }
 }
