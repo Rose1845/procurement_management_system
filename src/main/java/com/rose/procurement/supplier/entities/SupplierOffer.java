@@ -32,13 +32,23 @@ public class SupplierOffer {
     @JsonIgnore
     private Set<Supplier> suppliers;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
+    @ManyToMany
+    @JoinTable(
+            name = "offer_items",
+            joinColumns = {
+                    @JoinColumn(name = "offer_id",referencedColumnName = "id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "item_id",referencedColumnName = "itemId")
+            }
+    )
+    @JsonIgnore
+    private Set<Item> items;
 
     private BigDecimal unitPrice;
 
     public SupplierOffer(Set<Supplier> suppliers) {
         this.suppliers = suppliers;
     }
+
 }

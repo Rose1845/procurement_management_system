@@ -11,7 +11,9 @@ import com.rose.procurement.supplier.repository.SupplierOfferRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +28,16 @@ public class SupplierOfferService {
 
     public SupplierOffer addSupplierOffer(Long purchaseRequestId, SupplierOffer supplierOffer) {
         Optional<PurchaseRequest> purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId);
-    for(Item item : purchaseRequest.get().getItems()){
-        supplierOffer.setItem(item);
-    }
-     SupplierOffer supplierOffer1 = new SupplierOffer();
+        SupplierOffer supplierOffer1 = new SupplierOffer();
+
+        for(Supplier supplier: purchaseRequest.get().getSuppliers()){
+            supplierOffer1.setSuppliers((Set<Supplier>) supplier);
+            for(Item item : purchaseRequest.get().getItems()){
+                supplierOffer1.setItems((Set<Item>) item);
+            }
+        }
+
+//     SupplierOffer supplierOffer1 = new SupplierOffer();
      supplierOffer1.setUnitPrice(supplierOffer.getUnitPrice());
      supplierOffer.setSuppliers(purchaseRequest.get().getSuppliers());
         return supplierOfferRepository.save(supplierOffer);

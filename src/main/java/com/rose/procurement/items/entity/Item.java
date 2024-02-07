@@ -64,9 +64,9 @@ public class Item {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<SupplierOffer> supplierOffers;
+    private Set<SupplierOffer> supplierOffers;
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
