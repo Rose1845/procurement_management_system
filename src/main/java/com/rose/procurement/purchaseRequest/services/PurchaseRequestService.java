@@ -84,7 +84,7 @@ public class PurchaseRequestService {
             // For each item in the purchase request, create a placeholder supplier offer
             for (Item purchaseRequestItem : purchaseRequest.getItems()) {
                 SupplierOffer supplierOffer = new SupplierOffer();
-                supplierOffer.setItem(purchaseRequestItem);
+                supplierOffer.setItems((Set<Item>) purchaseRequestItem);
                 // Set default values or leave them null for suppliers to fill in
                 // This could include unit price, delivery time, etc.
 //                supplierOffer.setUnitPrice();
