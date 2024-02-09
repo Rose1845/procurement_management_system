@@ -103,7 +103,7 @@ public class DeliveryService {
 //        purchaseOrderRepository.save(purchaseOrder);
 //    }
 
-    public Delivery createDelivery(Long purchaseOrderId ,DeliveryDTo deliveryDTo) {
+    public Delivery createDelivery(Long purchaseOrderId, DeliveryDTo deliveryDTo) {
         // Retrieve PurchaseOrder
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId)
                 .orElseThrow(() -> new EntityNotFoundException("PurchaseOrder not found"));
@@ -116,26 +116,25 @@ public class DeliveryService {
                 .expectedOn(deliveryDTo.getExpectedOn())
                 .build();
 
-        // Process items in the delivery
-        Set<Item> itemsInDelivery = purchaseOrder.getItems();
+        Set<DeliveryItem> deliveryItems = new HashSet<>();
         for (DeliveryItemDTo itemDto : deliveryDTo.getItemDToSet()) {
             Item item = itemRepository.findById(itemDto.getItemId())
                     .orElseThrow(() -> new EntityNotFoundException("Item not found"));
-            // Update quantityDelivered and quantityReceived for each item in the delivery
-            item.setQuantityDelivered(itemDto.getQuantityDelivered());
-            item.setQuantityReceived(itemDto.getQuantityReceived());
 
-            itemsInDelivery.add(item);
+            DeliveryItem deliveryItem = new DeliveryItem();
+            deliveryItem.setDelivery(delivery);
+            deliveryItem.setItem(item);
+            deliveryItem.setQuantityDelivered(itemDto.getQuantityDelivered());
+            deliveryItem.setQuantityReceived(itemDto.getQuantityReceived());
+            deliveryItems.add(deliveryItem);
         }
 
-        delivery.setItems(itemsInDelivery);
+        delivery.setItems(deliveryItems);
         Delivery savedDelivery = deliveryRepository.save(delivery);
-
         // Update PurchaseOrder status and other fields
-        purchaseOrder.setDelivery(delivery);
-//        purchaseOrder.setDeliveryStatus(PurchaseOrder.DeliveryStatus.IN_DELIVERY);
-        // Update other status fields as needed
+        purchaseOrder.setDelivery(savedDelivery);
         purchaseOrderRepository.save(purchaseOrder);
         return savedDelivery;
     }
+
 }

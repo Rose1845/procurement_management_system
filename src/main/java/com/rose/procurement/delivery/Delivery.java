@@ -21,18 +21,8 @@ public class Delivery {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String receivedBy;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "delivery_items",
-            joinColumns = {
-                    @JoinColumn(name = "delivery_id",referencedColumnName = "id")
-            },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "item_id",referencedColumnName = "itemId")
-            }
-    )@JsonIgnore
-  private Set<Item> items;
-
+    @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
+    private Set<DeliveryItem> items;
     @OneToOne
     @JoinColumn(name = "purchase_order_id")
     private PurchaseOrder purchaseOrder;
@@ -68,4 +58,6 @@ public class Delivery {
 //        this.purchaseOrder = purchaseOrder;
 //        // Set other default values or initialize other fields as needed
 //    }
+
+
 }

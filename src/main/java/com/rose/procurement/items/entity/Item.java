@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.delivery.Delivery;
+import com.rose.procurement.delivery.DeliveryItem;
 import com.rose.procurement.document.File;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
@@ -69,15 +70,14 @@ public class Item {
     private LocalDateTime createdAt;
     @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
     @JsonIgnore
-
     private Set<SupplierOffer> supplierOffers;
-    @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Delivery> deliveries = new HashSet<>();
-    @Column(nullable = true, columnDefinition = "int default 0")
-    private int quantityDelivered =0 ;
-    @Column(nullable = true, columnDefinition = "int default 0")
-    private int quantityReceived = 0;
+    private Set<DeliveryItem> deliveriesItems;
+//    @Column(nullable = true, columnDefinition = "int default 0")
+//    private int quantityDelivered =0 ;
+//    @Column(nullable = true, columnDefinition = "int default 0")
+//    private int quantityReceived = 0;
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -87,12 +87,9 @@ public class Item {
             updatable = false
     )
     private Integer createdBy;
-
     @Transient // This annotation indicates that the field should not be persisted in the database
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public double getTotalPrice() {
         return quantity * unitPrice;
     }
-
-
 }

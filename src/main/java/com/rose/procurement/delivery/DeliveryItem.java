@@ -23,10 +23,11 @@ public class DeliveryItem {
     @JsonBackReference
     private Delivery delivery;
     @ManyToOne
-    @JoinColumn(name = "item_delivered_id")
+    @JoinColumn(name = "item_id")
     private Item item;
-    private BigDecimal quantityReceived;
-
+    @Column(nullable = true)
+    private int quantityDelivered;
+    private int quantityReceived;
     // ... (other fields related to delivery items)
 
     // ... (getters and setters)
