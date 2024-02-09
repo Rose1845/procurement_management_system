@@ -3,6 +3,7 @@ package com.rose.procurement.items.entity;
 import com.fasterxml.jackson.annotation.*;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.contract.entities.Contract;
+import com.rose.procurement.delivery.Delivery;
 import com.rose.procurement.document.File;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
@@ -17,9 +18,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -66,7 +69,15 @@ public class Item {
     private LocalDateTime createdAt;
     @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
     @JsonIgnore
+
     private Set<SupplierOffer> supplierOffers;
+    @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Delivery> deliveries = new HashSet<>();
+    @Column(nullable = true, columnDefinition = "int default 0")
+    private int quantityDelivered =0 ;
+    @Column(nullable = true, columnDefinition = "int default 0")
+    private int quantityReceived = 0;
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;

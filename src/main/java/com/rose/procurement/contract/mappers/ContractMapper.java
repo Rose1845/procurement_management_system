@@ -12,10 +12,14 @@ public interface ContractMapper {
     ContractMapper MAPPER = Mappers.getMapper(ContractMapper.class);
     @Mappings({
             @Mapping(target = "supplier.vendorId", source = "vendorId"),
+            @Mapping(target = "items", source = "items") // Add this mapping for items
+
             // Add other mappings as needed
     })    Contract toEntity(ContractDto contractDto);
     @Mappings({
             @Mapping(target = "vendorId", source = "supplier.vendorId"),
+            @Mapping(target = "items", source = "items") // Add this mapping for items
+
             // Add other mappings as needed
     })    ContractDto toDto(Contract contract);
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.contract.entities.Contract;
+import com.rose.procurement.delivery.Delivery;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.invoice.Invoice;
@@ -50,6 +51,9 @@ public class PurchaseOrder {
     @JoinColumn(name = "supplier_id")
     @JsonIgnore
     private Supplier supplier;
+    @OneToOne(mappedBy = "purchaseOrder")
+    @JsonIgnore
+    private Delivery delivery;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "order_items",

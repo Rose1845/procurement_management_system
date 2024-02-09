@@ -1,5 +1,6 @@
 package com.rose.procurement.user;
 
+import com.rose.procurement.org.Organization;
 import com.rose.procurement.user.token.Token;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -31,6 +32,8 @@ public class User implements UserDetails {
   private String password;
   @Enumerated(EnumType.STRING)
   private Role role;
+  @OneToOne(mappedBy = "user")
+  private Organization organization;
 //  @ManyToMany(fetch = FetchType.EAGER,cascade ={CascadeType.MERGE,CascadeType.REFRESH})
 //  @JoinTable(name = "user_with_roles",
 //          joinColumns = {@JoinColumn(name = "user_side_id")},
