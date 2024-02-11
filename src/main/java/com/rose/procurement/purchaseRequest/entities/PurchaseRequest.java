@@ -6,6 +6,7 @@ import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.invoice.Invoice;
 import com.rose.procurement.items.entity.Item;
+import com.rose.procurement.offer.Offer;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
@@ -49,6 +50,9 @@ public class PurchaseRequest {
     )
     @JsonIgnore
     private Set<Supplier> suppliers;
+    @OneToOne(mappedBy = "purchaseRequest")
+    @JsonIgnore
+    private Offer offer;
     @Enumerated
     private ApprovalStatus approvalStatus;
     @ManyToMany( fetch = FetchType.LAZY)

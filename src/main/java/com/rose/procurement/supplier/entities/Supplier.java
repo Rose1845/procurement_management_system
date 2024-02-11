@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.entity.Item;
+import com.rose.procurement.offer.Offer;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.utils.address.Address;
@@ -67,8 +68,8 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier")
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrder;
-    @ManyToMany(mappedBy = "suppliers", cascade = CascadeType.ALL)
-    private Set<SupplierOffer> supplierOffers = new HashSet<>();
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
+    private Set<Offer> offers;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

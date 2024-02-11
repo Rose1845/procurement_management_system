@@ -47,12 +47,12 @@ public class PurchaseRequestController {
         PurchaseRequest updatedPurchaseRequest = purchaseRequestService.createPurchaseOrder(purchaseRequestId, purchaseOrder);
         return new ResponseEntity<>(updatedPurchaseRequest, HttpStatus.OK);
     }
-    @PostMapping("/{purchaseRequestId}")
-    public ResponseEntity<String> submitPurchaseRequestToSuppliers(
-            @PathVariable Long purchaseRequestId) {
-        purchaseRequestService.submitPurchaseRequestToSuppliers(purchaseRequestId);
-        return ResponseEntity.ok("Purchase request submitted to suppliers successfully.");
-    }
+//    @PostMapping("/{purchaseRequestId}")
+//    public ResponseEntity<String> submitPurchaseRequestToSuppliers(
+//            @PathVariable Long purchaseRequestId) {
+//        purchaseRequestService.submitPurchaseRequestToSuppliers(purchaseRequestId);
+//        return ResponseEntity.ok("Purchase request submitted to suppliers successfully.");
+//    }
 
 
 }

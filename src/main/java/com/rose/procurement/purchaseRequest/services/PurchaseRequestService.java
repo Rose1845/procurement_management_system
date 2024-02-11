@@ -3,14 +3,14 @@ package com.rose.procurement.purchaseRequest.services;
 import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
+import com.rose.procurement.offer.Offer;
+import com.rose.procurement.offer.OfferItem;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
 import com.rose.procurement.purchaseRequest.mappers.PurchaseRequestMapper;
 import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository;
 import com.rose.procurement.supplier.entities.Supplier;
-import com.rose.procurement.supplier.entities.SupplierOffer;
-import com.rose.procurement.supplier.services.SupplierOfferService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +23,14 @@ import java.util.Set;
 public class PurchaseRequestService {
     private final PurchaseRequestRepository purchaseRequestRepository;
     private final PurchaseRequestMapper purchaseRequestMapper ;
-    private final SupplierOfferService supplierOfferService;
+//    private final SupplierOfferService supplierOfferService;
     private final EmailService emailService;
 
     public PurchaseRequestService(PurchaseRequestRepository purchaseRequestRepository,
-                                  PurchaseRequestMapper purchaseRequestMapper, SupplierOfferService supplierOfferService, EmailService emailService) {
+                                  PurchaseRequestMapper purchaseRequestMapper, EmailService emailService) {
         this.purchaseRequestRepository = purchaseRequestRepository;
         this.purchaseRequestMapper = purchaseRequestMapper;
-        this.supplierOfferService = supplierOfferService;
+//        this.supplierOfferService = supplierOfferService;
         this.emailService = emailService;
     }
 
@@ -74,30 +74,30 @@ public class PurchaseRequestService {
         }
     }
 
-    public void submitPurchaseRequestToSuppliers(Long purchaseRequestId) {
-        // Retrieve the purchase request by ID
-        PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId)
-                .orElseThrow(() -> new RuntimeException("Purchase request not found"));
-
-        // Validate that the purchase request is in a valid state for submission
-        for (Supplier supplier : purchaseRequest.getSuppliers()) {
-            // For each item in the purchase request, create a placeholder supplier offer
-            for (Item purchaseRequestItem : purchaseRequest.getItems()) {
-                SupplierOffer supplierOffer = new SupplierOffer();
-                supplierOffer.setItems((Set<Item>) purchaseRequestItem);
-                // Set default values or leave them null for suppliers to fill in
-                // This could include unit price, delivery time, etc.
-//                supplierOffer.setUnitPrice();
-                supplierOfferService.addSupplierOffer(purchaseRequestId,supplierOffer);
-                emailService.sendEmail(supplier.getEmail(),"Purchase Request Offer","PLease check the offer");
-            }
-        }
-
-
-        // Update the purchase request status or perform any other necessary actions
-
-        // You might want to notify suppliers via email, messaging, etc.
-    }
+//    public void submitPurchaseRequestToSuppliers(Long purchaseRequestId) {
+//        // Retrieve the purchase request by ID
+//        PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId)
+//                .orElseThrow(() -> new RuntimeException("Purchase request not found"));
+//
+//        // Validate that the purchase request is in a valid state for submission
+//        for (Supplier supplier : purchaseRequest.getSuppliers()) {
+//            // For each item in the purchase request, create a placeholder supplier offer
+//            for (OfferItem purchaseRequestItem : purchaseRequest.getItems()) {
+//                Offer offer = new Offer();
+//                offer.setItems((Set<Item>) purchaseRequestItem);
+//                // Set default values or leave them null for suppliers to fill in
+//                // This could include unit price, delivery time, etc.
+////                supplierOffer.setUnitPrice();
+//                supplierOfferService.addSupplierOffer(purchaseRequestId,supplierOffer);
+//                emailService.sendEmail(supplier.getEmail(),"Purchase Request Offer","PLease check the offer");
+//            }
+//        }
+//
+//
+//        // Update the purchase request status or perform any other necessary actions
+//
+//        // You might want to notify suppliers via email, messaging, etc.
+//    }
 
 
 }

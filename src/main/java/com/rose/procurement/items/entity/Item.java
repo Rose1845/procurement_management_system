@@ -10,7 +10,6 @@ import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisition;
 import com.rose.procurement.supplier.entities.Supplier;
-import com.rose.procurement.supplier.entities.SupplierOffer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -68,9 +67,9 @@ public class Item {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-    @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<SupplierOffer> supplierOffers;
+//    @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private Set<SupplierOffer> supplierOffers;
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<DeliveryItem> deliveriesItems;

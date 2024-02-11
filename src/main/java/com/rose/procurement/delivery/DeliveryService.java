@@ -116,6 +116,7 @@ public class DeliveryService {
                 .expectedOn(deliveryDTo.getExpectedOn())
                 .build();
 
+
         Set<DeliveryItem> deliveryItems = new HashSet<>();
         for (DeliveryItemDTo itemDto : deliveryDTo.getItemDToSet()) {
             Item item = itemRepository.findById(itemDto.getItemId())
