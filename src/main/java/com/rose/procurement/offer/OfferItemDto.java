@@ -9,6 +9,9 @@ import lombok.*;
 @NoArgsConstructor
 public class OfferItemDto {
     private String itemId;
-//    private Integer vendorId;
     private double offerUnitPrice;
 }
+
+
+
+

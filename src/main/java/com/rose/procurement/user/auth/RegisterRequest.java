@@ -15,18 +15,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
-  @NotBlank
   @NotNull
   private String firstname;
-  @NotBlank
   @NotNull
   private String lastname;
-  @NotBlank
   @NotNull
   @Email
   @Column(unique = true)
   private String email;
-  @NotBlank
   @NotNull
   private String password;
 }

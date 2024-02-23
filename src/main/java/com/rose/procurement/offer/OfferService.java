@@ -5,6 +5,7 @@ import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 
@@ -67,13 +68,19 @@ import java.util.*;
             this.offerRepository = offerRepository;
             this.supplierRepository = supplierRepository;
         }
+        @Transactional
         public Offer createOffersForPurchaseRequest(Long purchaseRequestId, MultiOfferDto multiOfferDto) {
             Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
             if (purchaseRequestOptional.isEmpty()) {
                 throw new EntityNotFoundException("Purchase request not found");
             }
+
             PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
-            Offer newOffer = new Offer();
+
+            // Create a single offer for the entire purchase request
+            Offer singleOffer = Offer.builder()
+                    .purchaseRequest(purchaseRequest)
+                    .build();
 
             Set<OfferItem> offerItems = new HashSet<>();
 
@@ -81,25 +88,62 @@ import java.util.*;
                 Supplier supplier = supplierRepository.findById(offerDto.getSupplierId())
                         .orElseThrow(() -> new EntityNotFoundException("Supplier not found"));
 
-                for (OfferItemDto item : offerDto.getItemDtoSet()) {
-                    Item item1 = itemRepository.findById(item.getItemId())
+                for (OfferItemDto itemDto : offerDto.getItemDtoSet()) {
+                    Item item = itemRepository.findById(itemDto.getItemId())
                             .orElseThrow(() -> new EntityNotFoundException("Item not found"));
-                    OfferItem offerItem = new OfferItem();
-                    offerItem.setItem(item1);
-                    offerItem.setOffer(newOffer);
-                    offerItem.setOfferUnitPrice(item.getOfferUnitPrice());
+
+                    OfferItem offerItem = OfferItem.builder()
+                            .item(item)
+                            .offer(singleOffer)
+                            .offerUnitPrice(itemDto.getOfferUnitPrice())
+                            .offerTotalPrice(itemDto.getOfferUnitPrice())  // You may want to adjust this calculation
+                            .build();
                     offerItems.add(offerItem);
                 }
-                newOffer.setSupplier(supplier);
+
+                // Set the common supplier for the entire offer
+                singleOffer.setSupplier(supplier);
             }
 
-            // Create a new offer for the entire purchase request
-            newOffer.setPurchaseRequest(purchaseRequest);
-            newOffer.setItems(offerItems);
+            // Set all the items to the single offer
+            singleOffer.setItems(offerItems);
 
             // Save the single offer for the entire purchase request
-            return offerRepository.save(newOffer);
+            return offerRepository.save(singleOffer);
         }
+//        public Offer createOffersForPurchaseRequest(Long purchaseRequestId, MultiOfferDto multiOfferDto) {
+//            Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
+//            if (purchaseRequestOptional.isEmpty()) {
+//                throw new EntityNotFoundException("Purchase request not found");
+//            }
+//            PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
+//            Offer newOffer = new Offer();
+//
+//            Set<OfferItem> offerItems = new HashSet<>();
+//
+//            for (OfferDto offerDto : multiOfferDto.getOfferDtoSet()) {
+//                Supplier supplier = supplierRepository.findById(offerDto.getSupplierId())
+//                        .orElseThrow(() -> new EntityNotFoundException("Supplier not found"));
+//
+//                for (OfferItemDto item : offerDto.getItemDtoSet()) {
+//                    Item item1 = itemRepository.findById(item.getItemId())
+//                            .orElseThrow(() -> new EntityNotFoundException("Item not found"));
+//                    OfferItem offerItem = new OfferItem();
+//                    offerItem.setItem(item1);
+//                    offerItem.setOffer(newOffer);
+//                    offerItem.setOfferUnitPrice(item.getOfferUnitPrice());
+//                    offerItems.add(offerItem);
+//                }
+//                newOffer.setSupplier(supplier);
+//            }
+//
+//            // Create a new offer for the entire purchase request
+//            newOffer.setPurchaseRequest(purchaseRequest);
+//            newOffer.setItems(offerItems);
+//
+//            // Save the single offer for the entire purchase request
+//            return offerRepository.save(newOffer);
+//        }
         public Optional<Offer> getOffer(Long id){
             return offerRepository.findById(id);
         }

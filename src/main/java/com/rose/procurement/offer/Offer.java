@@ -25,12 +25,10 @@ public class Offer {
     @OneToOne
     @JoinColumn(name = "purchase_request_id")
     private PurchaseRequest purchaseRequest;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "supplier_id")
     @JsonBackReference("offerSupplier")
     private Supplier supplier;
-
-
 
 
 //    @ManyToMany(fetch = FetchType.EAGER)
