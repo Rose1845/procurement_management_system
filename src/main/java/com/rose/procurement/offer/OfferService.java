@@ -73,6 +73,7 @@ import java.util.*;
                 throw new EntityNotFoundException("Purchase request not found");
             }
             PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
+            Offer newOffer = new Offer();
 
             Set<OfferItem> offerItems = new HashSet<>();
 
@@ -83,22 +84,26 @@ import java.util.*;
                 for (OfferItemDto item : offerDto.getItemDtoSet()) {
                     Item item1 = itemRepository.findById(item.getItemId())
                             .orElseThrow(() -> new EntityNotFoundException("Item not found"));
-
                     OfferItem offerItem = new OfferItem();
                     offerItem.setItem(item1);
+                    offerItem.setOffer(newOffer);
                     offerItem.setOfferUnitPrice(item.getOfferUnitPrice());
                     offerItems.add(offerItem);
                 }
+                newOffer.setSupplier(supplier);
             }
 
             // Create a new offer for the entire purchase request
-            Offer newOffer = new Offer();
             newOffer.setPurchaseRequest(purchaseRequest);
             newOffer.setItems(offerItems);
 
             // Save the single offer for the entire purchase request
             return offerRepository.save(newOffer);
         }
+        public Optional<Offer> getOffer(Long id){
+            return offerRepository.findById(id);
+        }
+
 
 //        public Offer createOffersForPurchaseRequest(Long purchaseRequestId, MultiOfferDto multiSupplierOfferDto) {
 //            // Retrieve the purchase request
@@ -227,9 +232,6 @@ import java.util.*;
 //
 //        }
 
-        public Optional<Offer> getOffer(Long id){
-            return offerRepository.findById(id);
-        }
     }
 
 //}

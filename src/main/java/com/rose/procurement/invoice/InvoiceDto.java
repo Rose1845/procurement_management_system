@@ -23,6 +23,6 @@ public class InvoiceDto{
     private LocalDate dueDate;
     @NotNull
     private double totalAmount;
-    @NotNull
-    private  Long purchaseOrderId;
+    private Long purchaseOrderId;
+
 }

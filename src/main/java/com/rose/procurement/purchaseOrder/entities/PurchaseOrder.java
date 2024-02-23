@@ -3,6 +3,7 @@ package com.rose.procurement.purchaseOrder.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.delivery.Delivery;
@@ -68,6 +69,7 @@ public class PurchaseOrder {
     @OneToOne(mappedBy = "purchaseOrder")
     @JsonIgnore
     private Invoice invoice;
+    private double TotalAmount;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -77,4 +79,6 @@ public class PurchaseOrder {
     @CreatedBy
     @Column(name = "created_by")
     private Integer createdBy;
+
+
 }

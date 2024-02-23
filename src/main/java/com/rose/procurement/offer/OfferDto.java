@@ -12,6 +12,6 @@ import java.util.Set;
 @Builder
 public class OfferDto {
     private  Set<OfferItemDto> itemDtoSet;
-    private Long supplierId;
+    private String supplierId;
 
 }

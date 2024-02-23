@@ -34,8 +34,8 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 public class Supplier {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long vendorId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String vendorId;
 
     private String name;
 
@@ -56,10 +56,10 @@ public class Supplier {
     private PaymentType paymentType;
 
     private String termsAndConditions;
-    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<Contract> contracts;
-    @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "supplier",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Item> items;
     @ManyToMany(mappedBy = "suppliers")
@@ -68,7 +68,7 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier")
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrder;
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Offer> offers;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

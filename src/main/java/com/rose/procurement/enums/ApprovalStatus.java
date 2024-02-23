@@ -7,5 +7,9 @@ import lombok.RequiredArgsConstructor;
 public enum ApprovalStatus {
     PENDING,
     APPROVED,
-    REJECT
+    REJECT,
+    ISSUED,
+    IN_DELIVERY,
+    FULLY_RECEIVED,
+    CLOSED;
 }

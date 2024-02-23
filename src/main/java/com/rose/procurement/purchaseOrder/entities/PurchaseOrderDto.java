@@ -37,6 +37,6 @@ public class PurchaseOrderDto {
     @NotNull
     private Set<Item> items;
     @NotNull
-    private Long vendorId;
+    private String vendorId;
 }
 

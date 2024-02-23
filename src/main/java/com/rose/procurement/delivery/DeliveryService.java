@@ -1,4 +1,5 @@
 package com.rose.procurement.delivery;
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
@@ -15,14 +16,12 @@ import java.util.*;
 @Service
 public class DeliveryService {
     private final DeliveryRepository deliveryRepository;
-    private final PurchaseOrderMapper  purchaseOrderMapper;
     private final ItemRepository itemRepository;
     private final PurchaseOrderRepository purchaseOrderRepository;
 
     @Autowired
-    public DeliveryService(DeliveryRepository deliveryRepository, PurchaseOrderService purchaseOrderService, PurchaseOrderMapper purchaseOrderMapper, ItemRepository itemRepository, PurchaseOrderRepository purchaseOrderRepository) {
+    public DeliveryService(DeliveryRepository deliveryRepository, PurchaseOrderService purchaseOrderService, ItemRepository itemRepository, PurchaseOrderRepository purchaseOrderRepository) {
         this.deliveryRepository = deliveryRepository;
-        this.purchaseOrderMapper = purchaseOrderMapper;
         this.itemRepository = itemRepository;
         this.purchaseOrderRepository = purchaseOrderRepository;
     }
@@ -134,6 +133,7 @@ public class DeliveryService {
         Delivery savedDelivery = deliveryRepository.save(delivery);
         // Update PurchaseOrder status and other fields
         purchaseOrder.setDelivery(savedDelivery);
+        purchaseOrder.setApprovalStatus(ApprovalStatus.IN_DELIVERY);
         purchaseOrderRepository.save(purchaseOrder);
         return savedDelivery;
     }

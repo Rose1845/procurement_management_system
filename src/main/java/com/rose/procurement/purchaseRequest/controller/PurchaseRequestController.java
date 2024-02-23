@@ -1,18 +1,16 @@
 package com.rose.procurement.purchaseRequest.controller;
 
 
-import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
 import com.rose.procurement.purchaseRequest.services.PurchaseRequestService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@Slf4j
 @RestController
 @RequestMapping("api/v1/purchase-request")
 public class PurchaseRequestController {
@@ -22,9 +20,11 @@ public class PurchaseRequestController {
         this.purchaseRequestService = purchaseRequestService;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public PurchaseRequestDto createPurchaseRequest(@RequestBody @Valid  PurchaseRequestDto purchaseRequest) {
-        return purchaseRequestService.createPurchaseRequest(purchaseRequest);
+        log.info("controller PR....");
+        System.out.println(purchaseRequest);
+           return     purchaseRequestService.createPurchaseRequest(purchaseRequest);
     }
 
     @GetMapping
@@ -40,13 +40,13 @@ public class PurchaseRequestController {
     }
 
     // Endpoint to associate a Purchase Order with a Purchase Request
-    @PostMapping("/{purchaseRequestId}/create-purchase-order")
-    public ResponseEntity<PurchaseRequest> createPurchaseOrder(
-            @PathVariable Long purchaseRequestId,
-            @RequestBody PurchaseOrder purchaseOrder) {
-        PurchaseRequest updatedPurchaseRequest = purchaseRequestService.createPurchaseOrder(purchaseRequestId, purchaseOrder);
-        return new ResponseEntity<>(updatedPurchaseRequest, HttpStatus.OK);
-    }
+//    @PostMapping("/{purchaseRequestId}/create-purchase-order")
+//    public ResponseEntity<PurchaseRequest> createPurchaseOrder(
+//            @PathVariable Long purchaseRequestId,
+//            @RequestBody PurchaseOrder purchaseOrder) {
+//        PurchaseRequest updatedPurchaseRequest = purchaseRequestService.createPurchaseOrder(purchaseRequestId, purchaseOrder);
+//        return new ResponseEntity<>(updatedPurchaseRequest, HttpStatus.OK);
+//    }
 //    @PostMapping("/{purchaseRequestId}")
 //    public ResponseEntity<String> submitPurchaseRequestToSuppliers(
 //            @PathVariable Long purchaseRequestId) {

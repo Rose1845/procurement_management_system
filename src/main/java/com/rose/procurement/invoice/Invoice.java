@@ -3,6 +3,7 @@ package com.rose.procurement.invoice;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.rose.procurement.enums.InvoiceStatus;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
@@ -33,6 +34,8 @@ public class Invoice {
     private String invoiceId;
     private String invoiceNumber;
     private LocalDate dueDate;
+    @Enumerated
+    private InvoiceStatus invoiceStatus;
     @NotNull
     private double totalAmount;
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)

@@ -1,6 +1,7 @@
 package com.rose.procurement.offer;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
@@ -28,6 +29,21 @@ public class Offer {
     @JoinColumn(name = "supplier_id")
     @JsonBackReference("offerSupplier")
     private Supplier supplier;
+
+
+
+
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(
+//            name = "offer_suppliers",
+//            joinColumns = {
+//                    @JoinColumn(name = "offer_id",referencedColumnName = "id")
+//            },
+//            inverseJoinColumns = {
+//                    @JoinColumn(name = "supplier_id",referencedColumnName = "vendorId")
+//            }
+//    )@JsonIgnore
+//    private Set<Supplier> suppliers;
 }
 
 

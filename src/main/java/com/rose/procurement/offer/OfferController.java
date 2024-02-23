@@ -3,7 +3,6 @@ package com.rose.procurement.offer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,4 +27,6 @@ public class OfferController {
     public Optional<Offer> getOffer(@PathVariable("id") Long id){
         return offerService.getOffer(id);
     }
+
+
 }

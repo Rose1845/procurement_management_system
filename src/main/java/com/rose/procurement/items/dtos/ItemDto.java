@@ -38,6 +38,6 @@ public class ItemDto {
     @NotNull
     private double totalPrice;
     @NotNull
-    private Long vendorId;
+    private String vendorId;
 
 }

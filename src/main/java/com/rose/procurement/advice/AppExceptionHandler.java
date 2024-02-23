@@ -27,12 +27,11 @@ public class AppExceptionHandler {
             codes.add(e.getCode());
             fields.add(e.getField());
         });
-        ProcureErrorBuilder errorBuilder = ProcureErrorBuilder.builder()
+        return ProcureErrorBuilder.builder()
                 .errors(errors)
                 .codes(codes)
                 .fields(fields)
                 .build();
-        return errorBuilder;
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

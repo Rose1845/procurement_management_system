@@ -1,12 +1,15 @@
 package com.rose.procurement.purchaseOrder.controller;
 
 
+import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
 import com.rose.procurement.purchaseOrder.services.PurchaseOrderService;
 import com.rose.procurement.utils.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("api/v1/purchase-order")
+@Slf4j
 public class PurchaseOrderController {
     private final PurchaseOrderService purchaseOrderService;
 
@@ -83,4 +87,48 @@ public class PurchaseOrderController {
     public String generateReport(@PathVariable("id") Long purchaseOrderId) throws JRException, FileNotFoundException {
         return purchaseOrderService.exportReport(purchaseOrderId);
     }
+//    @PostMapping("/{purchaseOrderId}/send-to-supplier")
+//    public ResponseEntity<PurchaseOrderDto> sendPurchaseOrderToSupplier(@PathVariable Long purchaseOrderId) {
+//        PurchaseOrderDto updatedPurchaseOrder = purchaseOrderService.sendPurchaseOrderToSupplier(purchaseOrderId);
+//        return ResponseEntity.ok(updatedPurchaseOrder);
+//    }
+
+//    @GetMapping("/approve/{purchaseOrderId}")
+//    public String approvePurchaseOrder(@PathVariable Long purchaseOrderId) {
+//        // Logic to handle the supplier's approval
+//        // You might want to update the approval status in the database
+//
+//        return "Purchase Order approved successfully";
+//    }
+    @PostMapping("/send-order-to-supplier/{id}")
+    public ResponseEntity<String> sendContractToSupplier(@PathVariable("id") Long purchaseOrderId) throws ProcureException {
+        log.info("start sending order email to supplier...");
+
+        try{
+            return ResponseEntity.ok(purchaseOrderService.sendApprovalEmailToSupplier(purchaseOrderId));
+
+        }catch (ProcureException | Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    // Step 3: Edit Approval Status by Supplier
+    @PatchMapping("/approve/{id}")
+    public String editContractApprovalStatus(
+            @PathVariable("id") Long purchaseOrderId,
+
+            @RequestParam String approvalStatus)  {
+        // Implement logic to update the contract approval status
+        try{
+            ResponseEntity.ok(purchaseOrderService.updateApprovalStatus(purchaseOrderId, ApprovalStatus.valueOf(approvalStatus)));
+            return "approved!!";
+
+        }catch (ProcureException | Exception e){
+            ResponseEntity.badRequest().body(e.getMessage());
+            return "an error occured";
+
+        }
+    }
+
 }
