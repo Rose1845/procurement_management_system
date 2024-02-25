@@ -23,7 +23,6 @@ public class OfferItem {
     private Item item;
     @ManyToOne
     @JoinColumn(name = "vendor_id")
-//    @JsonManagedReference
     private Supplier supplier;
     @JsonBackReference
     @ManyToOne

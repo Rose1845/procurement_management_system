@@ -27,5 +27,3 @@ public class Offer {
     @JoinColumn(name = "purchase_request_id")
     private PurchaseRequest purchaseRequest;
 }
-
-

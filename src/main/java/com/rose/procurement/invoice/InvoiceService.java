@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class InvoiceService {
@@ -34,11 +35,10 @@ public class InvoiceService {
             throw ProcureException.builder().metadata("create-invoice").message("purchase order with id do not exists").build();
         }
         Invoice invoiceDto1 = invoiceMapper.toEntity(invoiceDto);
-        invoiceDto1.setInvoiceNumber(invoiceDto.getInvoiceNumber());
+        invoiceDto1.setInvoiceNumber(generateInvoiceNumber());
         invoiceDto1.setDueDate(invoiceDto.getDueDate());
+        invoiceDto1.setInvoiceDate(invoiceDto.getInvoiceDate());
         invoiceDto1.setInvoiceStatus(InvoiceStatus.APPROVED_FOR_PAYMENT);
-        invoiceDto1.setTotalAmount(invoiceDto.getTotalAmount());
-//        invoiceDto1.setPurchaseOrder(purchaseOrder.get());
         purchaseOrder.ifPresent(invoiceDto1::setPurchaseOrder);
         Invoice savedInvoice = invoiceRepository.save(invoiceDto1);
         return invoiceMapper.toDto(savedInvoice);
@@ -51,6 +51,22 @@ public class InvoiceService {
     }
     public Optional<Invoice> getInvoice(String invoiceId){
         return invoiceRepository.findById(invoiceId);
+    }
+
+    private String generateInvoiceNumber() {
+        // Generate 3 random letters
+        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder randomLetters = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < 3; i++) {
+            randomLetters.append(letters.charAt(random.nextInt(letters.length())));
+        }
+
+        // Generate 2 random numbers
+        int randomNumber = random.nextInt(90) + 10;
+
+        // Combine "QR", letters, and numbers
+        return "IN" + randomLetters.toString() + randomNumber;
     }
 
 }

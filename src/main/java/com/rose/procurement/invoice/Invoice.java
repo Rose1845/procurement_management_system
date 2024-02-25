@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Entity
 @AllArgsConstructor
@@ -34,6 +35,7 @@ public class Invoice {
     private String invoiceId;
     private String invoiceNumber;
     private LocalDate dueDate;
+    private LocalDate invoiceDate;
     @Enumerated
     private InvoiceStatus invoiceStatus;
     @NotNull
@@ -51,4 +53,28 @@ public class Invoice {
     @CreatedBy
     @Column(name = "created_by")
     private Integer createdBy;
+
+
+
+    private String generateInvoiceNumber() {
+        // Generate 3 random letters
+        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        StringBuilder randomLetters = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < 3; i++) {
+            randomLetters.append(letters.charAt(random.nextInt(letters.length())));
+        }
+        // Generate 2 random numbers
+        int randomNumber = random.nextInt(90) + 10;
+        // Combine "QR", letters, and numbers
+        return "IN" + randomLetters.toString() + randomNumber;
+    }
+
+    @PrePersist
+    private void prePersist() {
+        // Set invoiceNumber before persisting the entity
+        if (invoiceNumber == null || invoiceNumber.isEmpty()) {
+            invoiceNumber = generateInvoiceNumber();
+        }
+    }
 }

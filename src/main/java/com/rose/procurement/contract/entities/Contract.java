@@ -72,13 +72,29 @@ public class Contract {
     @JsonIgnore
     private static final ContractStatus EXPIRED_STATUS = ContractStatus.EXPIRED;
 
-    public void checkAndSetExpiredStatus() {
-        LocalDate currentDate = LocalDate.now();
 
-        if (contractEndDate != null && currentDate.isAfter(contractEndDate)) {
-            this.contractStatus = EXPIRED_STATUS;
+    @PrePersist
+    private void prePersist() {
+        // Set contractStatus before persisting the entity
+        if (contractStatus == null) {
+            contractStatus = checkContractEndDateExpired() ? ContractStatus.EXPIRED : ContractStatus.OPEN;
         }
     }
 
-
+    private boolean checkContractEndDateExpired() {
+        // Check if the contract end date is in the past
+        return contractEndDate != null && contractEndDate.isBefore(LocalDate.now());
+    }
+//    public void checkAndSetExpiredStatus() {
+//        LocalDate currentDate = LocalDate.now();
+//        if (contractEndDate != null && currentDate.isAfter(contractEndDate)) {
+//            this.contractStatus = EXPIRED_STATUS;
+//        }
+//    }
 }
+
+
+
+
+
+

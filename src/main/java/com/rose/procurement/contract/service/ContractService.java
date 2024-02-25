@@ -16,6 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -38,6 +39,8 @@ public class ContractService {
         Optional<Supplier> supplier = supplierRepository.findById(contractRequest.getVendorId());
 
         Contract contract1 = ContractMapper.MAPPER.toEntity(contractRequest);
+        contract1.setContractStatus(checkContractEndDateExpired(contractRequest.getContractEndDate()) ? ContractStatus.EXPIRED : ContractStatus.OPEN);
+
         contract1.setContractEndDate(contractRequest.getContractEndDate());
         contract1.setContractTitle(contractRequest.getContractTitle());
         contract1.setContractStartDate(contractRequest.getContractStartDate());
@@ -51,9 +54,7 @@ public class ContractService {
         log.info("contract data",savedCOntract);
         return ContractMapper.MAPPER.toDto(savedCOntract);
     }
-
     public List<Contract> getAllContracts(){
-
         return new ArrayList<>(contractRepository.findAll());
     }
     public String deleteContract(String contractId){
@@ -72,8 +73,9 @@ public class ContractService {
 
     public Contract updateContract(String contractId,ContractDto contractRequest) throws ProcureException {
         Contract contract = contractRepository.findById(contractId).orElseThrow(()-> new ProcureException("contract id do not exists"));
-        contract.checkAndSetExpiredStatus();
-            contract.setContractEndDate(contractRequest.getContractEndDate());
+        contract.setContractStatus(checkContractEndDateExpired(contractRequest.getContractEndDate()) ? ContractStatus.EXPIRED : ContractStatus.OPEN);
+
+        contract.setContractEndDate(contractRequest.getContractEndDate());
             contract.setContractTitle(contractRequest.getContractTitle());
             contract.setContractType(contractRequest.getContractType());
             Supplier supplier = supplierRepository.findById(contractRequest.getVendorId()).orElseThrow(()->new RuntimeException("no supplier with id"+ contractRequest.getVendorId()));
@@ -157,7 +159,6 @@ public class ContractService {
     public Contract updateApprovalStatus(String contractId, ContractStatus contractStatus) throws ProcureException {
         // Retrieve the existing contract from the database
         Contract existingContract = contractRepository.findById(contractId).orElseThrow(()->new ProcureException("id already exists"));
-        existingContract.checkAndSetExpiredStatus();
         // Update the approval status
         existingContract.setContractStatus(contractStatus);
         // Save the updated contract in the database
@@ -181,11 +182,15 @@ public class ContractService {
                     .createdAt(LocalDateTime.now()) // Reset creation timestamp
                     .updatedAt(LocalDateTime.now()) // Reset update timestamp
                     .build();
-            clonedContract.checkAndSetExpiredStatus();
             // Save the cloned contract
             Contract savedClonedContract = contractRepository.save(clonedContract);
 
             return contractMapper.toDto(savedClonedContract);
         });
+    }
+
+    private boolean checkContractEndDateExpired(LocalDate contractEndDate) {
+        // Check if the contract end date is in the past
+        return contractEndDate != null && contractEndDate.isBefore(LocalDate.now());
     }
 }

@@ -54,8 +54,6 @@ public class PurchaseRequest {
     private Set<Supplier> suppliers;
     @OneToOne(mappedBy = "purchaseRequest",cascade = CascadeType.ALL)
     @JsonBackReference
-//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-//    @JsonIdentityReference(alwaysAsId = true)
     private Offer offer;
     @Enumerated
     private ApprovalStatus approvalStatus;
