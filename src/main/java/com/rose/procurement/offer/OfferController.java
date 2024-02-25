@@ -21,7 +21,7 @@ public class OfferController {
             @RequestBody MultiOfferDto offerItemDto
     ) {
         // Assuming you have a method to retrieve the Supplier based on supplierId
-        return offerService.createOffersForPurchaseRequest(purchaseRequestId, offerItemDto);
+        return offerService.createOfferForPurchaseRequest(purchaseRequestId, offerItemDto);
     }
     @GetMapping("/{id}")
     public Optional<Offer> getOffer(@PathVariable("id") Long id){

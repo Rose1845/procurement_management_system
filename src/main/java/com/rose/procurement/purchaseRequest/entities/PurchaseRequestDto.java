@@ -10,6 +10,9 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -19,6 +22,8 @@ import java.util.Set;
  */
 @Data
 @Builder
+@Setter
+@Getter
 public class PurchaseRequestDto {
     @NotNull
     @NotBlank

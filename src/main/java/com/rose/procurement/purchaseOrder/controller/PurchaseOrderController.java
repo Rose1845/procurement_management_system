@@ -38,6 +38,10 @@ public class PurchaseOrderController {
     public Optional<PurchaseOrder> getPurchaseOrderById(@PathVariable("id") Long purchaseOrderId){
         return purchaseOrderService.findPurchaseOrderById(purchaseOrderId);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePurchaseOrder(@PathVariable("id") Long purchaseOrderId){
+        return ResponseEntity.ok(purchaseOrderService.deletePurchaseOrder(purchaseOrderId));
+    }
 
     @GetMapping
     public List<PurchaseOrder> getAllPO(){

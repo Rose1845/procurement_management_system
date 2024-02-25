@@ -34,6 +34,7 @@ public class PurchaseOrderDto {
     @NotNull
     private PaymentType paymentType;
     private ApprovalStatus approvalStatus;
+    private double totalAmount;
     @NotNull
     private Set<Item> items;
     @NotNull

@@ -1,6 +1,6 @@
 package com.rose.procurement.purchaseRequest.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.enums.PaymentType;
@@ -30,6 +30,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "purchaseRequestId")
+
 @EntityListeners(AuditingEntityListener.class)
 public class PurchaseRequest {
     @Id
@@ -50,8 +52,10 @@ public class PurchaseRequest {
     )
     @JsonIgnore
     private Set<Supplier> suppliers;
-    @OneToOne(mappedBy = "purchaseRequest")
-    @JsonIgnore
+    @OneToOne(mappedBy = "purchaseRequest",cascade = CascadeType.ALL)
+    @JsonBackReference
+//    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+//    @JsonIdentityReference(alwaysAsId = true)
     private Offer offer;
     @Enumerated
     private ApprovalStatus approvalStatus;

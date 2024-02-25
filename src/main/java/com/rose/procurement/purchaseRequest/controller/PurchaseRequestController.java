@@ -1,6 +1,7 @@
 package com.rose.procurement.purchaseRequest.controller;
 
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
 import com.rose.procurement.purchaseRequest.services.PurchaseRequestService;
@@ -21,7 +22,7 @@ public class PurchaseRequestController {
     }
 
     @PostMapping("/create")
-    public PurchaseRequestDto createPurchaseRequest(@RequestBody @Valid  PurchaseRequestDto purchaseRequest) {
+    public PurchaseRequestDto createPurchaseRequest(@RequestBody @Valid  PurchaseRequestDto purchaseRequest) throws ProcureException {
         log.info("controller PR....");
         System.out.println(purchaseRequest);
            return     purchaseRequestService.createPurchaseRequest(purchaseRequest);
@@ -35,7 +36,6 @@ public class PurchaseRequestController {
     @GetMapping("/{id}")
     public Optional<PurchaseRequestDto> getPurchaseRequestById(@PathVariable Long id) {
        return purchaseRequestService.getPurchaseRequestById(id);
-
 
     }
 

@@ -55,10 +55,7 @@ private final SupplierRepository supplierRepository;
        purchaseOrder.setApprovalStatus(ApprovalStatus.PENDING);
        purchaseOrder.setPaymentType(purchaseOrderRequest.getPaymentType());
         Set<Item> items = new HashSet<>(purchaseOrder.getItems());
-        double totalAmount = purchaseOrder.getTotalAmount();
-        for (Item item : purchaseOrder.getItems()) {
-            totalAmount += item.getTotalPrice();
-        }
+        double totalAmount = purchaseOrder.getItems().stream().mapToDouble(Item::getTotalPrice).sum();
         purchaseOrder.setTotalAmount(totalAmount);
         purchaseOrder.setItems(new HashSet<>(items));
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate());
@@ -77,6 +74,8 @@ private final SupplierRepository supplierRepository;
             purchaseOrder.get().setTermsAndConditions(purchaseOrderDto.getTermsAndConditions());
             purchaseOrder.get().setDeliveryDate(purchaseOrderDto.getDeliveryDate());
             purchaseOrder.get().setItems(purchaseOrderDto.getItems());
+            double totalAmount = purchaseOrderDto.getItems().stream().mapToDouble(Item::getTotalPrice).sum();
+            purchaseOrderDto.setTotalAmount(totalAmount);
             Supplier supplier = supplierRepository.findById(purchaseOrderDto.getVendorId()).orElseThrow(()->new RuntimeException("no supplier with id"+ purchaseOrderDto.getVendorId()));
             purchaseOrder.get().setSupplier(supplier);
             purchaseOrder.get().setUpdatedAt(LocalDate.now().atStartOfDay());
@@ -119,6 +118,10 @@ private final SupplierRepository supplierRepository;
 
     public Optional<PurchaseOrder> findPurchaseOrderById(Long purchaseOrderId) {
         return purchaseOrderRepository.findById(purchaseOrderId);
+    }
+    public String deletePurchaseOrder(Long purchaseOrderId){
+        purchaseOrderRepository.deleteById(purchaseOrderId);
+        return "deleted succesffully";
     }
 
 

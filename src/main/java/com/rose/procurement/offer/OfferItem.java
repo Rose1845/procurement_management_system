@@ -1,6 +1,6 @@
 package com.rose.procurement.offer;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.*;
 import com.rose.procurement.delivery.Delivery;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.supplier.entities.Supplier;
@@ -13,6 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
 public class OfferItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,12 +21,13 @@ public class OfferItem {
     @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;
-//    @ManyToOne
-//    @JoinColumn(name = "supplier_id")
-//    private Supplier supplier;
+    @ManyToOne
+    @JoinColumn(name = "vendor_id")
+//    @JsonManagedReference
+    private Supplier supplier;
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "offer_id")
-    @JsonBackReference("offerItems")
     private Offer offer;
     private double offerUnitPrice;
     private double offerTotalPrice;

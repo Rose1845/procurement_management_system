@@ -33,7 +33,6 @@ public class AppExceptionHandler {
                 .fields(fields)
                 .build();
     }
-
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(UsernameNotFoundException.class)
     public Map<String, String> handleBusinessException(UsernameNotFoundException ex) {
@@ -41,7 +40,6 @@ public class AppExceptionHandler {
         errorMap.put("errorMessage", ex.getMessage());
         return errorMap;
     }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ProcureException.class)
     public Map<String, String> handleProcureException(ProcureException ex) {
