@@ -49,16 +49,16 @@ import java.util.*;
             for(Supplier supplier : purchaseRequest.getSuppliers()){
                 for (OfferDto offerDto : multiOfferDto.getOfferDtoSet()) {
                     for (OfferItemDto itemDto : offerDto.getItemDtoSet()) {
-                        Item item = itemRepository.findById(itemDto.getItemId())
-                                .orElseThrow(() -> new EntityNotFoundException("Item not found"));
-                        OfferItem offerItem = OfferItem.builder()
-                                .item(item)
-                                .offer(singleOffer)
-                                .supplier(supplier)  // Set the supplier for each offer item
-                                .offerUnitPrice(itemDto.getOfferUnitPrice())
-                                .offerTotalPrice(itemDto.getOfferUnitPrice())  // You may want to adjust this calculation
-                                .build();
-                        offerItems.add(offerItem);
+                        for(Item item: purchaseRequest.getItems()){
+                            OfferItem offerItem = OfferItem.builder()
+                                    .item(item)
+                                    .offer(singleOffer)
+                                    .supplier(supplier)  // Set the supplier for each offer item
+                                    .offerUnitPrice(itemDto.getOfferUnitPrice())
+                                    .offerTotalPrice(itemDto.getOfferUnitPrice())  // You may want to adjust this calculation
+                                    .build();
+                            offerItems.add(offerItem);
+                        }
                     }
                 }
             }

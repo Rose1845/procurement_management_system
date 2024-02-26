@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OfferItemDto {
-    private String itemId;
     private double offerUnitPrice;
 }
 

@@ -28,6 +28,7 @@ public class OfferItem {
     @ManyToOne
     @JoinColumn(name = "offer_id")
     private Offer offer;
+    @Column(columnDefinition = "double default 0.0") // Set default value for offerUnitPrice
     private double offerUnitPrice;
     private double offerTotalPrice;
     @Transient
