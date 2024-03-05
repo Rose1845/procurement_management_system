@@ -10,6 +10,7 @@ import com.rose.procurement.offer.Offer;
 import com.rose.procurement.offer.OfferItem;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
+import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
 import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -67,6 +68,8 @@ public class Supplier {
     @ManyToMany(mappedBy = "suppliers")
     @JsonIgnore
     private Set<PurchaseRequest> purchaseRequests;
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PurchaseRequestItemDetail> itemDetails;
     @OneToMany(mappedBy = "supplier")
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrder;

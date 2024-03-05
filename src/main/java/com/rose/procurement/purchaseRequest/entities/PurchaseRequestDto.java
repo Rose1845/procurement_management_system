@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,6 +41,7 @@ public class PurchaseRequestDto {
     private Set<Supplier> suppliers;
     @NotNull
     private Set<Item> items;
-    private MultiOfferDto multiOfferDto;
+//    private MultiOfferDto multiOfferDto;
+    private List<PurchaseRequestItemDetail> itemDetails;
 }
 

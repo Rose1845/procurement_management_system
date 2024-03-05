@@ -8,6 +8,7 @@ import com.rose.procurement.delivery.DeliveryItem;
 import com.rose.procurement.document.File;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
+import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisition;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
@@ -47,6 +48,8 @@ public class Item {
     @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Contract> contracts;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PurchaseRequestItemDetail> itemDetails;
     @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<PurchaseOrder> purchaseOrders;
@@ -90,5 +93,6 @@ public class Item {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public double getTotalPrice() {
         return quantity * unitPrice;
+
     }
 }

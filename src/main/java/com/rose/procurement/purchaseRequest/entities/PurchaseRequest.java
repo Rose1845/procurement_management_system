@@ -22,6 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -57,6 +58,9 @@ public class PurchaseRequest {
     private Offer offer;
     @Enumerated
     private ApprovalStatus approvalStatus;
+    @OneToMany(mappedBy = "purchaseRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonBackReference
+    private List<PurchaseRequestItemDetail> itemDetails;
     @ManyToMany( fetch = FetchType.LAZY)
     @JoinTable(
             name = "request_items",

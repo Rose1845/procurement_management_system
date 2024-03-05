@@ -64,9 +64,9 @@ public class ContractService {
         for (Contract existingContract : existingContracts) {
             if (existingContract.checkContractEndDateExpired()) {
                 existingContract.setContractStatus(ContractStatus.EXPIRED);
+                contractRepository.save(existingContract);
             }
         }
-
         return existingContracts;
     }
     public String deleteContract(String contractId){

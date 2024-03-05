@@ -6,26 +6,21 @@ import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.offer.*;
-import com.rose.procurement.purchaseRequest.entities.OfferItemUpdateDto;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
+import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
 import com.rose.procurement.purchaseRequest.mappers.PurchaseRequestMapper;
+import com.rose.procurement.purchaseRequest.repository.PurchaseRequestItemDetailRepository;
 import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,6 +29,7 @@ public class PurchaseRequestService {
     private final OfferItemRepository offerItemRepository;
     private final PurchaseRequestRepository purchaseRequestRepository;
     private final PurchaseRequestMapper purchaseRequestMapper ;
+    private final PurchaseRequestItemDetailRepository purchaseRequestItemDetailRepository;
     private final OfferRepository offerRepository;
     private final ItemRepository itemRepository;
 //    private final SupplierOfferService supplierOfferService;
@@ -41,7 +37,7 @@ public class PurchaseRequestService {
 
     public PurchaseRequestService(PurchaseRequestRepository purchaseRequestRepository,
                                   PurchaseRequestMapper purchaseRequestMapper, OfferRepository offerRepository, ItemRepository itemRepository, EmailService emailService,
-                                  OfferItemRepository offerItemRepository) {
+                                  OfferItemRepository offerItemRepository, PurchaseRequestItemDetailRepository purchaseRequestItemDetailRepository) {
         this.purchaseRequestRepository = purchaseRequestRepository;
         this.purchaseRequestMapper = purchaseRequestMapper;
         this.offerRepository = offerRepository;
@@ -49,6 +45,7 @@ public class PurchaseRequestService {
 //        this.supplierOfferService = supplierOfferService;
         this.emailService = emailService;
         this.offerItemRepository = offerItemRepository;
+        this.purchaseRequestItemDetailRepository = purchaseRequestItemDetailRepository;
     }
 
     public PurchaseRequestDto createPurchaseRequest(PurchaseRequestDto purchaseRequest) throws ProcureException {
@@ -62,10 +59,10 @@ public class PurchaseRequestService {
         Set<Supplier> suppliers = new HashSet<>(purchaseRequest1.getSuppliers());
         purchaseRequest1.setSuppliers(new HashSet<>(suppliers));
         PurchaseRequest savedRequest = purchaseRequestRepository.save(purchaseRequest1);
-        Offer offer = createOfferForPurchaseRequest(savedRequest.getPurchaseRequestId(), purchaseRequest.getMultiOfferDto());
+        List<PurchaseRequestItemDetail> purchaseRequestItemDetails = createOfferForPurchaseRequest2(savedRequest.getPurchaseRequestId(),purchaseRequest.getItemDetails());
         // Associate the offer with the purchase request
-        savedRequest.setOffer(offer);
-        sendApprovalEmailToSuppliers(savedRequest.getPurchaseRequestId());
+        savedRequest.setItemDetails(purchaseRequestItemDetails);
+//        sendApprovalEmailToSuppliers(savedRequest.getPurchaseRequestId());
         // Additional logic or validation can be added here before saving
         return PurchaseRequestMapper.INSTANCE.toDto(savedRequest);
     }
@@ -76,7 +73,6 @@ public class PurchaseRequestService {
         if (purchaseRequestId == null) {
             throw ProcureException.builder().message("Purchase request ID not found").metadata("id").build();
         }
-
         Optional<PurchaseRequest> optionalPurchaseRequest = purchaseRequestRepository.findById(purchaseRequestId);
 
         if (optionalPurchaseRequest.isPresent()) {
@@ -97,7 +93,6 @@ public class PurchaseRequestService {
 
                 // Send the email
                 emailService.sendEmail(supplier.getEmail(), subject, text);
-
                 log.info("Email sent to Supplier: {} for Purchase Request ID: {}", supplier.getVendorId(), purchaseRequestId);
             }
 
@@ -146,54 +141,117 @@ public class PurchaseRequestService {
         singleOffer.setOfferItems(offerItems);
         return offerRepository.save(singleOffer);
     }
-//    @Transactional
-//    public PurchaseRequestDto updateOfferItemsForSupplier(Long purchaseRequestId, String supplierId, List<OfferItemUpdateDto> offerItemUpdateDtoList) throws ProcureException {
-//        try {
-//            // Retrieve the purchase request
-//            Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
-//            if (purchaseRequestOptional.isEmpty()) {
-//                throw new EntityNotFoundException("Purchase request not found");
-//            }
-//            PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
-//
-//            // Retrieve the existing offer
-//            Offer existingOffer = purchaseRequest.getOffer();
-//            if (existingOffer == null) {
-//                throw new EntityNotFoundException("Offer not found for the purchase request");
-//            }
-//
-//            // Detach the existing offer
-////            offerRepository.detach(existingOffer);
-//
-//            // Find the OfferItems for the specified supplier
-////            List<OfferItem> offerItems = existingOffer.getOfferItems().stream()
-////                    .filter(item -> item.getSupplier().getVendorId().equals(supplierId))
-////                    .toList();
-//
-//            // Iterate through each OfferItem and update the offerUnitPrice
-//            for (int i = 0; i < offerItems.size() && i < offerItemUpdateDtoList.size(); i++) {
-//                OfferItem offerItem = offerItems.get(i);
-//                OfferItemUpdateDto offerItemUpdateDto = offerItemUpdateDtoList.get(i);
-//
-//                // Update the OfferItem with the new offerUnitPrice
-//                offerItem.setOfferUnitPrice(offerItemUpdateDto.getOfferUnitPrice());
-//                // Add more fields to update as needed
-//            }
-//
-//            // Merge the updated Offer back into the persistence context
-//            Offer mergedOffer = offerRepository.save(existingOffer);
-//
-//            // Update the PurchaseRequest with the merged Offer
-//            purchaseRequest.setOffer(mergedOffer);
-//
-//            // Additional logic or validation can be added here
-//
-//            return PurchaseRequestMapper.INSTANCE.toDto(purchaseRequest);
-//        } catch (Exception e) {
-//            // Handle exceptions appropriately
-//            throw new ProcureException().builder().message("an error").metadata("offer").build();
+    public List<PurchaseRequestItemDetail> createOfferForPurchaseRequest2(Long purchaseRequestId, List<PurchaseRequestItemDetail> offerDetails) {
+        Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
+        if (purchaseRequestOptional.isEmpty()) {
+            throw new EntityNotFoundException("Purchase request not found");
+        }
+        PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
+
+        // Create a list to store all the created offer details
+        List<PurchaseRequestItemDetail> createdOfferDetails = new ArrayList<>();
+
+        // Iterate through each supplier in the purchase request
+        for (Supplier supplier : purchaseRequest.getSuppliers()) {
+            // Create a single offer detail for the entire purchase request for the current supplier
+            // Create a set to store items in the offer
+            // Iterate through each item in the purchase request
+            for (Item item : purchaseRequest.getItems()) {
+                PurchaseRequestItemDetail singleOfferDetail = PurchaseRequestItemDetail.builder()
+                        .purchaseRequest(purchaseRequest)
+                        .supplier(supplier)
+                        .item(item)
+                        .offerUnitPrice(BigDecimal.ZERO) // Set default offer unit price
+                        .build();
+                PurchaseRequestItemDetail createdOfferDetail = purchaseRequestItemDetailRepository.save(singleOfferDetail);
+                createdOfferDetails.add(createdOfferDetail);
+                // Create a new item in the offer detail with the specified offer unit price
+            }
+            // Set all the items to the single offer detail
+            // Save the single offer detail with associated items
+            // Add the created offer detail to the list
+        }
+        return createdOfferDetails;
+    }
+//    public List<PurchaseRequestItemDetail> editOfferUnitPrices(Long purchaseRequestId, List<PurchaseRequestItemDetail> itemDetails) {
+//        Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
+//        if (purchaseRequestOptional.isEmpty()) {
+//            throw new EntityNotFoundException("Purchase request not found");
 //        }
+//        PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
+//
+//        // Create a map to store items for each supplier
+//        Map<Supplier, Set<PurchaseRequestItemDetail>> itemsBySupplier = new HashMap<>();
+//
+//        // Iterate through the list and organize items by supplier
+//        for (PurchaseRequestItemDetail updatedItemDetail : itemDetails) {
+//            Supplier supplier = updatedItemDetail.getSupplier();
+//
+//            // Create a set for the supplier if it doesn't exist in the map
+//            itemsBySupplier.computeIfAbsent(supplier, k -> new HashSet<>());
+//
+//            // Find the corresponding item in the purchase request
+//            Optional<PurchaseRequestItemDetail> existingItemDetailOptional = purchaseRequest
+//                    .getItemDetails()
+//                    .stream()
+//                    .filter(itemDetail ->
+//                            Objects.equals(itemDetail.getItem().getItemId(), updatedItemDetail.getItem().getItemId())
+//                                    && Objects.equals(itemDetail.getSupplier().getVendorId(), supplier.getVendorId()))
+//                    .findFirst();
+//            if (existingItemDetailOptional.isPresent()) {
+//                PurchaseRequestItemDetail existingItemDetail = existingItemDetailOptional.get();
+//                // Perform validation or any other business logic as needed
+//                // Update offer unit price
+//                existingItemDetail.setOfferUnitPrice(updatedItemDetail.getOfferUnitPrice());
+//
+//                // Add the item detail to the set for the supplier
+//                itemsBySupplier.get(supplier).add(existingItemDetail);
+//            } else {
+//                // Handle the case where the item detail is not found in the purchase request
+//                // You may throw an exception, log a warning, or handle it based on your requirements
+//                throw new EntityNotFoundException("Item detail not found in the purchase request");
+//            }
+//        }
+//
+//        // Save all updated item details in the database
+//        purchaseRequestItemDetailRepository.saveAll(itemDetails);
+//
+//        // Return the updated item details
+//        return itemDetails;
 //    }
+    public List<PurchaseRequestItemDetail> editOfferUnitPrices(Long purchaseRequestId, List<PurchaseRequestItemDetail> itemDetails) {
+        Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
+        if (purchaseRequestOptional.isEmpty()) {
+            throw new EntityNotFoundException("Purchase request not found");
+        }
+        PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
+        // Iterate through the list and update the offer unit prices in the database
+        for (PurchaseRequestItemDetail updatedItemDetail : itemDetails) {
+            // Find the corresponding item in the purchase request
+            Optional<PurchaseRequestItemDetail> existingItemDetailOptional = purchaseRequest
+                    .getItemDetails()
+                    .stream()
+                    .filter(itemDetail ->
+                            Objects.equals(itemDetail.getItem().getItemId(), updatedItemDetail.getItem().getItemId())
+                                    && Objects.equals(itemDetail.getSupplier().getVendorId(), updatedItemDetail.getSupplier().getVendorId()))
+                    .findFirst();
+            if (existingItemDetailOptional.isPresent()) {
+                PurchaseRequestItemDetail existingItemDetail = existingItemDetailOptional.get();
+                // Perform validation or any other business logic as needed
+                // Update offer unit price
+                existingItemDetail.setOfferUnitPrice(updatedItemDetail.getOfferUnitPrice());
+            } else {
+                // Handle the case where the item detail is not found in the purchase request
+                // You may throw an exception, log a warning, or handle it based on your requirements
+                throw new EntityNotFoundException("Item detail not found in the purchase request");
+            }
+        }
+        // Save all updated item details in the database
+        purchaseRequestItemDetailRepository.saveAll(itemDetails);
+        // Return the updated item details
+        return itemDetails;
+    }
+
     public List<PurchaseRequest> getAllPurchaseRequests() {
         return purchaseRequestRepository.findAll();
     }

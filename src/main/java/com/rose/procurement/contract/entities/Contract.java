@@ -77,9 +77,13 @@ public class Contract {
     private void prePersist() {
         // Set contractStatus before persisting the entity
         if (contractStatus == null) {
-            contractStatus = checkContractEndDateExpired() ? ContractStatus.EXPIRED : ContractStatus.OPEN;
+            if (checkContractEndDateExpired()) {
+                contractStatus = ContractStatus.EXPIRED;
+            }
         }
     }
+
+
     public boolean checkContractEndDateExpired() {
         // Check if the contract end date is in the past
         return contractEndDate != null && contractEndDate.isBefore(LocalDate.now());

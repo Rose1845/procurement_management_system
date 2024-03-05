@@ -2,6 +2,8 @@ package com.rose.procurement.purchaseOrder.controller;
 
 
 import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.contract.entities.Contract;
+import com.rose.procurement.contract.repository.ContractRepository;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
@@ -12,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +28,34 @@ import java.util.Set;
 @Slf4j
 public class PurchaseOrderController {
     private final PurchaseOrderService purchaseOrderService;
+    private final ContractRepository contractRepository;
 
-    public PurchaseOrderController(PurchaseOrderService purchaseOrderService) {
+    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, ContractRepository contractRepository) {
         this.purchaseOrderService = purchaseOrderService;
+        this.contractRepository = contractRepository;
     }
 
     @PostMapping
     public PurchaseOrderDto createPurchaseOrder(@RequestBody @Valid PurchaseOrderDto purchaseOrderRequest) {
         return purchaseOrderService.createPurchaseOrder(purchaseOrderRequest);
+    }
+    @PostMapping("/create-from-contract/{contractId}")
+    public ResponseEntity<PurchaseOrderDto> createPurchaseOrderFromContract(@PathVariable String contractId) {
+        try {
+            // Retrieve the contract from the database
+            Optional<Contract> contract = contractRepository.findById(contractId);
+
+            if (contract.isPresent()) {
+                // Create a new purchase order from the contract
+                PurchaseOrderDto purchaseOrderDto = purchaseOrderService.createPurchaseOrderFromContract(contract.get());
+                return new ResponseEntity<>(purchaseOrderDto, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            // Handle exceptions as needed
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     @GetMapping("/{id}")
     public Optional<PurchaseOrder> getPurchaseOrderById(@PathVariable("id") Long purchaseOrderId){
