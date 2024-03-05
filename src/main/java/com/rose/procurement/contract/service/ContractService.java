@@ -28,6 +28,9 @@ public class ContractService {
     private final EmailService emailService;
     private final ContractMapper contractMapper;
 
+
+
+
     public ContractService(SupplierRepository supplierRepository, ContractRepository contractRepository,
                            ItemRepository itemRepository, EmailService emailService, ContractMapper contractMapper) {
         this.supplierRepository = supplierRepository;
@@ -55,7 +58,16 @@ public class ContractService {
         return ContractMapper.MAPPER.toDto(savedCOntract);
     }
     public List<Contract> getAllContracts(){
-        return new ArrayList<>(contractRepository.findAll());
+        //        return new ArrayList<>(contractRepository.findAll());
+
+        List<Contract> existingContracts = contractRepository.findAll();
+        for (Contract existingContract : existingContracts) {
+            if (existingContract.checkContractEndDateExpired()) {
+                existingContract.setContractStatus(ContractStatus.EXPIRED);
+            }
+        }
+
+        return existingContracts;
     }
     public String deleteContract(String contractId){
         Optional<Contract> contract = contractRepository.findById(contractId);

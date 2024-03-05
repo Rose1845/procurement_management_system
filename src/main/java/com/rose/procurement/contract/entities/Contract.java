@@ -80,17 +80,10 @@ public class Contract {
             contractStatus = checkContractEndDateExpired() ? ContractStatus.EXPIRED : ContractStatus.OPEN;
         }
     }
-
-    private boolean checkContractEndDateExpired() {
+    public boolean checkContractEndDateExpired() {
         // Check if the contract end date is in the past
         return contractEndDate != null && contractEndDate.isBefore(LocalDate.now());
     }
-//    public void checkAndSetExpiredStatus() {
-//        LocalDate currentDate = LocalDate.now();
-//        if (contractEndDate != null && currentDate.isAfter(contractEndDate)) {
-//            this.contractStatus = EXPIRED_STATUS;
-//        }
-//    }
 }
 
 

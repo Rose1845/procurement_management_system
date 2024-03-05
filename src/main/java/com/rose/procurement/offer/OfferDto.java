@@ -1,5 +1,6 @@
 package com.rose.procurement.offer;
 
+import com.rose.procurement.supplier.entities.Supplier;
 import lombok.*;
 
 import java.util.Set;
@@ -12,4 +13,5 @@ import java.util.Set;
 @Builder
 public class OfferDto {
     private  Set<OfferItemDto> itemDtoSet;
+//    private Supplier supplier;
 }

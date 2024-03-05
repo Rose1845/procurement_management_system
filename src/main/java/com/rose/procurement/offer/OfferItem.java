@@ -1,7 +1,6 @@
 package com.rose.procurement.offer;
 
 import com.fasterxml.jackson.annotation.*;
-import com.rose.procurement.delivery.Delivery;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;

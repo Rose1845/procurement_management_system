@@ -19,6 +19,9 @@ public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+//    @ManyToOne
+//    @JoinColumn(name = "vendor_id")
+//    private Supplier supplier;
 //    @JsonManagedReference
     @OneToMany(mappedBy = "offer",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JsonIgnore

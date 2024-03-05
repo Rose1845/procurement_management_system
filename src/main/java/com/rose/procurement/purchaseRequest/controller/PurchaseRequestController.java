@@ -2,6 +2,7 @@ package com.rose.procurement.purchaseRequest.controller;
 
 
 import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.offer.OfferItem;
 import com.rose.procurement.purchaseRequest.entities.OfferItemUpdateDto;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
@@ -42,19 +43,19 @@ public class PurchaseRequestController {
        return purchaseRequestService.getPurchaseRequestById(id);
     }
 
-    @PatchMapping("/{purchaseRequestId}/suppliers/{supplierId}/offer-items")
-    public ResponseEntity<PurchaseRequestDto> updateOfferItemsForSupplier(
-            @PathVariable Long purchaseRequestId,
-            @PathVariable String supplierId,
-            @RequestBody List<OfferItemUpdateDto> offerItemUpdateDtoList) {
-        try {
-            PurchaseRequestDto updatedPurchaseRequest = purchaseRequestService.updateOfferItemsForSupplier(purchaseRequestId, supplierId, offerItemUpdateDtoList);
-            return ResponseEntity.ok(updatedPurchaseRequest);
-        } catch (ProcureException e) {
-            // Handle custom exceptions
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
+//    @PatchMapping("/{purchaseRequestId}/suppliers/{supplierId}/offer-items")
+//    public ResponseEntity<PurchaseRequestDto> updateOfferItemsForSupplier(
+//            @PathVariable Long purchaseRequestId,
+//            @PathVariable String supplierId,
+//            @RequestBody List<OfferItemUpdateDto> offerItemUpdateDtoList) {
+//        try {
+//            PurchaseRequestDto updatedPurchaseRequest = purchaseRequestService.updateOfferItemsForSupplier(purchaseRequestId, supplierId, offerItemUpdateDtoList);
+//            return ResponseEntity.ok(updatedPurchaseRequest);
+//        } catch (ProcureException e) {
+//            // Handle custom exceptions
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        }
+//    }
 
 
 }

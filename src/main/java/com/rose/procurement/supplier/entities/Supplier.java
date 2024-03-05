@@ -73,6 +73,7 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonBackReference
     private Set<OfferItem> offersItems;
+//    @JsonBackReference
 //    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private Set<Offer> offers;
     @CreationTimestamp
