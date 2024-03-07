@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -68,6 +69,13 @@ public class ContractService {
             }
         }
         return existingContracts;
+    }
+    public List<Contract> getAllContractsOpen(){
+        List<Contract> existingContracts = contractRepository.findAll();
+        // Filter contracts with "open" status
+        return existingContracts.stream()
+                .filter(contract -> "OPEN".equalsIgnoreCase(String.valueOf(contract.getContractStatus())))
+                .collect(Collectors.toList());
     }
     public String deleteContract(String contractId){
         Optional<Contract> contract = contractRepository.findById(contractId);

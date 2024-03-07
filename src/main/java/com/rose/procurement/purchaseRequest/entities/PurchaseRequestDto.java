@@ -3,7 +3,6 @@ package com.rose.procurement.purchaseRequest.entities;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.entity.Item;
-import com.rose.procurement.offer.MultiOfferDto;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -41,7 +40,6 @@ public class PurchaseRequestDto {
     private Set<Supplier> suppliers;
     @NotNull
     private Set<Item> items;
-//    private MultiOfferDto multiOfferDto;
     private List<PurchaseRequestItemDetail> itemDetails;
 }
 

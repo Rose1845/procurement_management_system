@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.entity.Item;
-import com.rose.procurement.offer.Offer;
-import com.rose.procurement.offer.OfferItem;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
@@ -69,13 +67,11 @@ public class Supplier {
     @JsonIgnore
     private Set<PurchaseRequest> purchaseRequests;
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<PurchaseRequestItemDetail> itemDetails;
     @OneToMany(mappedBy = "supplier")
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrder;
-    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JsonBackReference
-    private Set<OfferItem> offersItems;
 //    @JsonBackReference
 //    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private Set<Offer> offers;

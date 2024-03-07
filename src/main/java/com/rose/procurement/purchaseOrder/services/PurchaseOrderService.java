@@ -69,27 +69,25 @@ private final SupplierRepository supplierRepository;
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
         return purchaseOrderMapper.toDto(savedPurchaseOrder);
     }
-    public PurchaseOrderDto createPurchaseOrderFromContract(Contract contract) {
+    public PurchaseOrderDto createPurchaseOrderFromContract(Contract contract,PurchaseOrderDto purchaseOrderRequest) {
         // Assuming you have the necessary information in the Contract entity
         Optional<Supplier> supplier = Optional.ofNullable(contract.getSupplier());
 
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseOrderTitle("YourTitle"); // Set your title here
+        purchaseOrder.setPurchaseOrderTitle(purchaseOrderRequest.getPurchaseOrderTitle()); // Set your title here
         supplier.ifPresent(purchaseOrder::setSupplier);
-        purchaseOrder.setTermsAndConditions(contract.getTermsAndConditions());
+        purchaseOrder.setTermsAndConditions(purchaseOrderRequest.getTermsAndConditions());
         purchaseOrder.setApprovalStatus(ApprovalStatus.PENDING);
         // Set other properties as needed
-
         // Copy items from the contract to the purchase order
         Set<Item> items = new HashSet<>(contract.getItems());
         double totalAmount = items.stream().mapToDouble(Item::getTotalPrice).sum();
         purchaseOrder.setTotalAmount(totalAmount);
-        purchaseOrder.setItems(items);
-
-        purchaseOrder.setDeliveryDate(LocalDate.now().plusDays(7)); // Set your delivery date logic here
+        purchaseOrder.setItems(new HashSet<>(items));
+        purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate()); // Set your delivery date logic here
         purchaseOrder.setUpdatedAt(LocalDateTime.now());
         purchaseOrder.setCreatedAt(LocalDateTime.now());
-        purchaseOrder.setPaymentType(PaymentType.MPESA);
+        purchaseOrder.setPaymentType(purchaseOrderRequest.getPaymentType());
         // Associate the contract with the purchase order
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
         return PurchaseOrderMapper.MAPPER.toDto(savedPurchaseOrder);

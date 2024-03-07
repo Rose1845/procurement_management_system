@@ -32,6 +32,11 @@ public class ContractController {
     public List<Contract> getAllContracts(){
         return contractService.getAllContracts();
     }
+
+    @GetMapping("/status-open")
+    public List<Contract> getAllContractsOpen(){
+        return contractService.getAllContractsOpen();
+    }
     @GetMapping("{id}")
     public Optional<Contract> getContract(@PathVariable("id") String contractId){
         return contractService.getContract(contractId);

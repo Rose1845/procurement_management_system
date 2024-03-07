@@ -40,14 +40,13 @@ public class PurchaseOrderController {
         return purchaseOrderService.createPurchaseOrder(purchaseOrderRequest);
     }
     @PostMapping("/create-from-contract/{contractId}")
-    public ResponseEntity<PurchaseOrderDto> createPurchaseOrderFromContract(@PathVariable String contractId) {
+    public ResponseEntity<PurchaseOrderDto> createPurchaseOrderFromContract(@PathVariable String contractId, @RequestBody PurchaseOrderDto purchaseOrderRequest) {
         try {
             // Retrieve the contract from the database
             Optional<Contract> contract = contractRepository.findById(contractId);
-
             if (contract.isPresent()) {
                 // Create a new purchase order from the contract
-                PurchaseOrderDto purchaseOrderDto = purchaseOrderService.createPurchaseOrderFromContract(contract.get());
+                PurchaseOrderDto purchaseOrderDto = purchaseOrderService.createPurchaseOrderFromContract(contract.get(),purchaseOrderRequest);
                 return new ResponseEntity<>(purchaseOrderDto, HttpStatus.CREATED);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
