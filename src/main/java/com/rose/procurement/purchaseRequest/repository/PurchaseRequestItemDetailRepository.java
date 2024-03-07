@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface PurchaseRequestItemDetailRepository extends JpaRepository<PurchaseRequestItemDetail,Long> {
     List<PurchaseRequestItemDetail> findBySupplier_VendorId(String supplierId);
+
+    List<PurchaseRequestItemDetail> findByPurchaseRequest_PurchaseRequestId(Long purchaseRequestId);
 }

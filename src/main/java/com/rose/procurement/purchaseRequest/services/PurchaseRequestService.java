@@ -242,7 +242,6 @@ public class PurchaseRequestService {
                             Objects.equals(itemDetail.getItem().getItemId(), updatedItemDetail.getItem().getItemId())
                                     && Objects.equals(itemDetail.getSupplier().getVendorId(), supplierId))
                     .findFirst();
-
             if (existingItemDetailOptional.isPresent()) {
                 PurchaseRequestItemDetail existingItemDetail = existingItemDetailOptional.get();
                 // Perform validation or any other business logic as needed

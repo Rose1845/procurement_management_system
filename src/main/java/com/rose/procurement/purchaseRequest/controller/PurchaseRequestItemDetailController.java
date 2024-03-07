@@ -51,6 +51,11 @@ public class PurchaseRequestItemDetailController {
         List<PurchaseRequestItemDetail> itemDetails = itemDetailService.getDetailsBySupplierId(supplierId);
         return new ResponseEntity<>(itemDetails, HttpStatus.OK);
     }
+    @GetMapping("/request-offer-details/{purchaseRequestId}")
+    public ResponseEntity<List<PurchaseRequestItemDetail>> getDetailsByRequestId(@PathVariable Long purchaseRequestId) {
+        List<PurchaseRequestItemDetail> itemDetails = itemDetailService.getDetailsByRequestId(purchaseRequestId);
+        return new ResponseEntity<>(itemDetails, HttpStatus.OK);
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItemDetail(@PathVariable Long id) {
         itemDetailService.deleteItemDetail(id);

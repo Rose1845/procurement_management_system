@@ -38,6 +38,9 @@ public class PurchaseRequestItemDetailService {
     public List<PurchaseRequestItemDetail> getDetailsBySupplierId(String supplierId) {
         return itemDetailRepository.findBySupplier_VendorId(supplierId);
     }
+    public List<PurchaseRequestItemDetail> getDetailsByRequestId(Long purchaseRequestId) {
+        return itemDetailRepository.findByPurchaseRequest_PurchaseRequestId(purchaseRequestId);
+    }
 }
 
 
