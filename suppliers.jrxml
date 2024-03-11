@@ -6,7 +6,7 @@
     <queryString>
         <![CDATA[select * from supplier;]]>
     </queryString>
-    <field name="vendor_id" class="java.lang.Long">
+    <field name="vendor_id" class="java.lang.String">
         <fieldDescription><![CDATA[]]></fieldDescription>
     </field>
     <field name="p_o_box" class="java.lang.String">
@@ -36,7 +36,7 @@
     <field name="name" class="java.lang.String">
         <fieldDescription><![CDATA[]]></fieldDescription>
     </field>
-    <field name="payment_type" class="java.lang.Enum">
+    <field name="payment_type" class="java.lang.Integer">
         <fieldDescription><![CDATA[]]></fieldDescription>
     </field>
     <field name="phone_number" class="java.lang.String">
@@ -54,7 +54,7 @@
     <title>
         <band height="59" splitType="Stretch">
             <staticText>
-                <reportElement x="238" y="17" width="131" height="39" uuid="208fe747-22c0-4b45-ac8d-7c14ed5ce180"/>
+                <reportElement x="200" y="0" width="131" height="39" uuid="208fe747-22c0-4b45-ac8d-7c14ed5ce180"/>
                 <textElement>
                     <font size="24"/>
                 </textElement>
@@ -88,18 +88,10 @@
                 <reportElement x="642" y="41" width="100" height="20" uuid="b993fcdf-d4aa-42dc-8174-835c406ec529"/>
                 <text><![CDATA[PHONE_NUMBER]]></text>
             </staticText>
-            <staticText>
-                <reportElement x="0" y="41" width="100" height="20" uuid="62de4596-2a97-470f-9126-be54c2774a40"/>
-                <text><![CDATA[id]]></text>
-            </staticText>
         </band>
     </columnHeader>
     <detail>
         <band height="42" splitType="Stretch">
-            <textField>
-                <reportElement x="0" y="0" width="100" height="20" uuid="b2485a56-c521-485c-85da-df11471590f5"/>
-                <textFieldExpression><![CDATA[$F{vendor_id}]]></textFieldExpression>
-            </textField>
             <textField>
                 <reportElement x="100" y="0" width="100" height="20" uuid="635b6865-4b78-44e9-8eb9-5c3618e8ca5f"/>
                 <textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
@@ -116,7 +108,7 @@
             <textField>
                 <reportElement x="542" y="0" width="100" height="20" uuid="25003ef0-980c-4fa9-9e1b-8dbff26f513c"/>
                 <textElement textAlignment="Center"/>
-                <textFieldExpression><![CDATA[$F{payment_type} != null ? $F{payment_type}.name() : ""]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{payment_type}]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="642" y="0" width="100" height="20" uuid="7d155a38-13a4-4ff5-b672-0207bf340d33"/>
@@ -131,4 +123,256 @@
     <summary>
         <band height="42" splitType="Stretch"/>
     </summary>
+</jasperReport>
+        <?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1eefdad3-d581-43a6-b467-df1d1bf92992">
+<property name="ireport.zoom" value="1.0"/>
+<property name="ireport.x" value="0"/>
+<property name="ireport.y" value="0"/>
+<queryString>
+    <![CDATA[select * from supplier;]]>
+</queryString>
+<field name="vendor_id" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="p_o_box" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="city" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="country" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="location" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="contact_information" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="contact_person" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="created_at" class="java.sql.Timestamp">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="email" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="name" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="payment_type" class="java.lang.Integer">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="phone_number" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="terms_and_conditions" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="updated_at" class="java.sql.Timestamp">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<background>
+    <band splitType="Stretch"/>
+</background>
+<title>
+    <band height="59" splitType="Stretch">
+        <staticText>
+            <reportElement x="200" y="0" width="131" height="39" uuid="208fe747-22c0-4b45-ac8d-7c14ed5ce180"/>
+            <textElement>
+                <font size="24"/>
+            </textElement>
+            <text><![CDATA[Suppliers]]></text>
+        </staticText>
+    </band>
+</title>
+<columnHeader>
+    <band height="61" splitType="Stretch">
+        <staticText>
+            <reportElement x="100" y="41" width="100" height="20" uuid="7bc9268e-4e12-44a2-b5cf-261c1677bef7"/>
+            <text><![CDATA[NAME]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="213" y="41" width="100" height="20" uuid="2e6e1626-bcec-4c2b-bc52-1750c415dffe"/>
+            <text><![CDATA[P.O BOX]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="342" y="41" width="100" height="20" uuid="822c71b0-ef13-4745-9ddd-1ade1227ca48"/>
+            <text><![CDATA[LOCATION]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="442" y="41" width="100" height="20" uuid="6e0f477b-30d9-40ba-89db-950bf40342c9"/>
+            <text><![CDATA[EMAIL]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="542" y="41" width="100" height="20" uuid="092f25aa-681a-46d9-a077-e6fd347cedaa"/>
+            <text><![CDATA[PAYEMENT TYPE]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="642" y="41" width="100" height="20" uuid="b993fcdf-d4aa-42dc-8174-835c406ec529"/>
+            <text><![CDATA[PHONE_NUMBER]]></text>
+        </staticText>
+    </band>
+</columnHeader>
+<detail>
+    <band height="42" splitType="Stretch">
+        <textField>
+            <reportElement x="100" y="0" width="100" height="20" uuid="635b6865-4b78-44e9-8eb9-5c3618e8ca5f"/>
+            <textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="342" y="0" width="100" height="20" uuid="86cfd4b4-d8ce-4d80-8e5d-290b181be0b1"/>
+            <textFieldExpression><![CDATA[$F{location}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="442" y="0" width="100" height="20" uuid="82fae75f-5197-4fae-b69f-d36de3990c38"/>
+            <textElement textAlignment="Center"/>
+            <textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="542" y="0" width="100" height="20" uuid="25003ef0-980c-4fa9-9e1b-8dbff26f513c"/>
+            <textElement textAlignment="Center"/>
+            <textFieldExpression><![CDATA[$F{payment_type}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="642" y="0" width="100" height="20" uuid="7d155a38-13a4-4ff5-b672-0207bf340d33"/>
+            <textFieldExpression><![CDATA[$F{phone_number}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="213" y="0" width="100" height="20" uuid="0820d11e-6254-44dc-b7f8-0a2ecdeece86"/>
+            <textFieldExpression><![CDATA[$F{p_o_box}]]></textFieldExpression>
+        </textField>
+    </band>
+</detail>
+<summary>
+    <band height="42" splitType="Stretch"/>
+</summary>
+</jasperReport>
+        <?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="800" pageHeight="842" columnWidth="760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1eefdad3-d581-43a6-b467-df1d1bf92992">
+<property name="ireport.zoom" value="1.0"/>
+<property name="ireport.x" value="0"/>
+<property name="ireport.y" value="0"/>
+<queryString>
+    <![CDATA[select * from supplier;]]>
+</queryString>
+<field name="vendor_id" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="p_o_box" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="city" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="country" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="location" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="contact_information" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="contact_person" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="created_at" class="java.sql.Timestamp">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="email" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="name" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="payment_type" class="java.lang.Integer">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="phone_number" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="terms_and_conditions" class="java.lang.String">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<field name="updated_at" class="java.sql.Timestamp">
+    <fieldDescription><![CDATA[]]></fieldDescription>
+</field>
+<background>
+    <band splitType="Stretch"/>
+</background>
+<title>
+    <band height="59" splitType="Stretch">
+        <staticText>
+            <reportElement x="200" y="0" width="131" height="39" uuid="208fe747-22c0-4b45-ac8d-7c14ed5ce180"/>
+            <textElement>
+                <font size="24"/>
+            </textElement>
+            <text><![CDATA[Suppliers]]></text>
+        </staticText>
+    </band>
+</title>
+<columnHeader>
+    <band height="61" splitType="Stretch">
+        <staticText>
+            <reportElement x="100" y="41" width="100" height="20" uuid="7bc9268e-4e12-44a2-b5cf-261c1677bef7"/>
+            <text><![CDATA[NAME]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="213" y="41" width="100" height="20" uuid="2e6e1626-bcec-4c2b-bc52-1750c415dffe"/>
+            <text><![CDATA[P.O BOX]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="342" y="41" width="100" height="20" uuid="822c71b0-ef13-4745-9ddd-1ade1227ca48"/>
+            <text><![CDATA[LOCATION]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="442" y="41" width="100" height="20" uuid="6e0f477b-30d9-40ba-89db-950bf40342c9"/>
+            <text><![CDATA[EMAIL]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="542" y="41" width="100" height="20" uuid="092f25aa-681a-46d9-a077-e6fd347cedaa"/>
+            <text><![CDATA[PAYEMENT TYPE]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="642" y="41" width="100" height="20" uuid="b993fcdf-d4aa-42dc-8174-835c406ec529"/>
+            <text><![CDATA[PHONE_NUMBER]]></text>
+        </staticText>
+    </band>
+</columnHeader>
+<detail>
+    <band height="42" splitType="Stretch">
+        <textField>
+            <reportElement x="100" y="0" width="100" height="20" uuid="635b6865-4b78-44e9-8eb9-5c3618e8ca5f"/>
+            <textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="342" y="0" width="100" height="20" uuid="86cfd4b4-d8ce-4d80-8e5d-290b181be0b1"/>
+            <textFieldExpression><![CDATA[$F{location}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="442" y="0" width="100" height="20" uuid="82fae75f-5197-4fae-b69f-d36de3990c38"/>
+            <textElement textAlignment="Center"/>
+            <textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="542" y="0" width="100" height="20" uuid="25003ef0-980c-4fa9-9e1b-8dbff26f513c"/>
+            <textElement textAlignment="Center"/>
+            <textFieldExpression><![CDATA[$F{payment_type}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="642" y="0" width="100" height="20" uuid="7d155a38-13a4-4ff5-b672-0207bf340d33"/>
+            <textFieldExpression><![CDATA[$F{phone_number}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="213" y="0" width="100" height="20" uuid="0820d11e-6254-44dc-b7f8-0a2ecdeece86"/>
+            <textFieldExpression><![CDATA[$F{p_o_box}]]></textFieldExpression>
+        </textField>
+    </band>
+</detail>
+<summary>
+    <band height="42" splitType="Stretch"/>
+</summary>
 </jasperReport>

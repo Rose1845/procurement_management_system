@@ -12,5 +12,6 @@ import java.util.Optional;
 @Repository
 public interface PurchaseRequestRepository extends JpaRepository<PurchaseRequest,Long> {
 
+    Optional<PurchaseRequest> findByPurchaseRequestIdAndSuppliers_VendorId(Long purchaseRequestId, String vendorId);
 
 }

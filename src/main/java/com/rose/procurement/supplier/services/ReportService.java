@@ -6,6 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,28 +28,35 @@ import java.util.Map;
 public class ReportService {
     private final SupplierRepository supplierRepository;
 
-    public String exportReport(String reportFormat) throws FileNotFoundException, JRException {
+
+    public ResponseEntity<Resource> exportReport() throws IOException, JRException {
         List<Supplier> supplierList = supplierRepository.findAll();
-        File fIle = ResourceUtils.getFile("suppliers.jrxml");
-        JasperReport jasperReport = JasperCompileManager.compileReport(fIle.getAbsolutePath());
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(supplierList);
-        Map<String,Object> parameters = new HashMap<>();
-        parameters.put("Created By","ProcureSwift");
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,parameters,dataSource);
-//        JasperExportManager.exportReportToPdfStream(jasperReport,jasperPrint,jasperPrint );
+        JasperPrint jasperPrint = generateSupplierReport(supplierList);
 
-        if(reportFormat.equalsIgnoreCase("html")){
-            JasperExportManager.exportReportToHtmlFile(jasperPrint,fIle.getAbsolutePath());
-        }
-        if(reportFormat.equalsIgnoreCase("pdf")){
-            JasperExportManager.exportReportToPdf(jasperPrint);
+        // Export to byte array
+        byte[] reportBytes = JasperExportManager.exportReportToPdf(jasperPrint);
 
-        }
-        return "generated";
+        // Prepare file for download
+        ByteArrayResource resource = new ByteArrayResource(reportBytes);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=suppliers.pdf");
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
 
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(reportBytes.length)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
     }
 
-    public void exportJasperReport(HttpServletResponse response) throws JRException, IOException {
+    private JasperPrint generateSupplierReport(List<Supplier> supplierList) throws JRException, FileNotFoundException {
+        File file = ResourceUtils.getFile("classpath:suppliers.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(supplierList);
+        Map<String, Object> parameters = new HashMap<>();
+        return JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+    }
+    public String exportJasperReport() throws JRException, IOException {
         List<Supplier> suppliers = supplierRepository.findAll();
         //Get file and compile it
         File file = ResourceUtils.getFile("classpath:suppliers.jrxml");
@@ -54,8 +67,7 @@ public class ReportService {
         //Fill Jasper report
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
         //Export report
-        JasperExportManager.exportReportToPdfStream(jasperPrint,response.getOutputStream());
+        JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
+        return "generate";
     }
-
-
 }

@@ -2,7 +2,6 @@ package com.rose.procurement.purchaseRequest.controller;
 
 
 import com.rose.procurement.advice.ProcureException;
-import com.rose.procurement.purchaseRequest.entities.OfferItemUpdateDto;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
@@ -64,5 +63,19 @@ public class PurchaseRequestController {
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+    @GetMapping("/send-offer-to-suppliers/{id}")
+    public String sendRequestOffer(@PathVariable("id") Long purchaseRequestId) throws ProcureException {
+        return purchaseRequestService.sendApprovalEmailToSuppliers(purchaseRequestId);
+    }
+    @GetMapping("/{purchaseRequestId}/supplier/{vendorId}")
+    public ResponseEntity<PurchaseRequest> getPurchaseRequestDetailsForSupplier(
+            @PathVariable Long purchaseRequestId,
+            @PathVariable String vendorId) {
+
+        Optional<PurchaseRequest> purchaseRequestDetails = purchaseRequestService.getPurchaseRequestDetailsForSupplier(purchaseRequestId, vendorId);
+
+        return purchaseRequestDetails.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

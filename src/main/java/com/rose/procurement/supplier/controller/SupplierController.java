@@ -4,10 +4,10 @@ import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.services.ReportService;
 import com.rose.procurement.supplier.services.SupplierService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,11 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -44,18 +40,18 @@ public class SupplierController {
 //        }
         return supplierService.createSupplier(supplierRequest);
     }
-    @GetMapping("/jasperpdf/export")
-    public void createPDF(HttpServletResponse response) throws IOException, JRException {
-        response.setContentType("application/pdf");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
-        String currentDateTime = dateFormatter.format(new Date());
-
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=pdf_" + currentDateTime + ".pdf";
-        response.setHeader(headerKey, headerValue);
-
-        reportService.exportJasperReport(response);
-    }
+//    @GetMapping("/jasperpdf/export")
+//    public void createPDF(HttpServletResponse response) throws IOException, JRException {
+//        response.setContentType("application/pdf");
+//        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
+//        String currentDateTime = dateFormatter.format(new Date());
+//
+//        String headerKey = "Content-Disposition";
+//        String headerValue = "attachment; filename=pdf_" + currentDateTime + ".pdf";
+//        response.setHeader(headerKey, headerValue);
+//
+//        reportService.exportJasperReport(response);
+//    }
     @PostMapping(value = "upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<Integer> uploadSuppliers(@RequestPart("file")MultipartFile file){
         return ResponseEntity.ok(supplierService.uploadSuppliers(file));
@@ -94,9 +90,9 @@ public class SupplierController {
         return supplierService.deleteAll();
     }
 
-    @GetMapping("/report/{format}")
-    public String generatePurchaseOrderReport(@PathVariable("format") String format) throws JRException, FileNotFoundException {
-        return reportService.exportReport(format);
+    @GetMapping("/report/")
+    public ResponseEntity<Resource> generatePurchaseOrderReport() throws JRException, IOException {
+        return reportService.exportReport();
     }
 }
 

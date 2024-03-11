@@ -117,6 +117,7 @@ private final SupplierRepository supplierRepository;
         return new ArrayList<>(purchaseOrderRepository.findAll());
     }
 
+
     public Page<PurchaseOrder> findPurchaseOrderWithPagination(int offSet,int pageSize){
         return purchaseOrderRepository.findAll(PageRequest.of(offSet,pageSize));
     }
@@ -151,19 +152,6 @@ private final SupplierRepository supplierRepository;
         purchaseOrderRepository.deleteById(purchaseOrderId);
         return "deleted succesffully";
     }
-
-
-public String exportReport(Long purchaseOrderId) throws FileNotFoundException, JRException {
-        Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
-    File fIle = ResourceUtils.getFile("purchase_order.jrxml");
-    JasperReport jasperReport = JasperCompileManager.compileReport(fIle.getAbsolutePath());
-    JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singleton(purchaseOrder));
-    Map<String,Object> parameters = new HashMap<>();
-    parameters.put("purchaseOrderId",purchaseOrderId);
-    JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,parameters,dataSource);
-    JasperExportManager.exportReportToPdf(jasperPrint);
-    return "generated";
-}
 
     public PurchaseOrderDto sendPurchaseOrderToSupplier(Long purchaseOrderId) {
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
@@ -248,6 +236,32 @@ public String exportReport(Long purchaseOrderId) throws FileNotFoundException, J
         }catch(Exception e){
            throw  ProcureException.builder().metadata("error").message(e.getMessage()).build();
         }
+    }
+    public String exportReport(Long purchaseOrderId) throws FileNotFoundException, JRException {
+        Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
+        File file = ResourceUtils.getFile("classpath:purchase_order.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+
+        // Use the actual value of purchaseOrderId in the SQL query
+        String sql = "SELECT po.*,\n" +
+                "i.item_name,i.quantity,i.total_price,i.item_number,i.unit_price,\n" +
+                "s.name AS supplier_name,\n" +
+                "    s.p_o_box AS supplier_address_box,\n" +
+                "    s.country AS supplier_address_country,\n" +
+                "    s.city AS supplier_address_city,\n" +
+                "    s.location AS supplier_address_location\n" +
+                "FROM purchase_order po\n" +
+                "JOIN order_items oi ON po.purchase_order_id = oi.purchase_order_id\n" +
+                "JOIN item i ON oi.item_id = i.item_id\n" +
+                "JOIN supplier s ON po.supplier_id = s.vendor_id\n" +
+                "WHERE po.purchase_order_id = $P{purchaseOrderId} " ;
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singletonList(purchaseOrder.get().getPurchaseOrderId()));
+        Map<String, Object> parameters = new HashMap<>();
+//        parameters.put("query", sql);
+        parameters.put("purchaseOrderId", purchaseOrderId);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
+        return "generated";
     }
 
 }

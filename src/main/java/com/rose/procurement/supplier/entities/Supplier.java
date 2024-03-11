@@ -39,8 +39,9 @@ public class Supplier {
     private String vendorId;
 
     private String name;
-
+    @Column(name = "contact_person")
     private String contactPerson;
+    @Column(name = "contact_information")
 
     private String contactInformation;
     @Embedded
@@ -52,10 +53,12 @@ public class Supplier {
     })
     private Address address;
     private String email;
+    @Column(name = "phone_number")
     private String phoneNumber;
     @Enumerated
+    @Column(name ="payment_type")
     private PaymentType paymentType;
-
+    @Column(name = "terms_and_conditions")
     private String termsAndConditions;
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore

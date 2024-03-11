@@ -9,6 +9,8 @@ import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
 import com.rose.procurement.purchaseOrder.services.PurchaseOrderService;
+import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.utils.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -29,10 +33,12 @@ import java.util.Set;
 public class PurchaseOrderController {
     private final PurchaseOrderService purchaseOrderService;
     private final ContractRepository contractRepository;
+    private final SupplierRepository supplierRepository;
 
-    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, ContractRepository contractRepository) {
+    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, ContractRepository contractRepository, SupplierRepository supplierRepository) {
         this.purchaseOrderService = purchaseOrderService;
         this.contractRepository = contractRepository;
+        this.supplierRepository = supplierRepository;
     }
 
     @PostMapping
@@ -64,7 +70,18 @@ public class PurchaseOrderController {
     public ResponseEntity<?> deletePurchaseOrder(@PathVariable("id") Long purchaseOrderId){
         return ResponseEntity.ok(purchaseOrderService.deletePurchaseOrder(purchaseOrderId));
     }
-
+//    @GetMapping("/by-supplier/{supplierId}")
+//    public ResponseEntity<List<PurchaseOrder>> getOrdersBySupplier(@PathVariable String vendorId) {
+//        Optional<Supplier> supplier = supplierRepository.findById(vendorId);
+//
+//        if (supplier.isPresent()) {
+//            List<PurchaseOrder> orders = purchaseOrderService.getOrdersBySupplier(supplier.get().getVendorId());
+//            return new ResponseEntity<>(orders, HttpStatus.OK);
+//        } else {
+//            // Handle case where supplier is not found
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
     @GetMapping
     public List<PurchaseOrder> getAllPO(){
         return purchaseOrderService.getAllOrders();
@@ -110,22 +127,10 @@ public class PurchaseOrderController {
         return purchaseOrderService.updatePurchaseOrder(purchaseOrderId,purchaseOrderDto);
     }
     @GetMapping("{id}/report")
-    public String generateReport(@PathVariable("id") Long purchaseOrderId) throws JRException, FileNotFoundException {
+    public String generateReport(@PathVariable("id") Long purchaseOrderId) throws JRException, IOException {
         return purchaseOrderService.exportReport(purchaseOrderId);
     }
-//    @PostMapping("/{purchaseOrderId}/send-to-supplier")
-//    public ResponseEntity<PurchaseOrderDto> sendPurchaseOrderToSupplier(@PathVariable Long purchaseOrderId) {
-//        PurchaseOrderDto updatedPurchaseOrder = purchaseOrderService.sendPurchaseOrderToSupplier(purchaseOrderId);
-//        return ResponseEntity.ok(updatedPurchaseOrder);
-//    }
 
-//    @GetMapping("/approve/{purchaseOrderId}")
-//    public String approvePurchaseOrder(@PathVariable Long purchaseOrderId) {
-//        // Logic to handle the supplier's approval
-//        // You might want to update the approval status in the database
-//
-//        return "Purchase Order approved successfully";
-//    }
     @PostMapping("/send-order-to-supplier/{id}")
     public ResponseEntity<String> sendContractToSupplier(@PathVariable("id") Long purchaseOrderId) throws ProcureException {
         log.info("start sending order email to supplier...");

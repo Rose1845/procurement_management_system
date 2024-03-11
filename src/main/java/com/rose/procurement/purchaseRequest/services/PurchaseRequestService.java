@@ -20,11 +20,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
-@EnableAsync
 public class PurchaseRequestService {
     private final PurchaseRequestRepository purchaseRequestRepository;
     private final PurchaseRequestMapper purchaseRequestMapper ;
@@ -62,22 +61,22 @@ public class PurchaseRequestService {
         // Additional logic or validation can be added here before saving
         return PurchaseRequestMapper.INSTANCE.toDto(savedRequest);
     }
-    @Async
-    public void sendApprovalEmailToSuppliers(Long purchaseRequestId) throws ProcureException {
-        log.info("Sending order approval emails for Purchase Request with ID: {}", purchaseRequestId);
+    public String sendApprovalEmailToSuppliers(Long purchaseRequestId) throws ProcureException {
+        log.info("Sending request offer  emails for Purchase Request with ID: {}", purchaseRequestId);
 
         if (purchaseRequestId == null) {
             throw ProcureException.builder().message("Purchase request ID not found").metadata("id").build();
         }
+
         Optional<PurchaseRequest> optionalPurchaseRequest = purchaseRequestRepository.findById(purchaseRequestId);
 
         if (optionalPurchaseRequest.isPresent()) {
             PurchaseRequest purchaseRequest = optionalPurchaseRequest.get();
 
-            String approvalLinkBase = "http://localhost:8081/api/v1/purchase-order/approve/";
+            String approvalLinkBase = "/api/v1/purchase-request/" + purchaseRequest.getPurchaseRequestId() + "/edit2-offer-unit-prices2?supplierId=";
 
             for (Supplier supplier : purchaseRequest.getSuppliers()) {
-                String approvalLink = approvalLinkBase + purchaseRequest.getPurchaseRequestId();
+                String approvalLink = approvalLinkBase + supplier.getVendorId();
                 // Assuming you have a method to email the supplier
                 String subject = "New Purchase Request";
                 String text = "Dear Supplier,\n\n"
@@ -86,7 +85,6 @@ public class PurchaseRequestService {
                         + "Due Date: " + purchaseRequest.getDueDate() + "\n"
                         + "Follow this link: " + approvalLink + "\n"
                         + "\n\nBest Regards,\nProcureSwift Company";
-
                 // Send the email
                 emailService.sendEmail(supplier.getEmail(), subject, text);
                 log.info("Email sent to Supplier: {} for Purchase Request ID: {}", supplier.getVendorId(), purchaseRequestId);
@@ -105,6 +103,7 @@ public class PurchaseRequestService {
             log.info("Did not send emails because Purchase Request with ID {} not found", purchaseRequestId);
             throw ProcureException.builder().message("An error occurred").metadata("email sending").build();
         }
+        return "Email Sent";
     }
     public List<PurchaseRequestItemDetail> createOfferForPurchaseRequest2(Long purchaseRequestId, List<PurchaseRequestItemDetail> offerDetails) {
         Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
@@ -138,84 +137,7 @@ public class PurchaseRequestService {
         }
         return createdOfferDetails;
     }
-//    public List<PurchaseRequestItemDetail> editOfferUnitPrices(Long purchaseRequestId, List<PurchaseRequestItemDetail> itemDetails) {
-//        Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
-//        if (purchaseRequestOptional.isEmpty()) {
-//            throw new EntityNotFoundException("Purchase request not found");
-//        }
-//        PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
-//
-//        // Create a map to store items for each supplier
-//        Map<Supplier, Set<PurchaseRequestItemDetail>> itemsBySupplier = new HashMap<>();
-//
-//        // Iterate through the list and organize items by supplier
-//        for (PurchaseRequestItemDetail updatedItemDetail : itemDetails) {
-//            Supplier supplier = updatedItemDetail.getSupplier();
-//
-//            // Create a set for the supplier if it doesn't exist in the map
-//            itemsBySupplier.computeIfAbsent(supplier, k -> new HashSet<>());
-//
-//            // Find the corresponding item in the purchase request
-//            Optional<PurchaseRequestItemDetail> existingItemDetailOptional = purchaseRequest
-//                    .getItemDetails()
-//                    .stream()
-//                    .filter(itemDetail ->
-//                            Objects.equals(itemDetail.getItem().getItemId(), updatedItemDetail.getItem().getItemId())
-//                                    && Objects.equals(itemDetail.getSupplier().getVendorId(), supplier.getVendorId()))
-//                    .findFirst();
-//            if (existingItemDetailOptional.isPresent()) {
-//                PurchaseRequestItemDetail existingItemDetail = existingItemDetailOptional.get();
-//                // Perform validation or any other business logic as needed
-//                // Update offer unit price
-//                existingItemDetail.setOfferUnitPrice(updatedItemDetail.getOfferUnitPrice());
-//
-//                // Add the item detail to the set for the supplier
-//                itemsBySupplier.get(supplier).add(existingItemDetail);
-//            } else {
-//                // Handle the case where the item detail is not found in the purchase request
-//                // You may throw an exception, log a warning, or handle it based on your requirements
-//                throw new EntityNotFoundException("Item detail not found in the purchase request");
-//            }
-//        }
-//
-//        // Save all updated item details in the database
-//        purchaseRequestItemDetailRepository.saveAll(itemDetails);
-//
-//        // Return the updated item details
-//        return itemDetails;
-//    }
-//    public List<PurchaseRequestItemDetail> editOfferUnitPrices(Long purchaseRequestId, List<PurchaseRequestItemDetail> itemDetails) {
-//        Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
-//        if (purchaseRequestOptional.isEmpty()) {
-//            throw new EntityNotFoundException("Purchase request not found");
-//        }
-//        PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
-//        // Iterate through the list and update the offer unit prices in the database
-//        for (PurchaseRequestItemDetail updatedItemDetail : itemDetails) {
-//            // Find the corresponding item in the purchase request
-//            Optional<PurchaseRequestItemDetail> existingItemDetailOptional = purchaseRequest
-//                    .getItemDetails()
-//                    .stream()
-//                    .filter(itemDetail ->
-//                            Objects.equals(itemDetail.getItem().getItemId(), updatedItemDetail.getItem().getItemId())
-//                                    && Objects.equals(itemDetail.getSupplier().getVendorId(), updatedItemDetail.getSupplier().getVendorId()))
-//                    .findFirst();
-//            if (existingItemDetailOptional.isPresent()) {
-//                PurchaseRequestItemDetail existingItemDetail = existingItemDetailOptional.get();
-//                // Perform validation or any other business logic as needed
-//                // Update offer unit price
-//                existingItemDetail.setOfferUnitPrice(updatedItemDetail.getOfferUnitPrice());
-//            } else {
-//                // Handle the case where the item detail is not found in the purchase request
-//                // You may throw an exception, log a warning, or handle it based on your requirements
-//                throw new EntityNotFoundException("Item detail not found in the purchase request");
-//            }
-//        }
-//        // Save all updated item details in the database
-//        purchaseRequestItemDetailRepository.saveAll(itemDetails);
-//        // Return the updated item details
-//        return itemDetails;
-//    }
+
     public List<PurchaseRequestItemDetail> editOfferUnitPrices2(Long purchaseRequestId, String supplierId, List<PurchaseRequestItemDetail> itemDetails) {
         Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
         if (purchaseRequestOptional.isEmpty()) {
@@ -268,5 +190,8 @@ public class PurchaseRequestService {
     public Optional<PurchaseRequestDto> getPurchaseRequestById(Long purchaseRequestId) {
         Optional<PurchaseRequest> purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId);
         return purchaseRequest.map(purchaseRequestMapper::toDto);
+    }
+    public Optional<PurchaseRequest> getPurchaseRequestDetailsForSupplier(Long purchaseRequestId, String vendorId) {
+        return purchaseRequestRepository.findByPurchaseRequestIdAndSuppliers_VendorId(purchaseRequestId, vendorId);
     }
 }

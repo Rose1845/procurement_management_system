@@ -3,82 +3,55 @@
     <property name="ireport.zoom" value="1.0"/>
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
-    <parameter name="purchaseOrderId" class="java.lang.Long">
-        <defaultValueExpression><![CDATA[]]></defaultValueExpression>
-    </parameter>
-    <parameter name="query" class="java.lang.String">
-        <defaultValueExpression><![CDATA[]]></defaultValueExpression>
-    </parameter>
+    <parameter name="purchaseOrderId" class="java.lang.Long"/>
     <queryString>
-        <![CDATA[SELECT po.*,
-i.item_name,i.quantity,i.total_price,i.item_number,i.unit_price,
-s.name AS supplier_name,
-    s.p_o_box AS supplier_address_box,
-    s.country AS supplier_address_country,
-    s.city AS supplier_address_city,
-    s.location AS supplier_address_location
-FROM purchase_order po
-JOIN order_items oi ON po.purchase_order_id = oi.purchase_order_id
-JOIN item i ON oi.item_id = i.item_id
-JOIN supplier s ON po.supplier_id = s.vendor_id
-WHERE po.purchase_order_id = $P{purchaseOrderId};]]>
+        <![CDATA[SELECT
+            po.purchaseOrderId,
+            po.totalAmount,
+            po.approvalStatus,
+            po.createdAt,
+            po.createdBy,
+            po.deliveryDate,
+            po.paymentType,
+            po.purchaseOrderTitle,
+            po.termsAndConditions,
+            po.updatedAt,
+            s.supplierName AS supplier_name,
+            s.pOBox AS supplier_address_box,
+            s.country AS supplier_address_country,
+            s.city AS supplier_address_city,
+            s.location AS supplier_address_location,
+            i.itemName,
+            i.quantity,
+            i.totalPrice,
+            i.itemNumber,
+            i.unitPrice
+        FROM PurchaseOrder po
+        JOIN order_items oi ON po.purchaseOrderId = oi.purchaseOrderId
+        JOIN item i ON oi.item_id = i.item_id
+        JOIN supplier s ON po.supplier_id = s.vendor_id
+        WHERE po.purchaseOrderId = $P{purchaseOrderId}]]>
     </queryString>
-    <field name="purchase_order_id" class="java.lang.Long">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="total_amount" class="java.lang.Double">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="approval_status" class="java.lang.Integer">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="created_at" class="java.sql.Timestamp">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="created_by" class="java.lang.Integer">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="delivery_date" class="java.sql.Date">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="payment_type" class="java.lang.Integer">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="purchase_order_title" class="java.lang.String">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="terms_and_conditions" class="java.lang.String">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="updated_at" class="java.sql.Timestamp">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="supplier_id" class="java.lang.String">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="item_name" class="java.lang.String">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="quantity" class="java.lang.Integer">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="total_price" class="java.lang.Double">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="item_number" class="java.lang.String">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="unit_price" class="java.lang.Double">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
+    <field name="purchaseOrderId" class="java.lang.Long"/>
+    <field name="totalAmount" class="java.lang.Double"/>
+    <field name="approvalStatus" class="java.lang.Integer"/>
+    <field name="createdAt" class="java.sql.Timestamp"/>
+    <field name="createdBy" class="java.lang.Integer"/>
+    <field name="deliveryDate" class="java.sql.Date"/>
+    <field name="paymentType" class="java.lang.String"/>
+    <field name="purchaseOrderTitle" class="java.lang.String"/>
+    <field name="termsAndConditions" class="java.lang.String"/>
+    <field name="updatedAt" class="java.sql.Timestamp"/>
+    <field name="itemName" class="java.lang.String"/>
+    <field name="quantity" class="java.lang.Integer"/>
+    <field name="totalPrice" class="java.lang.Double"/>
+    <field name="itemNumber" class="java.lang.String"/>
+    <field name="unitPrice" class="java.lang.Double"/>
     <field name="supplier_name" class="java.lang.String"/>
     <field name="supplier_address_box" class="java.lang.String"/>
     <field name="supplier_address_country" class="java.lang.String"/>
     <field name="supplier_address_city" class="java.lang.String"/>
     <field name="supplier_address_location" class="java.lang.String"/>
-    <variable name="total_amount_1" class="java.lang.Double" calculation="Sum">
-        <variableExpression><![CDATA[$F{total_amount}]]></variableExpression>
-    </variable>
     <background>
         <band splitType="Stretch"/>
     </background>
@@ -120,15 +93,15 @@ WHERE po.purchase_order_id = $P{purchaseOrderId};]]>
             </staticText>
             <textField>
                 <reportElement x="420" y="0" width="100" height="20" uuid="1213f331-bfff-4eb1-927b-89b1a8cc75c7"/>
-                <textFieldExpression><![CDATA[$F{delivery_date}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{deliveryDate}]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="420" y="20" width="100" height="20" uuid="e0d8f452-7ea3-48b8-bc35-24c26d27a557"/>
-                <textFieldExpression><![CDATA[$F{created_at}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{createdAt}]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="420" y="60" width="135" height="20" uuid="81e210a7-1071-4716-9a88-5640eeee606e"/>
-                <textFieldExpression><![CDATA[$F{approval_status}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{approvalStatus}]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="0" y="20" width="120" height="20" uuid="3557f8dd-1068-4cbe-a22d-6fe93840d23e"/>
@@ -148,7 +121,39 @@ WHERE po.purchase_order_id = $P{purchaseOrderId};]]>
             </textField>
             <textField>
                 <reportElement x="271" y="104" width="149" height="20" uuid="bd43a045-84b4-4f4f-879b-6af29da2ec19"/>
-                <textFieldExpression><![CDATA[$F{purchase_order_id}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{purchaseOrderId}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="320" y="80" width="100" height="20" uuid="5ca54d6f-72f0-44d9-8a1c-8b7f8419a570"/>
+                <textFieldExpression><![CDATA[$F{deliveryDate}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="420" y="40" width="100" height="20" uuid="02dc4b91-04c9-46fb-a00e-500cd4ce9d90"/>
+                <textFieldExpression><![CDATA[$F{createdBy}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="171" y="0" width="100" height="20" uuid="1babbfde-41eb-44fa-b8f8-0dcc461e5c9d"/>
+                <textFieldExpression><![CDATA[$F{paymentType}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="120" y="104" width="100" height="20" uuid="a16cc9b3-a9ee-45bd-8659-63c5f161e2d7"/>
+                <textFieldExpression><![CDATA[$F{totalAmount}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="420" y="84" width="135" height="20" uuid="e5b540f0-81b8-40d0-8321-1a21b2090d3e"/>
+                <textFieldExpression><![CDATA[$F{purchaseOrderTitle}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="124" width="100" height="17" uuid="6908356a-8d65-4c69-ac38-2f94953ac715"/>
+                <textFieldExpression><![CDATA[$F{updatedAt}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="405" y="121" width="150" height="20" uuid="8dae20bc-cd88-407f-9ddc-80a146363938"/>
+                <textFieldExpression><![CDATA[$F{termsAndConditions}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="100" y="121" width="153" height="20" uuid="11aa3441-5ae8-4826-9761-57870fe0a340"/>
+                <textFieldExpression><![CDATA[$F{purchaseOrderTitle}]]></textFieldExpression>
             </textField>
         </band>
     </pageHeader>
@@ -194,7 +199,7 @@ WHERE po.purchase_order_id = $P{purchaseOrderId};]]>
         <band height="25" splitType="Stretch">
             <textField>
                 <reportElement x="100" y="0" width="100" height="20" uuid="e33c2947-7dff-423d-9e1a-09e92f3a1008"/>
-                <textFieldExpression><![CDATA[$F{item_number}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{itemNumber}]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="200" y="0" width="100" height="20" uuid="14d1c966-7c2b-4fc1-ae15-4f0ea59d1103"/>
@@ -202,15 +207,15 @@ WHERE po.purchase_order_id = $P{purchaseOrderId};]]>
             </textField>
             <textField>
                 <reportElement x="300" y="0" width="100" height="20" uuid="2bb3792f-d1bc-4cdb-853d-531b82ab92d1"/>
-                <textFieldExpression><![CDATA[$F{unit_price}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{unitPrice}]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="400" y="0" width="100" height="20" uuid="470c61d2-b842-4202-aeb7-bf426d0b1c49"/>
-                <textFieldExpression><![CDATA[$F{total_price}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{totalPrice}]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="0" y="0" width="100" height="20" uuid="40b65fad-fea4-4f4b-acb5-56dedbc05687"/>
-                <textFieldExpression><![CDATA[$F{item_name}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{itemName}]]></textFieldExpression>
             </textField>
         </band>
     </detail>
