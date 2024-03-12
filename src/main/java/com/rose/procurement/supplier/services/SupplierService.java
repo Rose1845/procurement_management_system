@@ -52,16 +52,11 @@ public class SupplierService {
         return new ArrayList<>(supplierRepository.findAll());
     }
 
-    public Supplier getSupplierById(Long vendorId) {
-        //return UserMapper.mapToUserDto(user);
-        //return modelMapper.map(user, UserDto.class);
+    public Supplier getSupplierById(String vendorId) {
         return supplierRepository.findById(vendorId).get();
-//        return SupplierMapper.MAPPER.toDto(supplier);
-//        return supplierRepository.findByVendorId(vendorId)
-//                .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + vendorId));
     }
 
-    public Supplier updateSupplier(Long vendorId,SupplierDto supplierRequest){
+    public Supplier updateSupplier(String vendorId,SupplierDto supplierRequest){
         Supplier supplier1 = supplierRepository.findByVendorId(vendorId).orElseThrow(()-> new IllegalStateException("supplier do not exist"));
         supplier1.setName(supplierRequest.getName());
         supplier1.setAddress(supplierRequest.getAddress());
@@ -74,7 +69,7 @@ public class SupplierService {
         return supplierRepository.save(supplier1);
     }
 
-    public String deleteSupplier(Long vendorId){
+    public String deleteSupplier(String vendorId){
         Optional<Supplier> supplier = supplierRepository.findById(vendorId);
         if(supplier.isPresent()){
             supplierRepository.deleteById(vendorId);
@@ -147,7 +142,6 @@ public class SupplierService {
     public InputStreamResource generateTemplate() {
         // Create a CSV string with header and placeholder values for a single supplier
         String csvTemplate = "name,contact_person,contact_info,box,city,location,country,email,phone_number,payment_type,terms";
-
         // Convert the CSV string to InputStreamResource
         ByteArrayInputStream inputStream = new ByteArrayInputStream(csvTemplate.getBytes());
         return new InputStreamResource(inputStream);

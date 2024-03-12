@@ -1,6 +1,6 @@
 package com.rose.procurement.purchaseRequest.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.enums.PaymentType;
@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,6 +30,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "purchaseRequestId")
+
 @EntityListeners(AuditingEntityListener.class)
 public class PurchaseRequest {
     @Id
@@ -51,6 +54,9 @@ public class PurchaseRequest {
     private Set<Supplier> suppliers;
     @Enumerated
     private ApprovalStatus approvalStatus;
+    @OneToMany(mappedBy = "purchaseRequest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<PurchaseRequestItemDetail> itemDetails;
     @ManyToMany( fetch = FetchType.LAZY)
     @JoinTable(
             name = "request_items",

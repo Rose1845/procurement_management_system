@@ -7,20 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class DeliveryDTo {
-    private Long purchaseOrderId;
     private LocalDateTime deliveryDate;
     private String receivedBy;
-    private String status;
-    private String trackingNumber;
-    private String deliveredVia;
-    private String billNumber;
-    private String invoiceNumber;
-    private String address;
+    private Set<DeliveryItemDTo> itemDToSet;
     private LocalDateTime deliveredOn;
     private LocalDateTime expectedOn;
     private LocalDateTime receivedOn;

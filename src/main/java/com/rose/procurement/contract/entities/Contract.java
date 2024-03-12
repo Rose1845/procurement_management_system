@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.enums.ApprovalStatus;
+import com.rose.procurement.enums.ContractStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
@@ -42,7 +43,7 @@ public class Contract {
     private LocalDate contractEndDate;
     private String termsAndConditions;
     @Enumerated
-    private ApprovalStatus approvalStatus;
+    private ContractStatus contractStatus;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "contract_items",
@@ -67,5 +68,30 @@ public class Contract {
     @CreatedBy
     @Column(name = "created_by")
     private Integer createdBy;
+    @Transient
+    @JsonIgnore
+    private static final ContractStatus EXPIRED_STATUS = ContractStatus.EXPIRED;
 
+
+    @PrePersist
+    private void prePersist() {
+        // Set contractStatus before persisting the entity
+        if (contractStatus == null) {
+            if (checkContractEndDateExpired()) {
+                contractStatus = ContractStatus.EXPIRED;
+            }
+        }
+    }
+
+
+    public boolean checkContractEndDateExpired() {
+        // Check if the contract end date is in the past
+        return contractEndDate != null && contractEndDate.isBefore(LocalDate.now());
+    }
 }
+
+
+
+
+
+

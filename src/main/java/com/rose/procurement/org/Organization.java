@@ -19,7 +19,7 @@ public class Organization {
     private String phoneNumber;
     @Embedded
     private Address address;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "admin_user_id")
-    private User adminUser;
+    private User user;
 }

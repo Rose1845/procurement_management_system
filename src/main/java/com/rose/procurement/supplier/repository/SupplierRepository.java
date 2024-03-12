@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SupplierRepository extends JpaRepository<Supplier,Long> {
+public interface SupplierRepository extends JpaRepository<Supplier,String> {
     Supplier findByName(String name);
 
-    Optional<Supplier> findByVendorId(Long vendorId);
+    Optional<Supplier> findByVendorId(String vendorId);
 
     Optional<Supplier> findByVendorId(Supplier supplier);
 }

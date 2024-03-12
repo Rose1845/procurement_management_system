@@ -1,5 +1,6 @@
 package com.rose.procurement.supplier.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rose.procurement.contract.entities.Contract;
@@ -7,6 +8,7 @@ import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
+import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
 import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -33,12 +35,13 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 public class Supplier {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long vendorId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String vendorId;
 
     private String name;
-
+    @Column(name = "contact_person")
     private String contactPerson;
+    @Column(name = "contact_information")
 
     private String contactInformation;
     @Embedded
@@ -50,25 +53,31 @@ public class Supplier {
     })
     private Address address;
     private String email;
+    @Column(name = "phone_number")
     private String phoneNumber;
     @Enumerated
+    @Column(name ="payment_type")
     private PaymentType paymentType;
-
+    @Column(name = "terms_and_conditions")
     private String termsAndConditions;
-    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<Contract> contracts;
-    @OneToMany(mappedBy = "supplier",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "supplier",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Item> items;
     @ManyToMany(mappedBy = "suppliers")
     @JsonIgnore
     private Set<PurchaseRequest> purchaseRequests;
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<PurchaseRequestItemDetail> itemDetails;
     @OneToMany(mappedBy = "supplier")
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrder;
-    @ManyToMany(mappedBy = "suppliers", cascade = CascadeType.ALL)
-    private Set<SupplierOffer> supplierOffers = new HashSet<>();
+//    @JsonBackReference
+//    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private Set<Offer> offers;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

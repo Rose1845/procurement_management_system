@@ -3,12 +3,14 @@ package com.rose.procurement.items.entity;
 import com.fasterxml.jackson.annotation.*;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.contract.entities.Contract;
+import com.rose.procurement.delivery.Delivery;
+import com.rose.procurement.delivery.DeliveryItem;
 import com.rose.procurement.document.File;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
+import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisition;
 import com.rose.procurement.supplier.entities.Supplier;
-import com.rose.procurement.supplier.entities.SupplierOffer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -17,9 +19,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +48,9 @@ public class Item {
     @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Contract> contracts;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<PurchaseRequestItemDetail> itemDetails;
     @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<PurchaseOrder> purchaseOrders;
@@ -64,9 +71,16 @@ public class Item {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-    @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
+//    @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private Set<SupplierOffer> supplierOffers;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<SupplierOffer> supplierOffers;
+    private Set<DeliveryItem> deliveriesItems;
+//    @Column(nullable = true, columnDefinition = "int default 0")
+//    private int quantityDelivered =0 ;
+//    @Column(nullable = true, columnDefinition = "int default 0")
+//    private int quantityReceived = 0;
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -76,12 +90,10 @@ public class Item {
             updatable = false
     )
     private Integer createdBy;
-
     @Transient // This annotation indicates that the field should not be persisted in the database
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public double getTotalPrice() {
         return quantity * unitPrice;
+
     }
-
-
 }

@@ -5,7 +5,7 @@ import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.contract.dtos.ContractDto;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.service.ContractService;
-import com.rose.procurement.enums.ApprovalStatus;
+import com.rose.procurement.enums.ContractStatus;
 import com.rose.procurement.items.entity.Item;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +32,11 @@ public class ContractController {
     public List<Contract> getAllContracts(){
         return contractService.getAllContracts();
     }
+
+    @GetMapping("/status-open")
+    public List<Contract> getAllContractsOpen(){
+        return contractService.getAllContractsOpen();
+    }
     @GetMapping("{id}")
     public Optional<Contract> getContract(@PathVariable("id") String contractId){
         return contractService.getContract(contractId);
@@ -54,6 +59,11 @@ public class ContractController {
     public String deleteContract(@PathVariable("id") String contractId){
         return contractService.deleteContract(contractId);
     }
+    @PostMapping("clone-contract/{id}")
+    public Optional<ContractDto> cloneContract(@PathVariable("id") String contractId){
+        return contractService.cloneContract(contractId);
+
+    }
     @PutMapping("{id}")
     public Contract updateContract(@PathVariable("id") String contractId,@RequestBody ContractDto contractRequest) throws ProcureException {
         return contractService.updateContract(contractId,contractRequest);
@@ -62,19 +72,18 @@ public class ContractController {
 //    public Contract approveContract(@PathVariable String contractId) throws ProcureException {
 //        return contractService.sendContractForApproval(contractId);
 //    }
-    @GetMapping("/send-to-supplier/{id}")
-    public ResponseEntity<Optional<Contract>> sendContractToSupplier(@PathVariable("id") String contractId) {
-        Optional<Contract> sendContract = contractService.sendApprovalEmailToSupplier(contractId);
-        return ResponseEntity.ok(sendContract);
-    }
+    @PostMapping("/send-to-supplier/{id}")
+    public String sendContractToSupplier(@PathVariable("id") String contractId) throws ProcureException {
+        return   contractService.sendApprovalEmailToSupplier(contractId);
 
+    }
     // Step 3: Edit Approval Status by Supplier
     @PatchMapping("/edit-contract/{contractId}")
     public ResponseEntity<Contract> editContractApprovalStatus(
             @PathVariable String contractId,
-            @RequestParam String approvalStatus) throws ProcureException {
+            @RequestParam String contractStatus) throws ProcureException {
         // Implement logic to update the contract approval status
-        Contract updatedContract = contractService.updateApprovalStatus(contractId, ApprovalStatus.valueOf(approvalStatus));
+        Contract updatedContract = contractService.updateApprovalStatus(contractId, ContractStatus.valueOf(contractStatus));
         return ResponseEntity.ok(updatedContract);
     }
 
@@ -88,3 +97,4 @@ public class ContractController {
     }
 
 }
+

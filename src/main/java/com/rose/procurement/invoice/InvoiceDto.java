@@ -15,14 +15,13 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class InvoiceDto{
-    @NotNull
-    @NotBlank
     private String invoiceNumber;
     @FutureOrPresent
     @NotNull
     private LocalDate dueDate;
+    @FutureOrPresent
     @NotNull
-    private double totalAmount;
-    @NotNull
-    private  Long purchaseOrderId;
+    private LocalDate invoiceDate;
+    private Long purchaseOrderId;
+
 }

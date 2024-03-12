@@ -7,6 +7,7 @@ import com.rose.procurement.supplier.services.SupplierService;
 import jakarta.validation.Valid;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -40,6 +40,18 @@ public class SupplierController {
 //        }
         return supplierService.createSupplier(supplierRequest);
     }
+//    @GetMapping("/jasperpdf/export")
+//    public void createPDF(HttpServletResponse response) throws IOException, JRException {
+//        response.setContentType("application/pdf");
+//        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
+//        String currentDateTime = dateFormatter.format(new Date());
+//
+//        String headerKey = "Content-Disposition";
+//        String headerValue = "attachment; filename=pdf_" + currentDateTime + ".pdf";
+//        response.setHeader(headerKey, headerValue);
+//
+//        reportService.exportJasperReport(response);
+//    }
     @PostMapping(value = "upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<Integer> uploadSuppliers(@RequestPart("file")MultipartFile file){
         return ResponseEntity.ok(supplierService.uploadSuppliers(file));
@@ -62,15 +74,15 @@ public class SupplierController {
         return supplierService.getAllSuppliers();
     }
     @GetMapping("/supplier/{id}")
-    public Supplier getSupplier(@PathVariable("id") Long vendorId) {
+    public Supplier getSupplier(@PathVariable("id") String vendorId) {
        return supplierService.getSupplierById(vendorId);
     }
     @PutMapping("{id}")
-    public Supplier updateSupplier(@PathVariable("id") Long vendorId , @RequestBody SupplierDto supplierRequest){
+    public Supplier updateSupplier(@PathVariable("id") String vendorId , @RequestBody SupplierDto supplierRequest){
         return supplierService.updateSupplier(vendorId, supplierRequest);
     }
     @DeleteMapping("{id}")
-    public String deleteSupplier(@PathVariable("id") Long vendorId){
+    public String deleteSupplier(@PathVariable("id") String vendorId){
         return supplierService.deleteSupplier(vendorId);
     }
     @DeleteMapping
@@ -78,9 +90,9 @@ public class SupplierController {
         return supplierService.deleteAll();
     }
 
-    @GetMapping("/report/{format}")
-    public String generatePurchaseOrderReport(@PathVariable("format") String format) throws JRException, FileNotFoundException {
-        return reportService.exportReport(format);
+    @GetMapping("/report/")
+    public ResponseEntity<Resource> generatePurchaseOrderReport() throws JRException, IOException {
+        return reportService.exportReport();
     }
 }
 

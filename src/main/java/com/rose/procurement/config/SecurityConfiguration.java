@@ -17,6 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static com.rose.procurement.user.Permission.*;
 import static com.rose.procurement.user.Role.ADMIN;
@@ -42,9 +43,9 @@ public class SecurityConfiguration {
             "/webjars/**",
             "api/newsletter/subscribe/**",
             "/api/demo/**",
-//            "/api/v1/category/**",
             "/api/v1/items",
             "/api/v1/roles/**",
+            "api/send-to-supplier/**",
             "/api/contact/message",
             "/swagger-ui.html"};
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -61,7 +62,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/v1/**").hasAnyRole(ADMIN.name(), MANAGER.name())
                                 .requestMatchers(GET, "/api/v1/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
                                 .requestMatchers(POST, "/api/v1/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-                                .requestMatchers(PUT, "/api/v1/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
+                                .requestMatchers(PUT, "/api/v1/**/").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
                                 .requestMatchers(DELETE, "/api/v1/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
                                 .anyRequest()
                                 .authenticated()
@@ -75,7 +76,6 @@ public class SecurityConfiguration {
                                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 )
         ;
-
         return http.build();
     }
 
@@ -85,12 +85,12 @@ public class SecurityConfiguration {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
         corsConfiguration.setAllowCredentials(false);
-        corsConfiguration.setAllowedOrigins(Arrays.asList(CorsConfiguration.ALL));
-        corsConfiguration.setAllowedMethods(Arrays.asList(CorsConfiguration.ALL));
-        corsConfiguration.setAllowedHeaders(Arrays.asList(CorsConfiguration.ALL));
+        corsConfiguration.setAllowedOrigins(List.of(CorsConfiguration.ALL));
+        corsConfiguration.setAllowedMethods(List.of(CorsConfiguration.ALL));
+        corsConfiguration.setAllowedHeaders(List.of(CorsConfiguration.ALL));
         source.registerCorsConfiguration("/**", corsConfiguration);
-        source.registerCorsConfiguration("http://localhost:3000/**", corsConfiguration);
-        source.registerCorsConfiguration("/api/**", corsConfiguration);
+        source.registerCorsConfiguration("/api/v1/**", corsConfiguration);
         return new CorsFilter(source);
     }
+
 }

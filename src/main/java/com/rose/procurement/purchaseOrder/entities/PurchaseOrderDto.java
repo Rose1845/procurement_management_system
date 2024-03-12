@@ -34,9 +34,10 @@ public class PurchaseOrderDto {
     @NotNull
     private PaymentType paymentType;
     private ApprovalStatus approvalStatus;
-    @NotNull
+    private double totalAmount;
+//    @NotNull
     private Set<Item> items;
-    @NotNull
-    private Long vendorId;
+//    @NotNull
+    private String vendorId;
 }
 

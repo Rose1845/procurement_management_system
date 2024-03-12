@@ -25,8 +25,28 @@ public class DeliveryController {
         return deliveryService.getDeliveryById(id);
     }
 
-    @PostMapping("/add/{purchaseOrderId}")
-    public Delivery createDelivery(@PathVariable Long purchaseOrderId, @RequestBody Delivery delivery) {
-        return deliveryService.createDelivery(purchaseOrderId, delivery);
-    }
+//    @PostMapping("/add/{purchaseOrderId}")
+//    public Delivery createDelivery(@PathVariable Long purchaseOrderId, @RequestBody Delivery delivery) {
+//        return deliveryService.createDelivery(purchaseOrderId, delivery);
+//    }
+
+//    @PostMapping("/{purchaseOrderId}/deliveries")
+//    public ResponseEntity<String> createDeliveryForPurchaseOrder(
+//            @PathVariable Long purchaseOrderId,
+//            @RequestBody DeliveryItemDTo itemDeliveries
+//    ) {
+//        try {
+//            deliveryService.createDeliveryForPurchaseOrder(purchaseOrderId, itemDeliveries);
+//            return ResponseEntity.ok("Delivery created successfully");
+//        } catch (EntityNotFoundException | IllegalStateException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
+@PostMapping("/{purchaseOrderId}/deliveries")
+public Delivery createDeliveryForPurchaseOrder(
+        @PathVariable Long purchaseOrderId,
+        @RequestBody DeliveryDTo deliveryDTo
+) {
+  return deliveryService.createDelivery(purchaseOrderId,deliveryDTo);
+}
 }
