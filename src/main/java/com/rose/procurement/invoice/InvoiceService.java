@@ -5,12 +5,14 @@ import com.rose.procurement.enums.InvoiceStatus;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.mappers.PurchaseOrderMapper;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 @Service
 public class InvoiceService {
@@ -69,4 +71,19 @@ public class InvoiceService {
         return "IN" + randomLetters.toString() + randomNumber;
     }
 
+    public void generateAndExportReport(String invoiceId) throws JRException, FileNotFoundException {
+        Optional<Invoice> invoice = invoiceRepository.findById(invoiceId);
+        File file = ResourceUtils.getFile("classpath:invoice1.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+
+        // Your SQL query and other logic for report generation go here
+
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singletonList(invoice.get()));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("purchaseOrderId", invoiceId);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+        // Export the report to a file
+        JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
+    }
 }

@@ -16,10 +16,14 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
@@ -126,10 +130,34 @@ public class PurchaseOrderController {
     public PurchaseOrder updatePO(@PathVariable("id") Long purchaseOrderId, @RequestBody PurchaseOrderDto purchaseOrderDto){
         return purchaseOrderService.updatePurchaseOrder(purchaseOrderId,purchaseOrderDto);
     }
-    @GetMapping("{id}/report")
-    public String generateReport(@PathVariable("id") Long purchaseOrderId) throws JRException, IOException {
-        return purchaseOrderService.exportReport(purchaseOrderId);
+
+    @GetMapping("/{id}/report")
+    public ResponseEntity<byte[]> exportReport(@PathVariable("id") Long purchaseOrderId) {
+        try {
+            // Call the service method to generate and export the report
+            purchaseOrderService.generateAndExportReport(purchaseOrderId);
+
+            // Get the generated file and set response headers
+            File file = new File("output.pdf");
+            FileInputStream fileInputStream = new FileInputStream(file);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "purchase_order.pdf");
+
+            // Convert the file to byte array
+            byte[] fileContent = new byte[(int) file.length()];
+            fileInputStream.read(fileContent);
+            fileInputStream.close();
+
+            // Return the response entity with byte array and headers
+            return ResponseEntity.ok().headers(headers).body(fileContent);
+        } catch (Exception e) {
+            // Handle exceptions appropriately
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
+
 
     @PostMapping("/send-order-to-supplier/{id}")
     public ResponseEntity<String> sendContractToSupplier(@PathVariable("id") Long purchaseOrderId) throws ProcureException {

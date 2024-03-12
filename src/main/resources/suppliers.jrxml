@@ -4,37 +4,36 @@
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
     <queryString>
-        <![CDATA[SELECT s.vendorId AS vendor_id, s.address.box AS p_o_box, s.name, s.address.location AS location, s.email, s.paymentType AS payment_type, s.phoneNumber AS phone_number " +
-           "FROM Supplier s;]]>
+        <![CDATA[ select * supplier;]]>
     </queryString>
-<!--    <field name="vendor_id" class="java.lang.String">-->
-<!--    </field>-->
-<!--    <field name="p_o_box" class="java.lang.String">-->
-<!--    </field>-->
-<!--    <field name="city" class="java.lang.String">-->
-<!--    </field>-->
-<!--    <field name="country" class="java.lang.String">-->
-<!--    </field>-->
-<!--    <field name="location" class="java.lang.String">-->
-<!--    </field>-->
-<!--    <field name="contact_information" class="java.lang.String">-->
-<!--    </field>-->
-<!--    <field name="contact_person" class="java.lang.String">-->
-<!--    </field>-->
-<!--    <field name="created_at" class="java.sql.Timestamp">-->
-<!--    </field>-->
+    <field name="vendorId" class="java.lang.String">
+    </field>
+    <field name="address.box" class="java.lang.String">
+    </field>
+    <field name="address.city" class="java.lang.String">
+    </field>
+    <field name="address.country" class="java.lang.String">
+    </field>
+    <field name="address.location" class="java.lang.String">
+    </field>
+    <field name="contactInformation" class="java.lang.String">
+    </field>
+    <field name="contactPerson" class="java.lang.String">
+    </field>
+    <field name="createdAt" class="java.sql.Timestamp">
+    </field>
     <field name="email" class="java.lang.String">
     </field>
     <field name="name" class="java.lang.String">
     </field>
-<!--    <field name="payment_type" class="java.lang.Integer">-->
+<!--    <field name="paymentType" class="java.lang.String">-->
 <!--    </field>-->
-<!--    <field name="phone_number" class="java.lang.String">-->
-<!--    </field>-->
-<!--    <field name="terms_and_conditions" class="java.lang.String">-->
-<!--    </field>-->
-<!--    <field name="updated_at" class="java.sql.Timestamp">-->
-<!--    </field>-->
+    <field name="phoneNumber" class="java.lang.String">
+    </field>
+    <field name="termsAndConditions" class="java.lang.String">
+    </field>
+    <field name="updatedAt" class="java.sql.Timestamp">
+    </field>
     <background>
         <band splitType="Stretch"/>
     </background>
@@ -55,26 +54,22 @@
                 <reportElement x="100" y="41" width="100" height="20" uuid="7bc9268e-4e12-44a2-b5cf-261c1677bef7"/>
                 <text><![CDATA[NAME]]></text>
             </staticText>
-<!--            <staticText>-->
-<!--                <reportElement x="213" y="41" width="100" height="20" uuid="2e6e1626-bcec-4c2b-bc52-1750c415dffe"/>-->
-<!--                <text><![CDATA[P.O BOX]]></text>-->
-<!--            </staticText>-->
-<!--            <staticText>-->
-<!--                <reportElement x="342" y="41" width="100" height="20" uuid="822c71b0-ef13-4745-9ddd-1ade1227ca48"/>-->
-<!--                <text><![CDATA[LOCATION]]></text>-->
-<!--            </staticText>-->
+            <staticText>
+                <reportElement x="213" y="41" width="100" height="20" uuid="2e6e1626-bcec-4c2b-bc52-1750c415dffe"/>
+                <text><![CDATA[P.O BOX]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="342" y="41" width="100" height="20" uuid="822c71b0-ef13-4745-9ddd-1ade1227ca48"/>
+                <text><![CDATA[LOCATION]]></text>
+            </staticText>
             <staticText>
                 <reportElement x="442" y="41" width="100" height="20" uuid="6e0f477b-30d9-40ba-89db-950bf40342c9"/>
                 <text><![CDATA[EMAIL]]></text>
             </staticText>
-<!--            <staticText>-->
-<!--                <reportElement x="542" y="41" width="100" height="20" uuid="092f25aa-681a-46d9-a077-e6fd347cedaa"/>-->
-<!--                <text><![CDATA[PAYEMENT TYPE]]></text>-->
-<!--            </staticText>-->
-<!--            <staticText>-->
-<!--                <reportElement x="642" y="41" width="100" height="20" uuid="b993fcdf-d4aa-42dc-8174-835c406ec529"/>-->
-<!--                <text><![CDATA[PHONE_NUMBER]]></text>-->
-<!--            </staticText>-->
+            <staticText>
+                <reportElement x="642" y="41" width="100" height="20" uuid="b993fcdf-d4aa-42dc-8174-835c406ec529"/>
+                <text><![CDATA[PHONE_NUMBER]]></text>
+            </staticText>
         </band>
     </columnHeader>
     <detail>
@@ -83,28 +78,23 @@
                 <reportElement x="100" y="0" width="100" height="20" uuid="635b6865-4b78-44e9-8eb9-5c3618e8ca5f"/>
                 <textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
             </textField>
-<!--            <textField>-->
-<!--                <reportElement x="342" y="0" width="100" height="20" uuid="86cfd4b4-d8ce-4d80-8e5d-290b181be0b1"/>-->
-<!--                <textFieldExpression><![CDATA[$F{location}]]></textFieldExpression>-->
-<!--            </textField>-->
+            <textField>
+                <reportElement x="342" y="0" width="100" height="20" uuid="86cfd4b4-d8ce-4d80-8e5d-290b181be0b1"/>
+                <textFieldExpression><![CDATA[$F{address.location}]]></textFieldExpression>
+            </textField>
             <textField>
                 <reportElement x="442" y="0" width="100" height="20" uuid="82fae75f-5197-4fae-b69f-d36de3990c38"/>
                 <textElement textAlignment="Center"/>
                 <textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
             </textField>
-<!--            <textField>-->
-<!--                <reportElement x="542" y="0" width="100" height="20" uuid="25003ef0-980c-4fa9-9e1b-8dbff26f513c"/>-->
-<!--                <textElement textAlignment="Center"/>-->
-<!--                <textFieldExpression><![CDATA[$F{payment_type}]]></textFieldExpression>-->
-<!--            </textField>-->
-<!--            <textField>-->
-<!--                <reportElement x="642" y="0" width="100" height="20" uuid="7d155a38-13a4-4ff5-b672-0207bf340d33"/>-->
-<!--                <textFieldExpression><![CDATA[$F{phone_number}]]></textFieldExpression>-->
-<!--            </textField>-->
-<!--            <textField>-->
-<!--                <reportElement x="213" y="0" width="100" height="20" uuid="0820d11e-6254-44dc-b7f8-0a2ecdeece86"/>-->
-<!--                <textFieldExpression><![CDATA[$F{p_o_box}]]></textFieldExpression>-->
-<!--            </textField>-->
+            <textField>
+                <reportElement x="642" y="0" width="100" height="20" uuid="7d155a38-13a4-4ff5-b672-0207bf340d33"/>
+                <textFieldExpression><![CDATA[$F{phoneNumber}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="213" y="0" width="100" height="20" uuid="0820d11e-6254-44dc-b7f8-0a2ecdeece86"/>
+                <textFieldExpression><![CDATA[$F{address.box}]]></textFieldExpression>
+            </textField>
         </band>
     </detail>
     <summary>

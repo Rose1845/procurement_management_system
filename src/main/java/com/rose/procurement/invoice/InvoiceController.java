@@ -2,9 +2,13 @@ package com.rose.procurement.invoice;
 
 import com.rose.procurement.advice.ProcureException;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,5 +80,32 @@ public class InvoiceController {
 //            return ResponseEntity.notFound().build();
 //        }
 //    }
+@GetMapping("/{id}/report")
+public ResponseEntity<byte[]> exportReport(@PathVariable("id") String invoiceId) {
+    try {
+        // Call the service method to generate and export the report
+        invoiceService.generateAndExportReport(invoiceId);
+
+        // Get the generated file and set response headers
+        File file = new File("output.pdf");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "purchase_order.pdf");
+
+        // Convert the file to byte array
+        byte[] fileContent = new byte[(int) file.length()];
+        fileInputStream.read(fileContent);
+        fileInputStream.close();
+
+        // Return the response entity with byte array and headers
+        return ResponseEntity.ok().headers(headers).body(fileContent);
+    } catch (Exception e) {
+        // Handle exceptions appropriately
+        e.printStackTrace();
+        return ResponseEntity.status(500).build();
+    }
+}
+
 
 }

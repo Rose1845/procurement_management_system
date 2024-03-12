@@ -237,31 +237,20 @@ private final SupplierRepository supplierRepository;
            throw  ProcureException.builder().metadata("error").message(e.getMessage()).build();
         }
     }
-    public String exportReport(Long purchaseOrderId) throws FileNotFoundException, JRException {
+    public void generateAndExportReport(Long purchaseOrderId) throws JRException, FileNotFoundException {
         Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
         File file = ResourceUtils.getFile("classpath:purchase_order.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
 
-        // Use the actual value of purchaseOrderId in the SQL query
-        String sql = "SELECT po.*,\n" +
-                "i.item_name,i.quantity,i.total_price,i.item_number,i.unit_price,\n" +
-                "s.name AS supplier_name,\n" +
-                "    s.p_o_box AS supplier_address_box,\n" +
-                "    s.country AS supplier_address_country,\n" +
-                "    s.city AS supplier_address_city,\n" +
-                "    s.location AS supplier_address_location\n" +
-                "FROM purchase_order po\n" +
-                "JOIN order_items oi ON po.purchase_order_id = oi.purchase_order_id\n" +
-                "JOIN item i ON oi.item_id = i.item_id\n" +
-                "JOIN supplier s ON po.supplier_id = s.vendor_id\n" +
-                "WHERE po.purchase_order_id = $P{purchaseOrderId} " ;
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singletonList(purchaseOrder.get().getPurchaseOrderId()));
+        // Your SQL query and other logic for report generation go here
+
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(Collections.singletonList(purchaseOrder.get()));
         Map<String, Object> parameters = new HashMap<>();
-//        parameters.put("query", sql);
         parameters.put("purchaseOrderId", purchaseOrderId);
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+        // Export the report to a file
         JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
-        return "generated";
     }
 
 }

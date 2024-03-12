@@ -43,18 +43,18 @@
     <field name="createdBy" class="java.lang.Integer"/>
     <field name="purchaseOrder.purchaseOrderTitle" class="java.lang.String"/>
     <field name="purchaseOrder" class="com.rose.procurement.purchaseOrder.entities.PurchaseOrder"/>
-    <!--    <field name="itemDescription" class="java.lang.String">-->
-    <!--    </field>-->
-    <!--    <field name="purchaseOrder.item.itemName" class="java.lang.String">-->
-    <!--    </field>-->
-    <!--    <field name="itemNumber" class="java.lang.String">-->
-    <!--    </field>-->
-    <!--    <field name="quantity" class="java.lang.Integer">-->
-    <!--    </field>-->
-    <!--    <field name="totalPrice" class="java.lang.Double">-->
-    <!--    </field>-->
-    <!--    <field name="unitPrice" class="java.lang.Double">-->
-    <!--    </field>-->
+<!--    <field name="itemDescription" class="java.lang.String">-->
+<!--    </field>-->
+<!--    <field name="purchaseOrder.item.itemName" class="java.lang.String">-->
+<!--    </field>-->
+<!--    <field name="itemNumber" class="java.lang.String">-->
+<!--    </field>-->
+<!--    <field name="quantity" class="java.lang.Integer">-->
+<!--    </field>-->
+<!--    <field name="totalPrice" class="java.lang.Double">-->
+<!--    </field>-->
+<!--    <field name="unitPrice" class="java.lang.Double">-->
+<!--    </field>-->
 
     <field name="purchaseOrder.supplier.name" class="java.lang.String"/>
     <field name="purchaseOrder.supplier.address.box" class="java.lang.String"/>
@@ -173,26 +173,26 @@
     </columnHeader>
     <detail>
         <band height="29" splitType="Stretch">
-            <!--            <textField>-->
-            <!--                <reportElement x="0" y="3" width="100" height="20" uuid="ea50fd50-ee35-4283-a6bf-567648635540"/>-->
-            <!--                <textFieldExpression><![CDATA[$F{purchaseOrder.item.itemName}]]></textFieldExpression>-->
-            <!--            </textField>-->
-            <!--            <textField>-->
-            <!--                <reportElement x="100" y="0" width="100" height="20" uuid="ddb61a65-cbdb-4c03-964e-dae4c74ff96b"/>-->
-            <!--                <textFieldExpression><![CDATA[$F{itemNumber}]]></textFieldExpression>-->
-            <!--            </textField>-->
-            <!--            <textField>-->
-            <!--                <reportElement x="300" y="3" width="100" height="20" uuid="4b587656-390e-4d0c-8dee-7df838976d6d"/>-->
-            <!--                <textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>-->
-            <!--            </textField>-->
-            <!--            <textField>-->
-            <!--                <reportElement x="200" y="3" width="100" height="20" uuid="eb770794-5788-4e63-96a0-c835f4dabb4b"/>-->
-            <!--                <textFieldExpression><![CDATA[$F{unitPrice}]]></textFieldExpression>-->
-            <!--            </textField>-->
-            <!--            <textField>-->
-            <!--                <reportElement x="400" y="3" width="100" height="20" uuid="91d45ba6-d4e2-4d09-97a4-96410f2be170"/>-->
-            <!--                <textFieldExpression><![CDATA[$F{totalPrice}]]></textFieldExpression>-->
-            <!--            </textField>-->
+<!--            <textField>-->
+<!--                <reportElement x="0" y="3" width="100" height="20" uuid="ea50fd50-ee35-4283-a6bf-567648635540"/>-->
+<!--                <textFieldExpression><![CDATA[$F{purchaseOrder.item.itemName}]]></textFieldExpression>-->
+<!--            </textField>-->
+<!--            <textField>-->
+<!--                <reportElement x="100" y="0" width="100" height="20" uuid="ddb61a65-cbdb-4c03-964e-dae4c74ff96b"/>-->
+<!--                <textFieldExpression><![CDATA[$F{itemNumber}]]></textFieldExpression>-->
+<!--            </textField>-->
+<!--            <textField>-->
+<!--                <reportElement x="300" y="3" width="100" height="20" uuid="4b587656-390e-4d0c-8dee-7df838976d6d"/>-->
+<!--                <textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>-->
+<!--            </textField>-->
+<!--            <textField>-->
+<!--                <reportElement x="200" y="3" width="100" height="20" uuid="eb770794-5788-4e63-96a0-c835f4dabb4b"/>-->
+<!--                <textFieldExpression><![CDATA[$F{unitPrice}]]></textFieldExpression>-->
+<!--            </textField>-->
+<!--            <textField>-->
+<!--                <reportElement x="400" y="3" width="100" height="20" uuid="91d45ba6-d4e2-4d09-97a4-96410f2be170"/>-->
+<!--                <textFieldExpression><![CDATA[$F{totalPrice}]]></textFieldExpression>-->
+<!--            </textField>-->
         </band>
     </detail>
     <columnFooter>

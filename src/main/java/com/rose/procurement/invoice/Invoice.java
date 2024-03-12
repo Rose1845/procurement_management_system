@@ -54,8 +54,6 @@ public class Invoice {
     @Column(name = "created_by")
     private Integer createdBy;
 
-
-
     private String generateInvoiceNumber() {
         // Generate 3 random letters
         String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
