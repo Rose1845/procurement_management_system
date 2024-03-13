@@ -60,9 +60,9 @@ public class SecurityConfiguration {
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
                                 .requestMatchers("/api/v1/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                .requestMatchers(GET, "/api/v1/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                                .requestMatchers(POST, "/api/v1/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-                                .requestMatchers(PUT, "/api/v1/**/").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
+                                .requestMatchers(GET, "/api/v1/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name(),STAFF_READ.name())
+                                .requestMatchers(POST, "/api/v1/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name(),STAFF_CREATE.name())
+                                .requestMatchers(PUT, "/api/v1/**/").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name(),STAFF_UPDATE.name())
                                 .requestMatchers(DELETE, "/api/v1/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
                                 .anyRequest()
                                 .authenticated()
@@ -92,5 +92,4 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/api/v1/**", corsConfiguration);
         return new CorsFilter(source);
     }
-
 }

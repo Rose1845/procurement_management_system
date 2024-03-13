@@ -3,6 +3,7 @@ package com.rose.procurement.category.service;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.dtos.CategoryDto;
 import com.rose.procurement.category.entity.CategoryCsvRepresentation;
@@ -34,7 +35,10 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryDto createCategory(CategoryDto categoryDto){
+    public CategoryDto createCategory(CategoryDto categoryDto) throws ProcureException {
+        if (categoryRepository.existsByCategoryName(categoryDto.getCategoryName())) {
+            throw ProcureException.builder().message("Category name   already exist").build();
+        }
         log.info("Received category payload",categoryDto);
         Category category = CategoryMapper.MAPPER.toEntity(categoryDto);
         category.setCategoryName(categoryDto.getCategoryName());

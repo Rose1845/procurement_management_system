@@ -1,5 +1,6 @@
 package com.rose.procurement.user.token;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rose.procurement.user.User;
 import jakarta.persistence.*;
 import lombok.*;

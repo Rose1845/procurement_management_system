@@ -150,7 +150,7 @@ public class ContractService {
 
              // Specify the email content
              String subject = "Contract Approval Request";
-             String editLink = "http://localhost:3000/contract/approve/" + contractId;
+             String editLink = "http://localhost:3001/dashboard/contract/approve/" + contractId;
              String text = "Dear Supplier, \n\n"
                      + "A contract requires your approval. Please review and take appropriate action.\n\n"
                      + "Contract Title: " + contract.getContractTitle() + "\n"

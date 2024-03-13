@@ -1,5 +1,6 @@
 package com.rose.procurement.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rose.procurement.org.Organization;
 import com.rose.procurement.user.token.Token;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,6 +43,7 @@ public class User implements UserDetails {
 //  private Set<Role> roles=new HashSet<>();
 
   @OneToMany(mappedBy = "user")
+  @JsonIgnore
   private List<Token> tokens;
 
   @Override

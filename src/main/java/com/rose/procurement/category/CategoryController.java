@@ -1,5 +1,6 @@
 package com.rose.procurement.category;
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.category.dtos.CategoryDto;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.service.CategoryService;
@@ -24,7 +25,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
     @PostMapping
-    public CategoryDto createCategory(@RequestBody @Valid CategoryDto  categoryDto){
+    public CategoryDto createCategory(@RequestBody @Valid CategoryDto  categoryDto) throws ProcureException {
         log.info("category");
         return categoryService.createCategory(categoryDto);
     }

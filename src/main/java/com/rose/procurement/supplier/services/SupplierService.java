@@ -3,6 +3,7 @@ package com.rose.procurement.supplier.services;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierCsvRepresentation;
@@ -29,7 +30,17 @@ public class SupplierService {
         this.supplierRepository = supplierRepository;
     }
 
-    public SupplierDto createSupplier(SupplierDto supplierRequest) {
+    public SupplierDto createSupplier(SupplierDto supplierRequest) throws ProcureException {
+        if (supplierRepository.existsByEmail(supplierRequest.getEmail())) {
+            throw ProcureException.builder().message("User email already exist").build();
+        }
+        if (supplierRepository.existsByName(supplierRequest.getName())) {
+            throw ProcureException.builder().message("Supplier with that name  already exist").build();
+        }
+        if (supplierRepository.existsByPhoneNumber(supplierRequest.getPhoneNumber())) {
+            throw ProcureException.builder().message("Phone number   already exist").build();
+        }
+
         Address address = new Address();
         address.setBox(supplierRequest.getAddress().getBox());
         address.setCity(supplierRequest.getAddress().getCity());

@@ -35,10 +35,15 @@ public enum Role {
                   MANAGER_DELETE,
                   MANAGER_CREATE
           )
+  ),
+  STAFF(
+          Set.of(
+                  STAFF_READ,
+                  STAFF_UPDATE,
+                  STAFF_CREATE
+          )
   )
-
   ;
-
   private final Set<Permission> permissions;
 
   public List<SimpleGrantedAuthority> getAuthorities() {

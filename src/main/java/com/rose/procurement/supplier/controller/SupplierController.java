@@ -1,5 +1,6 @@
 package com.rose.procurement.supplier.controller;
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.services.ReportService;
@@ -34,7 +35,7 @@ public class SupplierController {
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SupplierDto createSupplier(@RequestBody @Valid SupplierDto supplierRequest){
+    public SupplierDto createSupplier(@RequestBody @Valid SupplierDto supplierRequest) throws ProcureException {
 //        if(result.hasErrors()){
 //            throw new MethodArgumentNotValidException((MethodParameter) null, result);
 //        }

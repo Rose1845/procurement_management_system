@@ -31,15 +31,10 @@ public class RoleServiceImpl implements RoleService {
                     .build();
             Role approveRole = Role.builder()
                     .isDefault(Boolean.TRUE)
-                    .name("APPROVER")
+                    .name("EMMLOYEE")
                     .description("Approve role")
                     .build();
-        Role requisitionRole = Role.builder()
-                .isDefault(Boolean.TRUE)
-                .name("REQUISITIONER")
-                .description("REQUEST role")
-                .build();
-            return Optional.of(roleDao.saveAll(List.of(adminRole, approveRole,requisitionRole)));
+            return Optional.of(roleDao.saveAll(List.of(adminRole, approveRole)));
 
     }
 

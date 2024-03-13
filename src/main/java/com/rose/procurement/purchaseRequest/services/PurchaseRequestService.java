@@ -13,6 +13,7 @@ import com.rose.procurement.purchaseRequest.repository.PurchaseRequestItemDetail
 import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -138,49 +140,43 @@ public class PurchaseRequestService {
         return createdOfferDetails;
     }
 
+    @Transactional
     public List<PurchaseRequestItemDetail> editOfferUnitPrices2(Long purchaseRequestId, String supplierId, List<PurchaseRequestItemDetail> itemDetails) {
-        Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
-        if (purchaseRequestOptional.isEmpty()) {
-            throw new EntityNotFoundException("Purchase request not found");
-        }
+        PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("Purchase request not found"));
 
-        PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
+        List<PurchaseRequestItemDetail> updatedItemDetails = new ArrayList<>();
 
-        // Filter the item details for the specific supplier
-        List<PurchaseRequestItemDetail> supplierItemDetails = itemDetails.stream()
-                .filter(detail -> {
-                    Supplier supplier = detail.getSupplier();
-                    return supplier != null && Objects.equals(supplier.getVendorId(), supplierId);
-                })
-                .toList();
-
-        // Iterate through the list and update the offer unit prices in the database
-        for (PurchaseRequestItemDetail updatedItemDetail : supplierItemDetails) {
-            // Find the corresponding item in the purchase request
-            Optional<PurchaseRequestItemDetail> existingItemDetailOptional = purchaseRequest
-                    .getItemDetails()
-                    .stream()
+        // Iterate through each updated item detail
+        for (PurchaseRequestItemDetail updatedItemDetail : itemDetails) {
+            // Find the corresponding item detail in the purchase request
+            Optional<PurchaseRequestItemDetail> existingItemDetailOptional = purchaseRequest.getItemDetails().stream()
                     .filter(itemDetail ->
                             Objects.equals(itemDetail.getItem().getItemId(), updatedItemDetail.getItem().getItemId())
                                     && Objects.equals(itemDetail.getSupplier().getVendorId(), supplierId))
                     .findFirst();
-            if (existingItemDetailOptional.isPresent()) {
-                PurchaseRequestItemDetail existingItemDetail = existingItemDetailOptional.get();
-                // Perform validation or any other business logic as needed
+
+            // If the item detail exists, update its offer unit price
+            existingItemDetailOptional.ifPresent(existingItemDetail -> {
                 // Update offer unit price
                 existingItemDetail.setOfferUnitPrice(updatedItemDetail.getOfferUnitPrice());
-            } else {
-                // Handle the case where the item detail is not found in the purchase request
-                // You may throw an exception, log a warning, or handle it based on your requirements
-                throw new EntityNotFoundException("Item detail not found in the purchase request");
-            }
+                updatedItemDetails.add(existingItemDetail); // Add the updated item detail to the list
+            });
         }
 
-        // Save all updated item details in the database
-        purchaseRequestItemDetailRepository.saveAll(purchaseRequest.getItemDetails());
+        // Save all updated item details associated with the specified supplier in the database
+        return purchaseRequestItemDetailRepository.saveAll(updatedItemDetails);
+    }
 
-        // Return the updated item details
-        return purchaseRequest.getItemDetails();
+
+
+    private boolean isSupplierMatch(PurchaseRequestItemDetail detail, String supplierId) {
+        Supplier supplier = detail.getSupplier();
+        return supplier != null && Objects.equals(supplier.getVendorId(), supplierId);
+    }
+
+    private boolean isItemMatch(PurchaseRequestItemDetail existingItemDetail, PurchaseRequestItemDetail updatedItemDetail) {
+        return Objects.equals(existingItemDetail.getItem().getItemId(), updatedItemDetail.getItem().getItemId());
     }
     public List<PurchaseRequest> getAllPurchaseRequests() {
         return purchaseRequestRepository.findAll();

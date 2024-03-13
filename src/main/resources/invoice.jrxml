@@ -43,18 +43,39 @@
     <field name="createdBy" class="java.lang.Integer"/>
     <field name="purchaseOrder.purchaseOrderTitle" class="java.lang.String"/>
     <field name="purchaseOrder" class="com.rose.procurement.purchaseOrder.entities.PurchaseOrder"/>
-    <!--    <field name="itemDescription" class="java.lang.String">-->
-    <!--    </field>-->
-    <!--    <field name="purchaseOrder.item.itemName" class="java.lang.String">-->
-    <!--    </field>-->
-    <!--    <field name="itemNumber" class="java.lang.String">-->
-    <!--    </field>-->
-    <!--    <field name="quantity" class="java.lang.Integer">-->
-    <!--    </field>-->
-    <!--    <field name="totalPrice" class="java.lang.Double">-->
-    <!--    </field>-->
-    <!--    <field name="unitPrice" class="java.lang.Double">-->
-    <!--    </field>-->
+    <queryString>
+        <![CDATA[SELECT po.*,
+            i.item_name, i.quantity, i.total_price, i.item_number, i.unit_price,
+            s.name AS supplier_name,
+            s.p_o_box AS supplier_address_box,
+            s.country AS supplier_address_country,
+            s.city AS supplier_address_city,
+            s.location AS supplier_address_location
+        FROM purchase_order po
+        JOIN order_items oi ON po.purchase_order_id = oi.purchase_order_id
+        JOIN item i ON oi.item_id = i.item_id
+        JOIN supplier s ON po.supplier_id = s.vendor_id
+        WHERE po.purchase_order_id = $P{purchaseOrderId};]]>
+    </queryString>
+
+    <!-- Existing fields -->
+
+    <!-- New subDataset for items -->
+    <subDataset name="ItemsDataset" uuid="your-uuid">
+        <field name="itemName" class="java.lang.String"/>
+        <field name="itemNumber" class="java.lang.String"/>
+        <field name="quantity" class="java.lang.Integer"/>
+        <field name="unitPrice" class="java.lang.Double"/>
+        <field name="totalPrice" class="java.lang.Double"/>
+    </subDataset>
+
+    <field name="items" class="java.util.List">
+        <subDataset>
+            <datasetRun subDataset="ItemsDataset" uuid="your-uuid">
+                <dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{items})]]></dataSourceExpression>
+            </datasetRun>
+        </subDataset>
+    </field>
 
     <field name="purchaseOrder.supplier.name" class="java.lang.String"/>
     <field name="purchaseOrder.supplier.address.box" class="java.lang.String"/>

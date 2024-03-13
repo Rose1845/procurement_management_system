@@ -17,9 +17,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
@@ -115,6 +113,32 @@ private final SupplierRepository supplierRepository;
    }
     public List<PurchaseOrder> getAllOrders(){
         return new ArrayList<>(purchaseOrderRepository.findAll());
+    }
+
+    public List<PurchaseOrder> getOrdersBySupplier(String supplierName) {
+        Supplier supplier = new Supplier();
+        supplier.setName(supplierName); // Create a supplier object and set its name
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withStringMatcher(ExampleMatcher.StringMatcher.EXACT) // Match string exactly
+                .withIgnoreNullValues(); // Ignore null values in the example
+
+        Example<PurchaseOrder> example = Example.of(new PurchaseOrder(), matcher);
+
+        return purchaseOrderRepository.findAll(example);
+    }
+
+    public List<PurchaseOrder> getOrdersByStatus(String status) {
+        PurchaseOrder exampleOrder = new PurchaseOrder();
+        exampleOrder.setApprovalStatus(ApprovalStatus.valueOf(status)); // Set status
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withStringMatcher(ExampleMatcher.StringMatcher.EXACT) // Match string exactly
+                .withIgnoreNullValues(); // Ignore null values in the example
+
+        Example<PurchaseOrder> example = Example.of(exampleOrder, matcher);
+
+        return purchaseOrderRepository.findAll(example);
     }
 
 
