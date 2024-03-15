@@ -84,14 +84,14 @@ public class InvoiceController {
 public ResponseEntity<byte[]> exportReport(@PathVariable("id") String invoiceId) {
     try {
         // Call the service method to generate and export the report
-        invoiceService.generateAndExportReport(invoiceId);
+        invoiceService.generateAndExportReport1(invoiceId);
 
         // Get the generated file and set response headers
         File file = new File("output.pdf");
         FileInputStream fileInputStream = new FileInputStream(file);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "purchase_order.pdf");
+        headers.setContentDispositionFormData("attachment", "invoice.pdf");
 
         // Convert the file to byte array
         byte[] fileContent = new byte[(int) file.length()];

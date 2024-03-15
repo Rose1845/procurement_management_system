@@ -47,7 +47,7 @@ public class PurchaseRequisition {
                           @JoinColumn(name = "purchase_requisition_id",referencedColumnName = "requisitionId")
                     },
                     inverseJoinColumns = {
-                          @JoinColumn(name = "item_id",referencedColumnName = "itemId")
+                          @JoinColumn(name = "item_id",referencedColumnName = "item_id")
                     }
             )
     @JsonIgnore

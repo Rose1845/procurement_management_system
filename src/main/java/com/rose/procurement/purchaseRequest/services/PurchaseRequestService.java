@@ -3,6 +3,7 @@ package com.rose.procurement.purchaseRequest.services;
 import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ApprovalStatus;
+import com.rose.procurement.enums.QuoteStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
@@ -65,7 +66,6 @@ public class PurchaseRequestService {
     }
     public String sendApprovalEmailToSuppliers(Long purchaseRequestId) throws ProcureException {
         log.info("Sending request offer  emails for Purchase Request with ID: {}", purchaseRequestId);
-
         if (purchaseRequestId == null) {
             throw ProcureException.builder().message("Purchase request ID not found").metadata("id").build();
         }
@@ -127,6 +127,7 @@ public class PurchaseRequestService {
                         .purchaseRequest(purchaseRequest)
                         .supplier(supplier)
                         .item(item)
+                        .quoteStatus(QuoteStatus.Waiting_for_offer)
                         .offerUnitPrice(BigDecimal.ZERO) // Set default offer unit price
                         .build();
                 PurchaseRequestItemDetail createdOfferDetail = purchaseRequestItemDetailRepository.save(singleOfferDetail);
@@ -160,24 +161,16 @@ public class PurchaseRequestService {
             existingItemDetailOptional.ifPresent(existingItemDetail -> {
                 // Update offer unit price
                 existingItemDetail.setOfferUnitPrice(updatedItemDetail.getOfferUnitPrice());
+                existingItemDetail.setQuoteStatus(QuoteStatus.SUPPLIER_HAS_OFFERED);
                 updatedItemDetails.add(existingItemDetail); // Add the updated item detail to the list
             });
+
         }
 
         // Save all updated item details associated with the specified supplier in the database
         return purchaseRequestItemDetailRepository.saveAll(updatedItemDetails);
     }
 
-
-
-    private boolean isSupplierMatch(PurchaseRequestItemDetail detail, String supplierId) {
-        Supplier supplier = detail.getSupplier();
-        return supplier != null && Objects.equals(supplier.getVendorId(), supplierId);
-    }
-
-    private boolean isItemMatch(PurchaseRequestItemDetail existingItemDetail, PurchaseRequestItemDetail updatedItemDetail) {
-        return Objects.equals(existingItemDetail.getItem().getItemId(), updatedItemDetail.getItem().getItemId());
-    }
     public List<PurchaseRequest> getAllPurchaseRequests() {
         return purchaseRequestRepository.findAll();
     }
@@ -187,6 +180,13 @@ public class PurchaseRequestService {
         Optional<PurchaseRequest> purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId);
         return purchaseRequest.map(purchaseRequestMapper::toDto);
     }
+//    public List<PurchaseRequestDto> getPurchaseRequestsForSupplier(Long supplierId) {
+//        List<PurchaseRequest> purchaseRequests = purchaseRequestRepository.findBySupplierId(supplierId);
+//        return purchaseRequests.stream()
+//                .map(purchaseRequestMapper::toDto)
+//                .collect(Collectors.toList());
+//    }
+//
     public Optional<PurchaseRequest> getPurchaseRequestDetailsForSupplier(Long purchaseRequestId, String vendorId) {
         return purchaseRequestRepository.findByPurchaseRequestIdAndSuppliers_VendorId(purchaseRequestId, vendorId);
     }

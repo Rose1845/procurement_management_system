@@ -20,9 +20,13 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
+import org.webjars.NotFoundException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
@@ -59,7 +63,7 @@ private final SupplierRepository supplierRepository;
        purchaseOrder.setPaymentType(purchaseOrderRequest.getPaymentType());
         Set<Item> items = new HashSet<>(purchaseOrder.getItems());
         double totalAmount = purchaseOrder.getItems().stream().mapToDouble(Item::getTotalPrice).sum();
-        purchaseOrder.setTotalAmount(totalAmount);
+        purchaseOrder.setTotalAmount((long) totalAmount);
         purchaseOrder.setItems(new HashSet<>(items));
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate());
         purchaseOrder.setUpdatedAt(LocalDate.now().atStartOfDay());
@@ -80,7 +84,7 @@ private final SupplierRepository supplierRepository;
         // Copy items from the contract to the purchase order
         Set<Item> items = new HashSet<>(contract.getItems());
         double totalAmount = items.stream().mapToDouble(Item::getTotalPrice).sum();
-        purchaseOrder.setTotalAmount(totalAmount);
+        purchaseOrder.setTotalAmount((long) totalAmount);
         purchaseOrder.setItems(new HashSet<>(items));
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate()); // Set your delivery date logic here
         purchaseOrder.setUpdatedAt(LocalDateTime.now());
@@ -114,18 +118,9 @@ private final SupplierRepository supplierRepository;
     public List<PurchaseOrder> getAllOrders(){
         return new ArrayList<>(purchaseOrderRepository.findAll());
     }
-
-    public List<PurchaseOrder> getOrdersBySupplier(String supplierName) {
-        Supplier supplier = new Supplier();
-        supplier.setName(supplierName); // Create a supplier object and set its name
-
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withStringMatcher(ExampleMatcher.StringMatcher.EXACT) // Match string exactly
-                .withIgnoreNullValues(); // Ignore null values in the example
-
-        Example<PurchaseOrder> example = Example.of(new PurchaseOrder(), matcher);
-
-        return purchaseOrderRepository.findAll(example);
+    public List<PurchaseOrder> getOrdersForSupplierById(String supplierId) {
+        Supplier supplier = supplierRepository.findById(supplierId).orElseThrow(() -> new NotFoundException("Supplier not found with id: " + supplierId));
+        return purchaseOrderRepository.findBySupplier(supplier);
     }
 
     public List<PurchaseOrder> getOrdersByStatus(String status) {
@@ -263,7 +258,7 @@ private final SupplierRepository supplierRepository;
     }
     public void generateAndExportReport(Long purchaseOrderId) throws JRException, FileNotFoundException {
         Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
-        File file = ResourceUtils.getFile("classpath:purchase_order.jrxml");
+        File file = ResourceUtils.getFile("purchase_order.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
 
         // Your SQL query and other logic for report generation go here
@@ -275,6 +270,33 @@ private final SupplierRepository supplierRepository;
 
         // Export the report to a file
         JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
+    }
+    public void generateAndExportReport1(Long purchaseOrderId) throws JRException, FileNotFoundException {
+        // Assuming you have a JDBC URL, username, and password for your database
+        String jdbcUrl = "jdbc:mysql://localhost:3306/procure";
+        String username = "rose";
+        String password = "Atieno18_";
+
+        // Obtain the .jrxml file
+        File file = ResourceUtils.getFile("classpath:Order.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+
+        // Parameters to be passed to the report
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("purchaseOrderId", purchaseOrderId);
+
+        // Establishing a database connection
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password)) {
+            // Filling the report with data from the database, parameters, and the connection
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
+
+            // Export the report to a file
+            JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
+        } catch (Exception e) {
+            // Handle exceptions such as SQLExceptions
+            e.printStackTrace();
+            throw new RuntimeException("Error while generating report", e);
+        }
     }
 
 }

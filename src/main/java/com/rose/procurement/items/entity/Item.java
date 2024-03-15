@@ -33,18 +33,31 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@Table(name = "item")
 @EntityListeners(AuditingEntityListener.class)
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String itemId;
-    private String itemName;
-    private String itemNumber;
-    private String itemDescription;
+
+        @Column(name = "item_id")
+        private String itemId;
+
+        @Column(name = "item_name")
+        private String itemName;
+
+        @Column(name = "item_number")
+        private String itemNumber;
+
+        @Column(name = "item_description")
+        private String itemDescription;
     @Min(1)
-    private int quantity=1;
-    private double unitPrice;
-    private double totalPrice;
+         private int quantity=1;
+
+        @Column(name = "unit_price")
+        private double unitPrice;
+
+        @Column(name = "total_price")
+        private double totalPrice;
     @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Contract> contracts;
@@ -87,7 +100,8 @@ public class Item {
     @CreatedBy
     @Column(
             nullable = false,
-            updatable = false
+            updatable = false,
+            name = "created_by"
     )
     private Integer createdBy;
     @Transient // This annotation indicates that the field should not be persisted in the database

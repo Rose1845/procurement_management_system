@@ -34,6 +34,11 @@ class CategoryControllerTest {
            }
 
            @Override
+           public boolean existsByCategoryName(String categoryName) {
+               return false;
+           }
+
+           @Override
            public void flush() {
 
            }

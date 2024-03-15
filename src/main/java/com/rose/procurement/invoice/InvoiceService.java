@@ -12,6 +12,8 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.*;
 
 @Service
@@ -73,7 +75,7 @@ public class InvoiceService {
 
     public void generateAndExportReport(String invoiceId) throws JRException, FileNotFoundException {
         Optional<Invoice> invoice = invoiceRepository.findById(invoiceId);
-        File file = ResourceUtils.getFile("classpath:invoice1.jrxml");
+        File file = ResourceUtils.getFile("classpath:invoice2.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
 
         // Your SQL query and other logic for report generation go here
@@ -85,5 +87,32 @@ public class InvoiceService {
 
         // Export the report to a file
         JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
+    }
+    public void generateAndExportReport1(String invoiceId) throws JRException, FileNotFoundException {
+        // Assuming you have a JDBC URL, username, and password for your database
+        String jdbcUrl = "jdbc:mysql://localhost:3306/procure";
+        String username = "rose";
+        String password = "Atieno18_";
+
+        // Obtain the .jrxml file
+        File file = ResourceUtils.getFile("classpath:invoice1.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+
+        // Parameters to be passed to the report
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("invoiceId", invoiceId);
+
+        // Establishing a database connection
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password)) {
+            // Filling the report with data from the database, parameters, and the connection
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
+
+            // Export the report to a file
+            JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
+        } catch (Exception e) {
+            // Handle exceptions such as SQLExceptions
+            e.printStackTrace();
+            throw new RuntimeException("Error while generating report", e);
+        }
     }
 }

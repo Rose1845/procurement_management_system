@@ -32,17 +32,19 @@ import java.util.Set;
 @Getter
 @Builder
 @Setter
+@Table(name = "supplier")
 @EntityListeners(AuditingEntityListener.class)
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "vendor_id")
     private String vendorId;
 
     private String name;
     @Column(name = "contact_person")
+
     private String contactPerson;
     @Column(name = "contact_information")
-
     private String contactInformation;
     @Embedded
     @AttributeOverrides({
@@ -51,14 +53,19 @@ public class Supplier {
             @AttributeOverride(name = "city", column = @Column(name = "city")),
             @AttributeOverride(name = "location", column = @Column(name = "location"))
     })
+        @Column(name = "purchase_order_id")
+
     private Address address;
+    @Column(name = "purchase_order_id")
     private String email;
     @Column(name = "phone_number")
     private String phoneNumber;
     @Enumerated
     @Column(name ="payment_type")
+
     private PaymentType paymentType;
     @Column(name = "terms_and_conditions")
+
     private String termsAndConditions;
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
@@ -87,7 +94,8 @@ public class Supplier {
     @CreatedBy
     @Column(
             nullable = false,
-            updatable = false
+            updatable = false,
+            name = "created_by"
     )
     private Integer createdBy;
 

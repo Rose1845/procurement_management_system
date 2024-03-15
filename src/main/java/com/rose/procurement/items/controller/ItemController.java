@@ -16,7 +16,7 @@ public class ItemController {
     public ItemController(ItemService itemService) {
         this.itemService = itemService;
     }
-    @PostMapping
+    @PostMapping("/create")
     public ItemDto createItem(@RequestBody @Valid ItemDto itemRequest) {
         return itemService.createItem(itemRequest);
     }

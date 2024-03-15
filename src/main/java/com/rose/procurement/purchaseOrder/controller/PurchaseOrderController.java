@@ -45,7 +45,7 @@ public class PurchaseOrderController {
         this.supplierRepository = supplierRepository;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public PurchaseOrderDto createPurchaseOrder(@RequestBody @Valid PurchaseOrderDto purchaseOrderRequest) {
         return purchaseOrderService.createPurchaseOrder(purchaseOrderRequest);
     }
@@ -135,7 +135,7 @@ public class PurchaseOrderController {
     public ResponseEntity<byte[]> exportReport(@PathVariable("id") Long purchaseOrderId) {
         try {
             // Call the service method to generate and export the report
-            purchaseOrderService.generateAndExportReport(purchaseOrderId);
+            purchaseOrderService.generateAndExportReport1(purchaseOrderId);
 
             // Get the generated file and set response headers
             File file = new File("output.pdf");
@@ -171,7 +171,6 @@ public class PurchaseOrderController {
         }
     }
 
-
     // Step 3: Edit Approval Status by Supplier
     @PatchMapping("/approve/{id}")
     public String editContractApprovalStatus(
@@ -188,6 +187,18 @@ public class PurchaseOrderController {
             return "an error occured";
 
         }
+    }
+    @GetMapping("/purchase-orders/supplier/{supplierId}")
+    public ResponseEntity<List<PurchaseOrder>> getOrdersForSupplierById(
+            @PathVariable String supplierId) {
+        List<PurchaseOrder> purchaseOrders = purchaseOrderService.getOrdersForSupplierById(supplierId);
+        return new ResponseEntity<>(purchaseOrders, HttpStatus.OK);
+    }
+    @GetMapping("/purchase-orders/status/{status}")
+    public ResponseEntity<List<PurchaseOrder>> getOrdersByStatus(
+            @PathVariable String status) {
+        List<PurchaseOrder> purchaseOrders = purchaseOrderService.getOrdersByStatus(status);
+        return new ResponseEntity<>(purchaseOrders, HttpStatus.OK);
     }
 
 }

@@ -51,7 +51,7 @@ public class Contract {
                     @JoinColumn(name = "contract_id",referencedColumnName = "contractId")
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "item_id",referencedColumnName = "itemId")
+                    @JoinColumn(name = "item_id",referencedColumnName = "item_id")
             }
     )@JsonIgnore
     private Set<Item> items;

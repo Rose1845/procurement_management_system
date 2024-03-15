@@ -47,7 +47,7 @@ public class PurchaseRequest {
                     @JoinColumn(name = "purchase_request_id",referencedColumnName = "purchaseRequestId")
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "vendor_id",referencedColumnName = "vendorId")
+                    @JoinColumn(name = "vendor_id",referencedColumnName = "vendor_id")
             }
     )
     @JsonIgnore
@@ -64,7 +64,7 @@ public class PurchaseRequest {
                     @JoinColumn(name = "purchase_request_id",referencedColumnName = "purchaseRequestId")
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "item_id",referencedColumnName = "itemId")
+                    @JoinColumn(name = "item_id",referencedColumnName = "item_id")
             }
     )
     @JsonIgnore
