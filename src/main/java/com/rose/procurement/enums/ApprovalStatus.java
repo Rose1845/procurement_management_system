@@ -11,5 +11,6 @@ public enum ApprovalStatus {
     ISSUED,
     IN_DELIVERY,
     FULLY_RECEIVED,
+    COMPLETED,
     CLOSED;
 }

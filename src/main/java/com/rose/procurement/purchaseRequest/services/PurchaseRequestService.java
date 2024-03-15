@@ -140,6 +140,49 @@ public class PurchaseRequestService {
         }
         return createdOfferDetails;
     }
+    public void acceptOffer(Long purchaseRequestId, String supplierId) {
+        PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("Purchase request not found"));
+        purchaseRequest.setApprovalStatus(ApprovalStatus.COMPLETED);
+
+        boolean offerAccepted = false;
+
+        // Iterate over item details to find the supplier's offers and accept them
+        for (PurchaseRequestItemDetail itemDetail : purchaseRequest.getItemDetails()) {
+            if (itemDetail.getSupplier().getVendorId().equals(supplierId)) {
+                itemDetail.setQuoteStatus(QuoteStatus.BUYER_ACCEPTED);
+                purchaseRequestItemDetailRepository.save(itemDetail);
+                offerAccepted = true;
+            }
+        }
+
+        // If an offer is accepted, notify other suppliers
+        if (offerAccepted) {
+            sendCancellationEmailsToOtherSuppliers(purchaseRequest, supplierId);
+        }
+    }
+    private void sendCancellationEmailsToOtherSuppliers(PurchaseRequest purchaseRequest, String acceptedSupplierId) {
+        Set<Supplier> otherSuppliers = purchaseRequest.getSuppliers().stream()
+                .filter(supplier -> !Objects.equals(supplier.getVendorId(), acceptedSupplierId))
+                .collect(Collectors.toSet());
+        for (Supplier supplier : otherSuppliers) {
+            log.info("sending email");
+            // Check if email, subject, and body are not null before sending the email
+            if (supplier.getEmail() != null && purchaseRequest.getPurchaseRequestId() != null) {
+                String emailSubject = "Offer Cancellation Notice";
+                String emailBody = "Your offer for the purchase request " + purchaseRequest.getPurchaseRequestId() + " has been cancelled.";
+                emailService.sendEmail(supplier.getEmail(), emailSubject, emailBody);
+                log.info("email sent!");
+            } else {
+                log.info("error occured");
+                // Handle the case where either email or purchaseRequestId is null
+                // This could include logging an error or skipping the email sending
+                // For example:
+                // logger.error("Failed to send cancellation email to supplier: Email or purchase request ID is null.");
+            }
+        }
+    }
+
 
     @Transactional
     public List<PurchaseRequestItemDetail> editOfferUnitPrices2(Long purchaseRequestId, String supplierId, List<PurchaseRequestItemDetail> itemDetails) {
@@ -180,13 +223,10 @@ public class PurchaseRequestService {
         Optional<PurchaseRequest> purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId);
         return purchaseRequest.map(purchaseRequestMapper::toDto);
     }
-//    public List<PurchaseRequestDto> getPurchaseRequestsForSupplier(Long supplierId) {
-//        List<PurchaseRequest> purchaseRequests = purchaseRequestRepository.findBySupplierId(supplierId);
-//        return purchaseRequests.stream()
-//                .map(purchaseRequestMapper::toDto)
-//                .collect(Collectors.toList());
-//    }
-//
+    public List<PurchaseRequest> findPurchaseRequestsBySupplierId(Long supplierId) {
+        return purchaseRequestRepository.findAllBySupplierId(supplierId);
+    }
+
     public Optional<PurchaseRequest> getPurchaseRequestDetailsForSupplier(Long purchaseRequestId, String vendorId) {
         return purchaseRequestRepository.findByPurchaseRequestIdAndSuppliers_VendorId(purchaseRequestId, vendorId);
     }

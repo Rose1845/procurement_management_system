@@ -41,17 +41,24 @@ public class PurchaseRequestController {
     public Optional<PurchaseRequestDto> getPurchaseRequestById(@PathVariable Long id) {
        return purchaseRequestService.getPurchaseRequestById(id);
     }
-//    @PatchMapping("/{purchaseRequestId}/edit-offer-unit-prices")
-//    public ResponseEntity<List<PurchaseRequestItemDetail>> editOfferUnitPrices(
-//            @PathVariable Long purchaseRequestId,
-//            @RequestBody List<PurchaseRequestItemDetail> itemDetails) {
-//        try {
-//            List<PurchaseRequestItemDetail> updatedItemDetails = purchaseRequestService.editOfferUnitPrices(purchaseRequestId, itemDetails);
-//            return new ResponseEntity<>(updatedItemDetails, HttpStatus.OK);
-//        } catch (EntityNotFoundException e) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
+    @GetMapping("/supplier/{supplierId}")
+    public ResponseEntity<List<PurchaseRequest>> getPurchaseRequestsBySupplier(@PathVariable Long supplierId) {
+        List<PurchaseRequest> purchaseRequests = purchaseRequestService.findPurchaseRequestsBySupplierId(supplierId);
+        return ResponseEntity.ok(purchaseRequests);
+    }
+    @PostMapping("/{purchaseRequestId}/accept-offer")
+    public ResponseEntity<String> acceptOffer(@PathVariable Long purchaseRequestId, @RequestParam String supplierId) {
+        try {
+            purchaseRequestService.acceptOffer(purchaseRequestId, supplierId);
+            return ResponseEntity.ok("Offer accepted successfully and other suppliers have been notified.");
+        } catch (EntityNotFoundException enfe) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException iae) {
+            return ResponseEntity.badRequest().body("Error: " + iae.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An unexpected error occurred.");
+        }
+    }
     @PatchMapping("/{purchaseRequestId}/edit2-offer-unit-prices2")
     public ResponseEntity<List<PurchaseRequestItemDetail>> editOfferUnitPrices(
             @PathVariable Long purchaseRequestId,

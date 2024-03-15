@@ -56,16 +56,13 @@ public class Supplier {
         @Column(name = "purchase_order_id")
 
     private Address address;
-    @Column(name = "purchase_order_id")
     private String email;
     @Column(name = "phone_number")
     private String phoneNumber;
     @Enumerated
     @Column(name ="payment_type")
-
     private PaymentType paymentType;
     @Column(name = "terms_and_conditions")
-
     private String termsAndConditions;
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
