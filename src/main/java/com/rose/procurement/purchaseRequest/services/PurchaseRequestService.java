@@ -185,34 +185,34 @@ public class PurchaseRequestService {
     }
 
 
-    @Transactional
-    public List<PurchaseRequestItemDetail> editOfferUnitPrices2(Long purchaseRequestId, String supplierId, List<PurchaseRequestItemDetail> itemDetails) {
-        PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId)
-                .orElseThrow(() -> new EntityNotFoundException("Purchase request not found"));
 
-        List<PurchaseRequestItemDetail> updatedItemDetails = new ArrayList<>();
+    public List<PurchaseRequestItemDetail> editOfferUnitPrices2(Long purchaseRequestId, String supplierId, List<PurchaseRequestItemDetail> itemDetails) {
+        Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
+        if (purchaseRequestOptional.isEmpty()) {
+            throw new EntityNotFoundException("Purchase request not found");
+        }
+
+        PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
 
         // Iterate through each updated item detail
         for (PurchaseRequestItemDetail updatedItemDetail : itemDetails) {
             // Find the corresponding item detail in the purchase request
             Optional<PurchaseRequestItemDetail> existingItemDetailOptional = purchaseRequest.getItemDetails().stream()
                     .filter(itemDetail ->
-                            Objects.equals(itemDetail.getItem().getItemId(), updatedItemDetail.getItem().getItemId())
-                                    && Objects.equals(itemDetail.getSupplier().getVendorId(), supplierId))
+                            itemDetail.getSupplier() != null && itemDetail.getSupplier().getVendorId().equals(supplierId)
+                                    && itemDetail.getItem().getItemId().equals(updatedItemDetail.getItem().getItemId()))
                     .findFirst();
 
             // If the item detail exists, update its offer unit price
             existingItemDetailOptional.ifPresent(existingItemDetail -> {
                 // Update offer unit price
                 existingItemDetail.setOfferUnitPrice(updatedItemDetail.getOfferUnitPrice());
-                existingItemDetail.setQuoteStatus(QuoteStatus.SUPPLIER_HAS_OFFERED);
-                updatedItemDetails.add(existingItemDetail); // Add the updated item detail to the list
             });
 
         }
 
         // Save all updated item details associated with the specified supplier in the database
-        return purchaseRequestItemDetailRepository.saveAll(updatedItemDetails);
+        return purchaseRequestItemDetailRepository.saveAll(purchaseRequest.getItemDetails());
     }
 
     public List<PurchaseRequest> getAllPurchaseRequests() {

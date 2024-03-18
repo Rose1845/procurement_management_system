@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +36,7 @@ public class SupplierController {
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority({'ADMIN','EMPLOYEE'})")
     public SupplierDto createSupplier(@RequestBody @Valid SupplierDto supplierRequest) throws ProcureException {
 //        if(result.hasErrors()){
 //            throw new MethodArgumentNotValidException((MethodParameter) null, result);

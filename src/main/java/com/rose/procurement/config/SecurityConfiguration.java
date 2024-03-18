@@ -39,11 +39,11 @@ public class SecurityConfiguration {
             "/webjars/**",
             "api/newsletter/subscribe/**",
             "/api/demo/**",
-            "/api/v1/items",
-            "/api/v1/roles/**",
-            "/pai/v1/purchase-request/**",
+//            "/api/v1/items",
+//            "/api/v1/roles/**",
+//            "/pai/v1/purchase-request/**",
             "api/send-to-supplier/**",
-            "/api/v1/suppliers/**",
+//            "/api/v1/suppliers/**",
             "/api/contact/message",
             "/swagger-ui.html"};
     private final JwtAuthenticationFilter jwtAuthFilter;

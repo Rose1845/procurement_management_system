@@ -18,7 +18,7 @@ public class ItemController {
         this.itemService = itemService;
     }
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
+    @PreAuthorize("hasAnyAuthority({'ADMIN','EMPLOYEE'})")
     public ItemDto createItem(@RequestBody @Valid ItemDto itemRequest) {
         return itemService.createItem(itemRequest);
     }

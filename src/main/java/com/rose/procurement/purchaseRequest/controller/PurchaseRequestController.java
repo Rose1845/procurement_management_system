@@ -29,11 +29,11 @@ public class PurchaseRequestController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
+//    @PreAuthorize("hasAnyAuthority({'ADMIN','EMPLOYEE'})")
     public PurchaseRequestDto createPurchaseRequest(@RequestBody @Valid  PurchaseRequestDto purchaseRequest) throws ProcureException {
         log.info("controller PR....");
         System.out.println(purchaseRequest);
-           return     purchaseRequestService.createPurchaseRequest(purchaseRequest);
+           return   purchaseRequestService.createPurchaseRequest(purchaseRequest);
     }
     @GetMapping
     public List<PurchaseRequest> getAllPurchaseRequests() {
