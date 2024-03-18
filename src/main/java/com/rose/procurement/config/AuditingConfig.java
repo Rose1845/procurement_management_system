@@ -1,6 +1,6 @@
 package com.rose.procurement.config;
 
-import com.rose.procurement.user.User;
+import com.rose.procurement.users.entity.User;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

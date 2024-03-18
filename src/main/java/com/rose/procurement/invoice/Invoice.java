@@ -38,8 +38,6 @@ public class Invoice {
     private LocalDate invoiceDate;
     @Enumerated
     private InvoiceStatus invoiceStatus;
-    @NotNull
-    private double totalAmount;
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "purchase_order_id")
 //    @JsonIgnore

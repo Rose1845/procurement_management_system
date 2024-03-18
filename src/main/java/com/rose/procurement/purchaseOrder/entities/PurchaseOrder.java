@@ -76,8 +76,7 @@ public class PurchaseOrder {
     @OneToOne(mappedBy = "purchaseOrder")
     @JsonIgnore
     private Invoice invoice;
-    @Column(name = "total_amount")
-    private Long totalAmount;
+    private double totalAmount;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

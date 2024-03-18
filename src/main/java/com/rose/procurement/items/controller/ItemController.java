@@ -4,6 +4,7 @@ import com.rose.procurement.items.dtos.ItemDto;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.service.ItemService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class ItemController {
         this.itemService = itemService;
     }
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
     public ItemDto createItem(@RequestBody @Valid ItemDto itemRequest) {
         return itemService.createItem(itemRequest);
     }
@@ -31,6 +33,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE'})")
     public ItemDto getItemById(@PathVariable("id") String itemId) {
         return itemService.getItemById(itemId);
     }

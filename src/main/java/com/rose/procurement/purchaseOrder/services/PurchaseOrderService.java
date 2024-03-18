@@ -5,7 +5,6 @@ import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.service.ContractService;
 import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ApprovalStatus;
-import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
@@ -24,14 +23,11 @@ import org.webjars.NotFoundException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -63,7 +59,7 @@ private final SupplierRepository supplierRepository;
        purchaseOrder.setPaymentType(purchaseOrderRequest.getPaymentType());
         Set<Item> items = new HashSet<>(purchaseOrder.getItems());
         double totalAmount = purchaseOrder.getItems().stream().mapToDouble(Item::getTotalPrice).sum();
-        purchaseOrder.setTotalAmount((long) totalAmount);
+        purchaseOrder.setTotalAmount(totalAmount);
         purchaseOrder.setItems(new HashSet<>(items));
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate());
         purchaseOrder.setUpdatedAt(LocalDate.now().atStartOfDay());
@@ -84,7 +80,7 @@ private final SupplierRepository supplierRepository;
         // Copy items from the contract to the purchase order
         Set<Item> items = new HashSet<>(contract.getItems());
         double totalAmount = items.stream().mapToDouble(Item::getTotalPrice).sum();
-        purchaseOrder.setTotalAmount((long) totalAmount);
+        purchaseOrder.setTotalAmount(totalAmount);
         purchaseOrder.setItems(new HashSet<>(items));
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate()); // Set your delivery date logic here
         purchaseOrder.setUpdatedAt(LocalDateTime.now());
@@ -137,7 +133,7 @@ private final SupplierRepository supplierRepository;
     }
 
 
-    public Page<PurchaseOrder> findPurchaseOrderWithPagination(int offSet,int pageSize){
+    public Page<PurchaseOrder> findPurchaseOrderWithPagination(int offSet, int pageSize){
         return purchaseOrderRepository.findAll(PageRequest.of(offSet,pageSize));
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/purchase-request-item-details")
+@RequestMapping("/api/v1/purchase-request-item-details")
 public class PurchaseRequestItemDetailController {
 
     private final PurchaseRequestItemDetailService itemDetailService;

@@ -18,10 +18,6 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static com.rose.procurement.user.Permission.*;
-import static com.rose.procurement.user.Role.ADMIN;
-import static com.rose.procurement.user.Role.MANAGER;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -61,11 +57,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/api/v1/suppliers/**","/api/v1/invoices/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                .requestMatchers(GET, "/api/v1/suppliers/**","/api/v1/invoices/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name(),STAFF_READ.name())
-                                .requestMatchers(POST, "/api/v1/invoices/**","/api/v1/items/create","/api/v1/purchase-order/create","/api/v1/purchase-order/create-from-contract/**","/api/v1/purchase-request/create").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name(),STAFF_CREATE.name())
-//                                .requestMatchers(PUT, "/api/v1/**/").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name(),STAFF_UPDATE.name())
-//                                .requestMatchers(DELETE, "/api/v1/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
+//                                .requestMatchers("/api/v1/suppliers/**","/api/v1/invoices/**").hasAnyRole(ADMIN.name(), MANAGER.name())
+//                                .requestMatchers(GET, "/api/v1/suppliers/**","/api/v1/invoices/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name(),STAFF_READ.name())
+//                                .requestMatchers(POST, "/api/v1/invoices/**","/api/v1/items/create","/api/v1/purchase-order/create","/api/v1/purchase-order/create-from-contract/**","/api/v1/purchase-request/create").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name(),STAFF_CREATE.name())
+////                                .requestMatchers(PUT, "/api/v1/**/").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name(),STAFF_UPDATE.name())
+////                                .requestMatchers(DELETE, "/api/v1/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
                                 .anyRequest()
                                 .authenticated()
                 )

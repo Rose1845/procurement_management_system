@@ -10,6 +10,7 @@ import com.rose.procurement.items.entity.Item;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class ContractController {
         this.contractService = contractService;
     }
     @PostMapping
+    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
     public ContractDto createContract(@RequestBody @Valid ContractDto contractRequest){
         return contractService.createContract(contractRequest);
     }

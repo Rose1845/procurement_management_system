@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -23,11 +24,11 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
     }
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE'})")
     public InvoiceDto createInvoice(@RequestBody @Valid InvoiceDto invoiceDto) throws ProcureException {
         return invoiceService.createInvoice(invoiceDto);
         
     }
-
 
     @GetMapping
     public List<Invoice> getAll(){

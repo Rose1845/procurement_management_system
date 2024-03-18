@@ -1,7 +1,9 @@
 package com.rose.procurement.config;
 
 
-import com.rose.procurement.user.UserRepository;
+import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.users.dao.UserDao;
+import com.rose.procurement.users.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,12 +21,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-  private final UserRepository repository;
+  private final UserDao repository;
 
   @Bean
   public UserDetailsService userDetailsService() {
-    return username -> repository.findByEmail(username)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    return username -> {
+      User u = repository.findByUsername(username);
+      if (u == null) {
+        try {
+          throw ProcureException.builder()
+                  .message("User account not found")
+                  .metadata("auth error")
+                  .statusCode(404)
+                  .build();
+        } catch (ProcureException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      return u;
+    };
   }
   @Bean
   public AuthenticationProvider authenticationProvider() {

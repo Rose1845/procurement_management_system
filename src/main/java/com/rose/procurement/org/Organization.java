@@ -1,6 +1,6 @@
 package com.rose.procurement.org;
 
-import com.rose.procurement.user.User;
+import com.rose.procurement.users.entity.User;
 import com.rose.procurement.utils.address.Address;
 import jakarta.persistence.*;
 import lombok.*;

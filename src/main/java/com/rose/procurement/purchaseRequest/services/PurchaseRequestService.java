@@ -167,6 +167,7 @@ public class PurchaseRequestService {
                 .collect(Collectors.toSet());
         for (Supplier supplier : otherSuppliers) {
             log.info("sending email");
+
             // Check if email, subject, and body are not null before sending the email
             if (supplier.getEmail() != null && purchaseRequest.getPurchaseRequestId() != null) {
                 String emailSubject = "Offer Cancellation Notice";

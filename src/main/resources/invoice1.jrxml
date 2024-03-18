@@ -10,7 +10,7 @@
         <defaultValueExpression><![CDATA["/home/nyaugenya/Documents/TestReport/src/main/java/com/mycompany/testreport/"]]></defaultValueExpression>
     </parameter>
     <queryString>
-        <![CDATA[ SELECT
+        <![CDATA[SELECT
             i.*,
             po.*,
             it.*,
@@ -86,9 +86,6 @@
         <fieldDescription><![CDATA[]]></fieldDescription>
     </field>
     <field name="supplier_id" class="java.lang.String">
-        <fieldDescription><![CDATA[]]></fieldDescription>
-    </field>
-    <field name="total-amount" class="java.lang.Double">
         <fieldDescription><![CDATA[]]></fieldDescription>
     </field>
     <field name="item_id" class="java.lang.String">

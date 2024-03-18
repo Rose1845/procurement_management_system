@@ -8,25 +8,23 @@ import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
+import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import com.rose.procurement.purchaseOrder.services.PurchaseOrderService;
-import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.utils.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jasperreports.engine.JRException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,14 +36,18 @@ public class PurchaseOrderController {
     private final PurchaseOrderService purchaseOrderService;
     private final ContractRepository contractRepository;
     private final SupplierRepository supplierRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
 
-    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, ContractRepository contractRepository, SupplierRepository supplierRepository) {
+    public PurchaseOrderController(PurchaseOrderService purchaseOrderService, ContractRepository contractRepository, SupplierRepository supplierRepository, PurchaseOrderRepository purchaseOrderRepository) {
         this.purchaseOrderService = purchaseOrderService;
         this.contractRepository = contractRepository;
         this.supplierRepository = supplierRepository;
+        this.purchaseOrderRepository = purchaseOrderRepository;
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority({'ADMIN'})")
+
     public PurchaseOrderDto createPurchaseOrder(@RequestBody @Valid PurchaseOrderDto purchaseOrderRequest) {
         return purchaseOrderService.createPurchaseOrder(purchaseOrderRequest);
     }
@@ -95,10 +97,17 @@ public class PurchaseOrderController {
         return purchaseOrderService.getPurchaseOrderWithItems(purchaseOrderId);
     }
     @GetMapping("/paginate")
-    public ApiResponse<Page<PurchaseOrder>> findAllPurchaseOrders( @RequestParam(name = "offSet") int offSet,
-                                                                  @RequestParam(name = "pageSize") int pageSize){
-        Page<PurchaseOrder> purchaseOrders = purchaseOrderService.findPurchaseOrderWithPagination(offSet,pageSize);
-        return new ApiResponse<>(purchaseOrders.getTotalPages(),purchaseOrders);
+    public ApiResponse<PurchaseOrder> findAllPurchaseOrders(@RequestParam(name = "offSet") int offSet,
+                                                                  @RequestParam(name = "pageSize") int pageSize) {
+        Page<PurchaseOrder> purchaseOrders = purchaseOrderService.findPurchaseOrderWithPagination(offSet, pageSize);
+        return new ApiResponse<>(purchaseOrders);
+    }
+    @GetMapping("/paginations")
+    public Page<PurchaseOrder> findAllPurchaseOrders1(@RequestParam(name = "offSet") int offSet,
+                                                      @RequestParam(name = "pageSize") int pageSize) {
+        PageRequest pageRequest = PageRequest.of(offSet, pageSize);
+        return purchaseOrderRepository.findAll(pageRequest);
+
     }
     @GetMapping("/{purchaseOrderId}/items")
     public ResponseEntity<Set<Item>> getItemsForPurchaseOrder(@PathVariable Long purchaseOrderId) {
@@ -109,14 +118,14 @@ public class PurchaseOrderController {
     public List<Object[]> getPurchaseDetailsByPurchaseOrderId(@PathVariable("purchaseOrderId") Long purchaseOrderId){
         return purchaseOrderService.findPurchaseOrderDetailsByPurchaseOrderId(purchaseOrderId);
     }
-   @GetMapping("/paginate-sorting")
-    public ApiResponse<Page<PurchaseOrder>> findAllPurchaseOrderWithSorting(@RequestParam(name = "offSet") int offSet,
-                                                                            @RequestParam(name = "pageSize") int pageSize,
-                                                                            @RequestParam(name = "field") String field){
-        Page<PurchaseOrder> purchaseOrders=
-                purchaseOrderService.findAllPurchaseOrderWithPaginationAndSorting(offSet,pageSize,field);
-        return new ApiResponse<>(purchaseOrders.getSize(),purchaseOrders);
-    }
+//   @GetMapping("/paginate-sorting")
+//    public ApiResponse<Page<PurchaseOrder>> findAllPurchaseOrderWithSorting(@RequestParam(name = "offSet") int offSet,
+//                                                                            @RequestParam(name = "pageSize") int pageSize,
+//                                                                            @RequestParam(name = "field") String field){
+//        Page<PurchaseOrder> purchaseOrders=
+//                purchaseOrderService.findAllPurchaseOrderWithPaginationAndSorting(offSet,pageSize,field);
+//        return new ApiResponse<>(purchaseOrders.getSize(),purchaseOrders);
+//    }
     @GetMapping("/title")
     public PurchaseOrder getPurchaseOrderByPurchaseOrderTitle(@RequestParam("title") String purchaseOrderTitle){
         return purchaseOrderService.getPurchaseOrderByPurchaseOrderTitle(purchaseOrderTitle);
