@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -103,12 +104,12 @@ public class PurchaseOrderController {
         return new ApiResponse<>(purchaseOrders);
     }
     @GetMapping("/paginations")
-    public Page<PurchaseOrder> findAllPurchaseOrders1(@RequestParam(name = "offSet") int offSet,
-                                                      @RequestParam(name = "pageSize") int pageSize) {
-        PageRequest pageRequest = PageRequest.of(offSet, pageSize);
-        return purchaseOrderRepository.findAll(pageRequest);
-
+    public Page<PurchaseOrder> findAllPurchaseOrders1(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                      @RequestParam(name = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return purchaseOrderRepository.findAll(pageable);
     }
+
     @GetMapping("/{purchaseOrderId}/items")
     public ResponseEntity<Set<Item>> getItemsForPurchaseOrder(@PathVariable Long purchaseOrderId) {
         Set<Item> items = purchaseOrderService.getItemsForPurchaseOrder(purchaseOrderId);

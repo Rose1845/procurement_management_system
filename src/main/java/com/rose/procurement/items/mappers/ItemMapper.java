@@ -13,10 +13,8 @@ import java.util.List;
 public interface ItemMapper {
     ItemMapper MAPPER = Mappers.getMapper(ItemMapper.class);
 
-    @Mapping(source = "vendorId", target = "supplier.vendorId")
     @Mapping(source = "categoryId", target = "category.categoryId")
     Item toEntity(ItemDto itemDto);
-    @Mapping(source = "supplier.vendorId", target = "vendorId")
     @Mapping(source = "category.categoryId", target = "categoryId")
     ItemDto toDto(Item item);
 //    List<Item> toEntityList(List<ItemDto>itemDtoList);

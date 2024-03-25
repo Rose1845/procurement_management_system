@@ -2,30 +2,35 @@ package com.rose.procurement.purchaseRequest.controller;
 
 
 import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
+import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository;
 import com.rose.procurement.purchaseRequest.services.PurchaseRequestService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
 @RequestMapping("api/v1/purchase-request")
 public class PurchaseRequestController {
     private final PurchaseRequestService purchaseRequestService;
+    private final PurchaseRequestRepository purchaseRequestRepository;
 
-    public PurchaseRequestController(PurchaseRequestService purchaseRequestService) {
+    public PurchaseRequestController(PurchaseRequestService purchaseRequestService, PurchaseOrderRepository purchaseOrderRepository, PurchaseRequestRepository purchaseRequestRepository) {
         this.purchaseRequestService = purchaseRequestService;
+        this.purchaseRequestRepository = purchaseRequestRepository;
     }
 
     @PostMapping("/create")
@@ -42,6 +47,12 @@ public class PurchaseRequestController {
     @GetMapping("/{id}")
     public Optional<PurchaseRequestDto> getPurchaseRequestById(@PathVariable Long id) {
        return purchaseRequestService.getPurchaseRequestById(id);
+    }
+    @GetMapping("/all-by-pagination")
+    public Page<PurchaseRequest> findAllRequestByPagination(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                      @RequestParam(name = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return purchaseRequestRepository.findAll(pageable);
     }
     @GetMapping("/supplier/{supplierId}")
     public ResponseEntity<List<PurchaseRequest>> getPurchaseRequestsBySupplier(@PathVariable Long supplierId) {

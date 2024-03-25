@@ -1,16 +1,15 @@
 package com.rose.procurement.items.entity;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.contract.entities.Contract;
-import com.rose.procurement.delivery.Delivery;
 import com.rose.procurement.delivery.DeliveryItem;
-import com.rose.procurement.document.File;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisition;
-import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -20,10 +19,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,14 +46,14 @@ public class Item {
 
         @Column(name = "item_description")
         private String itemDescription;
-    @Min(1)
+         @Min(value = 1,message = "minimum quantity required is 1")
          private int quantity=1;
 
         @Column(name = "unit_price")
-        private double unitPrice;
+        private BigDecimal unitPrice;
 
         @Column(name = "total_price")
-        private double totalPrice;
+        private BigDecimal totalPrice;
     @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Contract> contracts;
@@ -71,10 +67,10 @@ public class Item {
     @JoinColumn(name = "categoryId")
     @JsonBackReference
     private Category category;
-    @ManyToOne
-    @JoinColumn(name = "supplierId")
-    @JsonIgnore
-    private Supplier supplier;
+//    @ManyToOne
+//    @JoinColumn(name = "supplierId")
+//    @JsonIgnore
+//    private Supplier supplier;
     @ManyToMany(mappedBy = "items")
     @JsonIgnore
     private Set<PurchaseRequest> purchaseRequests;
@@ -104,10 +100,16 @@ public class Item {
             name = "created_by"
     )
     private Integer createdBy;
-    @Transient // This annotation indicates that the field should not be persisted in the database
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public double getTotalPrice() {
-        return quantity * unitPrice;
+//    @Transient // This annotation indicates that the field should not be persisted in the database
+//    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+//    public double getTotalPrice() {
+//        return quantity * unitPrice;
+//
+//    }
+//    @Transient // This annotation indicates that the field should not be persisted in the database
+//    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+//    public BigDecimal getTotalPrice() {
+//        return BigDecimal.valueOf(quantity).multiply(BigDecimal.valueOf(unitPrice));
+//    }
 
-    }
 }

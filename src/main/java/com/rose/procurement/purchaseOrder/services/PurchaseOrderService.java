@@ -23,6 +23,7 @@ import org.webjars.NotFoundException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.time.LocalDate;
@@ -58,9 +59,12 @@ private final SupplierRepository supplierRepository;
        purchaseOrder.setApprovalStatus(ApprovalStatus.PENDING);
        purchaseOrder.setPaymentType(purchaseOrderRequest.getPaymentType());
         Set<Item> items = new HashSet<>(purchaseOrder.getItems());
-        double totalAmount = purchaseOrder.getItems().stream().mapToDouble(Item::getTotalPrice).sum();
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (Item item : items) {
+            totalAmount = totalAmount.add(item.getTotalPrice());
+        }
         purchaseOrder.setTotalAmount(totalAmount);
-        purchaseOrder.setItems(new HashSet<>(items));
+        purchaseOrder.setItems(items);
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate());
         purchaseOrder.setUpdatedAt(LocalDate.now().atStartOfDay());
         purchaseOrder.setCreatedAt(LocalDate.now().atStartOfDay());
@@ -79,7 +83,10 @@ private final SupplierRepository supplierRepository;
         // Set other properties as needed
         // Copy items from the contract to the purchase order
         Set<Item> items = new HashSet<>(contract.getItems());
-        double totalAmount = items.stream().mapToDouble(Item::getTotalPrice).sum();
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (Item item : items) {
+            totalAmount = totalAmount.add(item.getTotalPrice());
+        }
         purchaseOrder.setTotalAmount(totalAmount);
         purchaseOrder.setItems(new HashSet<>(items));
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate()); // Set your delivery date logic here
@@ -100,7 +107,10 @@ private final SupplierRepository supplierRepository;
             purchaseOrder.get().setTermsAndConditions(purchaseOrderDto.getTermsAndConditions());
             purchaseOrder.get().setDeliveryDate(purchaseOrderDto.getDeliveryDate());
             purchaseOrder.get().setItems(purchaseOrderDto.getItems());
-            double totalAmount = purchaseOrderDto.getItems().stream().mapToDouble(Item::getTotalPrice).sum();
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            for (Item item : purchaseOrder.get().getItems()) {
+                totalAmount = totalAmount.add(item.getTotalPrice());
+            }
             purchaseOrderDto.setTotalAmount(totalAmount);
             Supplier supplier = supplierRepository.findById(purchaseOrderDto.getVendorId()).orElseThrow(()->new RuntimeException("no supplier with id"+ purchaseOrderDto.getVendorId()));
             purchaseOrder.get().setSupplier(supplier);

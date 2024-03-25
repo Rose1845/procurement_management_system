@@ -39,6 +39,7 @@ public class PurchaseRequest {
     private Long purchaseRequestId;
     private String purchaseRequestTitle;
     private LocalDate dueDate;
+    private LocalDate deliveryDate;
     private String termsAndConditions;
     @ManyToMany( fetch = FetchType.LAZY)
     @JoinTable(

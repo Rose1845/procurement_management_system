@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item,String> {
-    @Query("SELECT p FROM Item p LEFT JOIN FETCH p.category LEFT JOIN FETCH p.supplier WHERE p.itemId = :itemId")
+    @Query("SELECT p FROM Item p LEFT JOIN FETCH p.category  WHERE p.itemId = :itemId")
     Optional<Item> findItemDetailsById(@Param("itemId") String itemId);
 
 }

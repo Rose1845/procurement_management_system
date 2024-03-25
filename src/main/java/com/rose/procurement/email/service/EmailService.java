@@ -20,13 +20,15 @@ public class EmailService{
 
     public void sendEmail(String toEmail, String subject, String text){
          SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-         simpleMailMessage.setFrom(emailFrom);
+        simpleMailMessage.setFrom(formatSenderName(emailFrom, "ProcureSwift Company"));
          simpleMailMessage.setTo(toEmail);
          simpleMailMessage.setText(text);
          simpleMailMessage.setSubject(subject);
         javaMailSender.send(simpleMailMessage);
    }
-
+    private String formatSenderName(String email, String name) {
+        return String.format("%s <%s>", name, email);
+    }
 
 
 }

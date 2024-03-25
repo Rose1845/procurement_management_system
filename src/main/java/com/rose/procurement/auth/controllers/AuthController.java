@@ -51,9 +51,7 @@ public class AuthController {
 
     @PostMapping("/init")
     public ResponseEntity<Optional<List<Role>>> initializeApp() throws ProcureException {
-
         return ResponseEntity.ok().body(roleService.initializeRoles());
-
     }
 
     @PreAuthorize("hasAnyAuthority({'LAWYER','USER','ADMIN'})")
@@ -61,13 +59,10 @@ public class AuthController {
     public ResponseEntity<User> getUserProfile(@PathVariable("username") @NotNull @NotEmpty @NotBlank String username) {
         try {
 
-
             return ResponseEntity.ok().body(authService.getUserprofile(username));
         } catch (Exception | ProcureException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
     }
-
-
 }

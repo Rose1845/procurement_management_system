@@ -3,9 +3,12 @@ package com.rose.procurement.purchaseRequest.services;
 import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ApprovalStatus;
+import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.enums.QuoteStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
+import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
@@ -16,13 +19,11 @@ import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,18 +33,20 @@ public class PurchaseRequestService {
     private final PurchaseRequestMapper purchaseRequestMapper ;
     private final PurchaseRequestItemDetailRepository purchaseRequestItemDetailRepository;
     private final ItemRepository itemRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
 //    private final SupplierOfferService supplierOfferService;
     private final EmailService emailService;
 
     public PurchaseRequestService(PurchaseRequestRepository purchaseRequestRepository,
-                                  PurchaseRequestMapper purchaseRequestMapper,ItemRepository itemRepository, EmailService emailService,
-                                  PurchaseRequestItemDetailRepository purchaseRequestItemDetailRepository) {
+                                  PurchaseRequestMapper purchaseRequestMapper, ItemRepository itemRepository, EmailService emailService,
+                                  PurchaseRequestItemDetailRepository purchaseRequestItemDetailRepository, PurchaseOrderRepository purchaseOrderRepository) {
         this.purchaseRequestRepository = purchaseRequestRepository;
         this.purchaseRequestMapper = purchaseRequestMapper;
         this.itemRepository = itemRepository;
 //        this.supplierOfferService = supplierOfferService;
         this.emailService = emailService;
         this.purchaseRequestItemDetailRepository = purchaseRequestItemDetailRepository;
+        this.purchaseOrderRepository = purchaseOrderRepository;
     }
 
     public PurchaseRequestDto createPurchaseRequest(PurchaseRequestDto purchaseRequest) throws ProcureException {
@@ -52,6 +55,7 @@ public class PurchaseRequestService {
         purchaseRequest1.setPurchaseRequestTitle(purchaseRequest1.getPurchaseRequestTitle());
         purchaseRequest1.setDueDate(purchaseRequest.getDueDate());
         purchaseRequest1.setApprovalStatus(ApprovalStatus.PENDING);
+        purchaseRequest1.setTermsAndConditions(purchaseRequest.getTermsAndConditions());
         Set<Item> items = new HashSet<>(purchaseRequest1.getItems());
         purchaseRequest1.setItems(new HashSet<>(items));
         Set<Supplier> suppliers = new HashSet<>(purchaseRequest1.getSuppliers());
@@ -140,27 +144,62 @@ public class PurchaseRequestService {
         }
         return createdOfferDetails;
     }
+
+    @Transactional
     public void acceptOffer(Long purchaseRequestId, String supplierId) {
+        log.info("Starting acceptOffer...");
+
         PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId)
                 .orElseThrow(() -> new EntityNotFoundException("Purchase request not found"));
         purchaseRequest.setApprovalStatus(ApprovalStatus.COMPLETED);
 
         boolean offerAccepted = false;
+        Set<PurchaseRequestItemDetail> acceptedItemDetails = new HashSet<>();
 
         // Iterate over item details to find the supplier's offers and accept them
         for (PurchaseRequestItemDetail itemDetail : purchaseRequest.getItemDetails()) {
+            log.info("Checking item detail for supplier's offer...");
             if (itemDetail.getSupplier().getVendorId().equals(supplierId)) {
                 itemDetail.setQuoteStatus(QuoteStatus.BUYER_ACCEPTED);
                 purchaseRequestItemDetailRepository.save(itemDetail);
                 offerAccepted = true;
+                // Update item's unit price to offer unit price
+                itemDetail.getItem().setUnitPrice(itemDetail.getOfferUnitPrice());
+                // Add accepted item detail to the set for the Purchase Order
+                acceptedItemDetails.add(itemDetail);
             }
         }
 
-        // If an offer is accepted, notify other suppliers
+        // If an offer is accepted, create and save the Purchase Order
         if (offerAccepted) {
-            sendCancellationEmailsToOtherSuppliers(purchaseRequest, supplierId);
+            log.info("Creating and saving Purchase Order...");
+            PurchaseOrder purchaseOrder = new PurchaseOrder();
+            Supplier supplier = acceptedItemDetails.iterator().next().getSupplier(); // Assuming one supplier per accepted items
+            purchaseOrder.setSupplier(supplier);
+            purchaseOrder.setPaymentType(PaymentType.MPESA);
+            purchaseOrder.setApprovalStatus(ApprovalStatus.ISSUED);
+            purchaseOrder.setPurchaseOrderTitle(purchaseRequest.getPurchaseRequestTitle());
+            purchaseOrder.setDeliveryDate(purchaseRequest.getDeliveryDate());
+            purchaseOrder.setTermsAndConditions(purchaseRequest.getTermsAndConditions());
+            BigDecimal totalAmount1 = acceptedItemDetails.stream()
+                    .map(itemDetail -> itemDetail.getOfferUnitPrice().multiply(BigDecimal.valueOf(itemDetail.getItem().getQuantity())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            purchaseOrder.setTotalAmount(totalAmount1);
+// Collect all items from acceptedItemDetails
+            Set<Item> items = acceptedItemDetails.stream()
+                    .map(PurchaseRequestItemDetail::getItem)
+                    .collect(Collectors.toSet());
+            purchaseOrder.setItems(items);
+            purchaseOrder.setCreatedAt(LocalDateTime.now());
+            // Save the Purchase Order
+            purchaseOrderRepository.save(purchaseOrder);
+            log.info("Purchase Order created and saved.");
+        } else {
+            log.info("No offer accepted for the specified supplier.");
         }
+        log.info("Ending acceptOffer.");
     }
+
     private void sendCancellationEmailsToOtherSuppliers(PurchaseRequest purchaseRequest, String acceptedSupplierId) {
         Set<Supplier> otherSuppliers = purchaseRequest.getSuppliers().stream()
                 .filter(supplier -> !Objects.equals(supplier.getVendorId(), acceptedSupplierId))

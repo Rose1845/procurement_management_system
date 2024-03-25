@@ -76,7 +76,7 @@ public class PurchaseOrder {
     @OneToOne(mappedBy = "purchaseOrder")
     @JsonIgnore
     private Invoice invoice;
-    private double totalAmount;
+    private BigDecimal totalAmount;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -89,14 +89,17 @@ public class PurchaseOrder {
 
     @Transient
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         if (items != null && !items.isEmpty()) {
-            return items.stream().mapToDouble(Item::getTotalPrice).sum();
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            for (Item item : items) {
+                totalAmount = totalAmount.add(item.getTotalPrice());
+            }
+            return totalAmount;
         } else {
-            return 0.0;
+            return BigDecimal.ZERO;
         }
     }
-
 }
 
 

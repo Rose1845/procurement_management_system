@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * DTO for {@link com.rose.procurement.items.entity.Item}
  */
@@ -32,11 +34,11 @@ public class ItemDto {
     @NotNull
     private int quantity;
     @NotNull
-    private double unitPrice;
+    private BigDecimal unitPrice;
     @NotNull
     private Long categoryId;
     @NotNull
-    private double totalPrice;
+    private BigDecimal totalPrice;
     @NotNull
     private String vendorId;
 

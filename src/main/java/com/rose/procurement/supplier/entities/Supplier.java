@@ -67,9 +67,9 @@ public class Supplier {
     @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<Contract> contracts;
-    @OneToMany(mappedBy = "supplier",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
-    @JsonIgnore
-    private List<Item> items;
+//    @OneToMany(mappedBy = "supplier",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
+//    @JsonIgnore
+//    private List<Item> items;
     @ManyToMany(mappedBy = "suppliers")
     @JsonIgnore
     private Set<PurchaseRequest> purchaseRequests;

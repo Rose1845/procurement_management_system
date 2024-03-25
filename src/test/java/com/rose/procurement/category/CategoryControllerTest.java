@@ -1,24 +1,50 @@
 package com.rose.procurement.category;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rose.procurement.category.dtos.CategoryDto;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.mappers.CategoryMapper;
 import com.rose.procurement.category.repository.CategoryRepository;
+import com.rose.procurement.enums.PaymentType;
+import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.utils.address.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
-
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
 class CategoryControllerTest {
+    @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
    @BeforeEach
    void testMethod(){
@@ -191,17 +217,29 @@ class CategoryControllerTest {
    }
 
     @Test
-    void createCategory() {
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setCategoryName("test");
-        Category category = CategoryMapper.MAPPER.toEntity(categoryDto);
-        Category savedCategory = categoryRepository.save(category);
-        CategoryMapper.MAPPER.toDto(savedCategory);
-
+    @WithMockUser
+    void createCategory() throws Exception {
+        Category categoryDto = Category.builder()
+                .categoryId(1L)
+                .categoryName("Utensils")
+                .build();
+        ResultActions response = mockMvc.perform(post("/api/v1/category")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(categoryDto)));
+        response.andDo(print()).
+                andExpect(status().isOk());
     }
 
     @Test
-    void getAllCategories() {
+    @WithMockUser
+    void getAllCategories() throws Exception {
        List<Category> categories = categoryRepository.findAll();
+       ResultActions resultActions = mockMvc.perform(get("/api/v1/category"));
+       resultActions.andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(
+                       jsonPath("$.size()",
+                               is(categories.size())));
     }
 }
+

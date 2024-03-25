@@ -1,14 +1,19 @@
 package com.rose.procurement.supplier.controller;
 
 import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
+import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.supplier.services.ReportService;
 import com.rose.procurement.supplier.services.SupplierService;
 import jakarta.validation.Valid;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,11 +33,13 @@ import java.util.List;
 public class SupplierController {
     private final SupplierService supplierService;
     private final ReportService reportService;
+    private final SupplierRepository supplierRepository;
 
 
-    public SupplierController(SupplierService supplierService, ReportService reportService) {
+    public SupplierController(SupplierService supplierService, ReportService reportService, SupplierRepository supplierRepository) {
         this.supplierService = supplierService;
         this.reportService = reportService;
+        this.supplierRepository = supplierRepository;
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,6 +49,12 @@ public class SupplierController {
 //            throw new MethodArgumentNotValidException((MethodParameter) null, result);
 //        }
         return supplierService.createSupplier(supplierRequest);
+    }
+    @GetMapping("/all")
+    public Page<Supplier> findAllPurchaseOrders1(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                 @RequestParam(name = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return supplierRepository.findAll(pageable);
     }
 //    @GetMapping("/jasperpdf/export")
 //    public void createPDF(HttpServletResponse response) throws IOException, JRException {

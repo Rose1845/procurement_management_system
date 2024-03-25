@@ -14,6 +14,7 @@ import com.rose.procurement.supplier.repository.SupplierRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +48,8 @@ public class ItemService {
         item1.setQuantity(itemRequest.getQuantity());
         item1.setUnitPrice(itemRequest.getUnitPrice());
         category.ifPresent(item1::setCategory);
-        supplier.ifPresent(item1::setSupplier);
         // Calculate and set the total price
-        double totalPrice = item1.getQuantity() * item1.getUnitPrice();
+        BigDecimal totalPrice = BigDecimal.valueOf(item1.getQuantity()).multiply(item1.getUnitPrice());
         item1.setTotalPrice(totalPrice);
         Item savedItem = itemRepository.save(item1);
         return ItemMapper.MAPPER.toDto(savedItem);
