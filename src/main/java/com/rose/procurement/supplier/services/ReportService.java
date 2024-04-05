@@ -1,24 +1,21 @@
 package com.rose.procurement.supplier.services;
+
 import com.rose.procurement.supplier.entities.Supplier;
-import com.rose.procurement.supplier.entities.SupplierReport;
 import com.rose.procurement.supplier.repository.SupplierRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +53,7 @@ public class ReportService {
         Map<String, Object> parameters = new HashMap<>();
         return JasperFillManager.fillReport(jasperReport, parameters, dataSource);
     }
+
     public String exportJasperReport() throws JRException, IOException {
         List<Supplier> suppliers = supplierRepository.findAll();
         //Get file and compile it

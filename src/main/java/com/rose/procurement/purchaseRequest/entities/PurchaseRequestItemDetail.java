@@ -1,7 +1,6 @@
 package com.rose.procurement.purchaseRequest.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rose.procurement.enums.QuoteStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.supplier.entities.Supplier;
@@ -31,7 +30,7 @@ public class PurchaseRequestItemDetail {
     @ManyToOne
     @JoinColumn(name = "supplier_id")
     private Supplier supplier;
-    private BigDecimal  offerUnitPrice;
+    private BigDecimal offerUnitPrice;
     private double offerTotalPrice;
     @Enumerated
     private QuoteStatus quoteStatus;
@@ -51,7 +50,7 @@ public class PurchaseRequestItemDetail {
         }
         return totalPrice;
     }
-    
+
 
     // Other fields as needed
 }

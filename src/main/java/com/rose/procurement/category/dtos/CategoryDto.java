@@ -1,13 +1,10 @@
 package com.rose.procurement.category.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rose.procurement.category.entity.Category;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.io.Serializable;
 
 /**
  * DTO for {@link Category}

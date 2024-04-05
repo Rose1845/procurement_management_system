@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -35,30 +36,35 @@ public class PurchaseRequestController {
 
     @PostMapping("/create")
 //    @PreAuthorize("hasAnyAuthority({'ADMIN','EMPLOYEE'})")
-    public PurchaseRequestDto createPurchaseRequest(@RequestBody @Valid  PurchaseRequestDto purchaseRequest) throws ProcureException {
+    public PurchaseRequestDto createPurchaseRequest(@RequestBody @Valid PurchaseRequestDto purchaseRequest) throws ProcureException {
         log.info("controller PR....");
         System.out.println(purchaseRequest);
-           return   purchaseRequestService.createPurchaseRequest(purchaseRequest);
+        return purchaseRequestService.createPurchaseRequest(purchaseRequest);
     }
+
     @GetMapping
     public List<PurchaseRequest> getAllPurchaseRequests() {
         return purchaseRequestService.getAllPurchaseRequests();
     }
+
     @GetMapping("/{id}")
     public Optional<PurchaseRequestDto> getPurchaseRequestById(@PathVariable Long id) {
-       return purchaseRequestService.getPurchaseRequestById(id);
+        return purchaseRequestService.getPurchaseRequestById(id);
     }
+
     @GetMapping("/all-by-pagination")
     public Page<PurchaseRequest> findAllRequestByPagination(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                      @RequestParam(name = "size", defaultValue = "10") int size) {
+                                                            @RequestParam(name = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return purchaseRequestRepository.findAll(pageable);
     }
+
     @GetMapping("/supplier/{supplierId}")
     public ResponseEntity<List<PurchaseRequest>> getPurchaseRequestsBySupplier(@PathVariable Long supplierId) {
         List<PurchaseRequest> purchaseRequests = purchaseRequestService.findPurchaseRequestsBySupplierId(supplierId);
         return ResponseEntity.ok(purchaseRequests);
     }
+
     @PostMapping("/{purchaseRequestId}/accept-offer")
     public ResponseEntity<String> acceptOffer(@PathVariable Long purchaseRequestId, @RequestParam String supplierId) {
         try {
@@ -72,6 +78,7 @@ public class PurchaseRequestController {
             return ResponseEntity.internalServerError().body("An unexpected error occurred.");
         }
     }
+
     @PatchMapping("/{purchaseRequestId}/edit2-offer-unit-prices2")
     public ResponseEntity<List<PurchaseRequestItemDetail>> editOfferUnitPrices(
             @PathVariable Long purchaseRequestId,
@@ -84,10 +91,16 @@ public class PurchaseRequestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @GetMapping("/send-offer-to-suppliers/{id}")
     public String sendRequestOffer(@PathVariable("id") Long purchaseRequestId) throws ProcureException {
         return purchaseRequestService.sendApprovalEmailToSuppliers(purchaseRequestId);
     }
+    @GetMapping("/getOffers/{id}")
+    public Set<PurchaseRequestItemDetail> getOffers(@PathVariable("id") Long purchaseRequestId, @RequestParam String supplierId) throws ProcureException {
+        return purchaseRequestService.getOffers(purchaseRequestId,supplierId);
+    }
+
     @GetMapping("/{purchaseRequestId}/supplier/{vendorId}")
     public ResponseEntity<PurchaseRequest> getPurchaseRequestDetailsForSupplier(
             @PathVariable Long purchaseRequestId,

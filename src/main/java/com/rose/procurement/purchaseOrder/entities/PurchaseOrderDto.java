@@ -32,9 +32,9 @@ public class PurchaseOrderDto {
     private PaymentType paymentType;
     private ApprovalStatus approvalStatus;
     private BigDecimal totalAmount;
-//    @NotNull
+    //    @NotNull
     private Set<Item> items;
-//    @NotNull
+    //    @NotNull
     private String vendorId;
 }
 

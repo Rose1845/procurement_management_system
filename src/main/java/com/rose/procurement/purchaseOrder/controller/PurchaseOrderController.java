@@ -52,6 +52,7 @@ public class PurchaseOrderController {
     public PurchaseOrderDto createPurchaseOrder(@RequestBody @Valid PurchaseOrderDto purchaseOrderRequest) {
         return purchaseOrderService.createPurchaseOrder(purchaseOrderRequest);
     }
+
     @PostMapping("/create-from-contract/{contractId}")
     public ResponseEntity<PurchaseOrderDto> createPurchaseOrderFromContract(@PathVariable String contractId, @RequestBody PurchaseOrderDto purchaseOrderRequest) {
         try {
@@ -59,7 +60,7 @@ public class PurchaseOrderController {
             Optional<Contract> contract = contractRepository.findById(contractId);
             if (contract.isPresent()) {
                 // Create a new purchase order from the contract
-                PurchaseOrderDto purchaseOrderDto = purchaseOrderService.createPurchaseOrderFromContract(contract.get(),purchaseOrderRequest);
+                PurchaseOrderDto purchaseOrderDto = purchaseOrderService.createPurchaseOrderFromContract(contract.get(), purchaseOrderRequest);
                 return new ResponseEntity<>(purchaseOrderDto, HttpStatus.CREATED);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -69,15 +70,18 @@ public class PurchaseOrderController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/{id}")
-    public Optional<PurchaseOrder> getPurchaseOrderById(@PathVariable("id") Long purchaseOrderId){
+    public Optional<PurchaseOrder> getPurchaseOrderById(@PathVariable("id") Long purchaseOrderId) {
         return purchaseOrderService.findPurchaseOrderById(purchaseOrderId);
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePurchaseOrder(@PathVariable("id") Long purchaseOrderId){
+    public ResponseEntity<?> deletePurchaseOrder(@PathVariable("id") Long purchaseOrderId) {
         return ResponseEntity.ok(purchaseOrderService.deletePurchaseOrder(purchaseOrderId));
     }
-//    @GetMapping("/by-supplier/{supplierId}")
+
+    //    @GetMapping("/by-supplier/{supplierId}")
 //    public ResponseEntity<List<PurchaseOrder>> getOrdersBySupplier(@PathVariable String vendorId) {
 //        Optional<Supplier> supplier = supplierRepository.findById(vendorId);
 //
@@ -90,19 +94,22 @@ public class PurchaseOrderController {
 //        }
 //    }
     @GetMapping
-    public List<PurchaseOrder> getAllPO(){
+    public List<PurchaseOrder> getAllPO() {
         return purchaseOrderService.getAllOrders();
     }
+
     @GetMapping("/get/order-items/{id}")
     public Optional<PurchaseOrderDto> getPurchaseOrderWithItems(@PathVariable("id") Long purchaseOrderId) {
         return purchaseOrderService.getPurchaseOrderWithItems(purchaseOrderId);
     }
+
     @GetMapping("/paginate")
     public ApiResponse<PurchaseOrder> findAllPurchaseOrders(@RequestParam(name = "offSet") int offSet,
-                                                                  @RequestParam(name = "pageSize") int pageSize) {
+                                                            @RequestParam(name = "pageSize") int pageSize) {
         Page<PurchaseOrder> purchaseOrders = purchaseOrderService.findPurchaseOrderWithPagination(offSet, pageSize);
         return new ApiResponse<>(purchaseOrders);
     }
+
     @GetMapping("/paginations")
     public Page<PurchaseOrder> findAllPurchaseOrders1(@RequestParam(name = "page", defaultValue = "0") int page,
                                                       @RequestParam(name = "size", defaultValue = "10") int size) {
@@ -115,11 +122,13 @@ public class PurchaseOrderController {
         Set<Item> items = purchaseOrderService.getItemsForPurchaseOrder(purchaseOrderId);
         return ResponseEntity.ok(items);
     }
+
     @GetMapping("purchase-details/{purchaseOrderId}")
-    public List<Object[]> getPurchaseDetailsByPurchaseOrderId(@PathVariable("purchaseOrderId") Long purchaseOrderId){
+    public List<Object[]> getPurchaseDetailsByPurchaseOrderId(@PathVariable("purchaseOrderId") Long purchaseOrderId) {
         return purchaseOrderService.findPurchaseOrderDetailsByPurchaseOrderId(purchaseOrderId);
     }
-//   @GetMapping("/paginate-sorting")
+
+    //   @GetMapping("/paginate-sorting")
 //    public ApiResponse<Page<PurchaseOrder>> findAllPurchaseOrderWithSorting(@RequestParam(name = "offSet") int offSet,
 //                                                                            @RequestParam(name = "pageSize") int pageSize,
 //                                                                            @RequestParam(name = "field") String field){
@@ -128,17 +137,19 @@ public class PurchaseOrderController {
 //        return new ApiResponse<>(purchaseOrders.getSize(),purchaseOrders);
 //    }
     @GetMapping("/title")
-    public PurchaseOrder getPurchaseOrderByPurchaseOrderTitle(@RequestParam("title") String purchaseOrderTitle){
+    public PurchaseOrder getPurchaseOrderByPurchaseOrderTitle(@RequestParam("title") String purchaseOrderTitle) {
         return purchaseOrderService.getPurchaseOrderByPurchaseOrderTitle(purchaseOrderTitle);
 
     }
+
     @GetMapping("p-orders/{month}")
-    public List<PurchaseOrder> findPurchaseOrdersByMonth(@PathVariable("month") int month){
-        return  purchaseOrderService.findPurchaseOrdersByMonth(month);
+    public List<PurchaseOrder> findPurchaseOrdersByMonth(@PathVariable("month") int month) {
+        return purchaseOrderService.findPurchaseOrdersByMonth(month);
     }
+
     @PutMapping("{id}")
-    public PurchaseOrder updatePO(@PathVariable("id") Long purchaseOrderId, @RequestBody PurchaseOrderDto purchaseOrderDto){
-        return purchaseOrderService.updatePurchaseOrder(purchaseOrderId,purchaseOrderDto);
+    public PurchaseOrder updatePO(@PathVariable("id") Long purchaseOrderId, @RequestBody PurchaseOrderDto purchaseOrderDto) {
+        return purchaseOrderService.updatePurchaseOrder(purchaseOrderId, purchaseOrderDto);
     }
 
     @GetMapping("/{id}/report")
@@ -173,10 +184,10 @@ public class PurchaseOrderController {
     public ResponseEntity<String> sendContractToSupplier(@PathVariable("id") Long purchaseOrderId) throws ProcureException {
         log.info("start sending order email to supplier...");
 
-        try{
+        try {
             return ResponseEntity.ok(purchaseOrderService.sendApprovalEmailToSupplier(purchaseOrderId));
 
-        }catch (ProcureException | Exception e){
+        } catch (ProcureException | Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -186,24 +197,26 @@ public class PurchaseOrderController {
     public String editContractApprovalStatus(
             @PathVariable("id") Long purchaseOrderId,
 
-            @RequestParam String approvalStatus)  {
+            @RequestParam String approvalStatus) {
         // Implement logic to update the contract approval status
-        try{
+        try {
             ResponseEntity.ok(purchaseOrderService.updateApprovalStatus(purchaseOrderId, ApprovalStatus.valueOf(approvalStatus)));
             return "approved!!";
 
-        }catch (ProcureException | Exception e){
+        } catch (ProcureException | Exception e) {
             ResponseEntity.badRequest().body(e.getMessage());
             return "an error occured";
 
         }
     }
+
     @GetMapping("/purchase-orders/supplier/{supplierId}")
     public ResponseEntity<List<PurchaseOrder>> getOrdersForSupplierById(
             @PathVariable String supplierId) {
         List<PurchaseOrder> purchaseOrders = purchaseOrderService.getOrdersForSupplierById(supplierId);
         return new ResponseEntity<>(purchaseOrders, HttpStatus.OK);
     }
+
     @GetMapping("/purchase-orders/status/{status}")
     public ResponseEntity<List<PurchaseOrder>> getOrdersByStatus(
             @PathVariable String status) {

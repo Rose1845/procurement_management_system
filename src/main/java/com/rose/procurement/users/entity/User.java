@@ -1,7 +1,6 @@
 package com.rose.procurement.users.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rose.procurement.org.Organization;
 import com.rose.procurement.roles.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,11 +24,12 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Integer id;
-    @OneToOne(mappedBy = "user")
-    private Organization organization;
+//    @OneToOne(mappedBy = "user")
+//    private Organization organization;
     @Column(unique = true, nullable = false)
     private String email;
     private String username;
+    private String phoneNumber;
     @ToString.Exclude
     @JsonIgnore
     private String password;

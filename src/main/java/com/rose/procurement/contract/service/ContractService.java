@@ -6,7 +6,6 @@ import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.mappers.ContractMapper;
 import com.rose.procurement.contract.repository.ContractRepository;
 import com.rose.procurement.email.service.EmailService;
-import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.enums.ContractStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
@@ -18,7 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service

@@ -8,6 +8,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PurchaseRequisitionMapper {
     PurchaseRequisitionMapper MAPPER = Mappers.getMapper(PurchaseRequisitionMapper.class);
+
     PurchaseRequisition toEntity(PurchaseRequisitionDto purchaseRequisitionDto);
 
     PurchaseRequisitionDto toDto(PurchaseRequisition purchaseRequisition);

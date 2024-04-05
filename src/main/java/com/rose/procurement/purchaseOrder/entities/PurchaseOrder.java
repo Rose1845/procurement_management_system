@@ -1,34 +1,26 @@
 package com.rose.procurement.purchaseOrder.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.rose.procurement.category.entity.Category;
-import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.delivery.Delivery;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.invoice.Invoice;
 import com.rose.procurement.items.entity.Item;
-import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -55,7 +47,7 @@ public class PurchaseOrder {
     @Enumerated
     @Column(name = "approval_status")
     private ApprovalStatus approvalStatus;
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "supplier_id")
     @JsonIgnore
     private Supplier supplier;
@@ -66,12 +58,13 @@ public class PurchaseOrder {
     @JoinTable(
             name = "order_items",
             joinColumns = {
-                    @JoinColumn(name = "purchase_order_id",referencedColumnName = "purchase_order_id")
+                    @JoinColumn(name = "purchase_order_id", referencedColumnName = "purchase_order_id")
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "item_id",referencedColumnName = "item_id")
+                    @JoinColumn(name = "item_id", referencedColumnName = "item_id")
             }
-    )@JsonIgnore
+    )
+    @JsonIgnore
     private Set<Item> items;
     @OneToOne(mappedBy = "purchaseOrder")
     @JsonIgnore

@@ -1,12 +1,7 @@
 package com.rose.procurement.document;
 
-import com.rose.procurement.items.entity.Item;
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
-
-import java.util.Arrays;
-import java.util.Objects;
+import lombok.Data;
 
 @Data
 @Entity

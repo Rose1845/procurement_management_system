@@ -6,12 +6,12 @@ import lombok.Data;
 @Data
 public class SupplierReport {
     private String name;
-//    private String contactPerson;
+    //    private String contactPerson;
 //    private String contactInformation;
     private String p_o_box;
-//    private String city;
+    //    private String city;
     private String location;
-//    private String country;
+    //    private String country;
     private String email;
     private String phoneNumber;
     private PaymentType paymentType;

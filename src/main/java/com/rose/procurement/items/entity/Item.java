@@ -2,7 +2,6 @@ package com.rose.procurement.items.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.delivery.DeliveryItem;
@@ -35,39 +34,39 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
 
-        @Column(name = "item_id")
-        private String itemId;
+    @Column(name = "item_id")
+    private String itemId;
 
-        @Column(name = "item_name")
-        private String itemName;
+    @Column(name = "item_name")
+    private String itemName;
 
-        @Column(name = "item_number")
-        private String itemNumber;
+    @Column(name = "item_number")
+    private String itemNumber;
 
-        @Column(name = "item_description")
-        private String itemDescription;
-         @Min(value = 1,message = "minimum quantity required is 1")
-         private int quantity=1;
+    @Column(name = "item_description")
+    private String itemDescription;
+    @Min(value = 1, message = "minimum quantity required is 1")
+    private int quantity = 1;
 
-        @Column(name = "unit_price")
-        private BigDecimal unitPrice;
+    @Column(name = "unit_price")
+    private BigDecimal unitPrice;
 
-        @Column(name = "total_price")
-        private BigDecimal totalPrice;
-    @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
+    @Column(name = "total_price")
+    private BigDecimal totalPrice;
+    @ManyToMany(mappedBy = "items", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Contract> contracts;
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<PurchaseRequestItemDetail> itemDetails;
-    @ManyToMany(mappedBy = "items",fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "items", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<PurchaseOrder> purchaseOrders;
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "categoryId")
     @JsonBackReference
     private Category category;
-//    @ManyToOne
+    //    @ManyToOne
 //    @JoinColumn(name = "supplierId")
 //    @JsonIgnore
 //    private Supplier supplier;
@@ -80,13 +79,13 @@ public class Item {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-//    @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
+    //    @ManyToMany(mappedBy = "items", cascade = CascadeType.ALL)
 //    @JsonIgnore
 //    private Set<SupplierOffer> supplierOffers;
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<DeliveryItem> deliveriesItems;
-//    @Column(nullable = true, columnDefinition = "int default 0")
+    //    @Column(nullable = true, columnDefinition = "int default 0")
 //    private int quantityDelivered =0 ;
 //    @Column(nullable = true, columnDefinition = "int default 0")
 //    private int quantityReceived = 0;

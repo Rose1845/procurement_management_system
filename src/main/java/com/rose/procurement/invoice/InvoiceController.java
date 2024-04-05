@@ -1,7 +1,6 @@
 package com.rose.procurement.invoice;
 
 import com.rose.procurement.advice.ProcureException;
-import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

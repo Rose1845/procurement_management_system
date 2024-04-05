@@ -1,16 +1,11 @@
 package com.rose.procurement.items.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.rose.procurement.category.entity.Category;
-import com.rose.procurement.supplier.entities.Supplier;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -32,14 +27,15 @@ public class ItemDto {
     @NotNull
     private String itemDescription;
     @NotNull
+    @Min(value = 1, message = "minimum quantity required is 1")
     private int quantity;
     @NotNull
+    @DecimalMin(value = "0.00", message = "Unit Price must be greater than zero")
     private BigDecimal unitPrice;
     @NotNull
     private Long categoryId;
-    @NotNull
     private BigDecimal totalPrice;
-    @NotNull
-    private String vendorId;
+//    @NotNull
+//    private String vendorId;
 
 }

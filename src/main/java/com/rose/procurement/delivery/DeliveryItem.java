@@ -5,8 +5,6 @@ import com.rose.procurement.items.entity.Item;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @Entity
 @Getter
 @Setter

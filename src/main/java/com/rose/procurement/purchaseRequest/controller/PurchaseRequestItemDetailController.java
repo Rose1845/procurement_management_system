@@ -3,7 +3,6 @@ package com.rose.procurement.purchaseRequest.controller;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestItemDetail;
 import com.rose.procurement.purchaseRequest.services.PurchaseRequestItemDetailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,21 +45,25 @@ public class PurchaseRequestItemDetailController {
         PurchaseRequestItemDetail createdItemDetail = itemDetailService.createItemDetail(itemDetail);
         return new ResponseEntity<>(createdItemDetail, HttpStatus.CREATED);
     }
+
     @GetMapping("/supplier-offer-details/{supplierId}")
     public ResponseEntity<List<PurchaseRequestItemDetail>> getDetailsBySupplierId(@PathVariable String supplierId) {
         List<PurchaseRequestItemDetail> itemDetails = itemDetailService.getDetailsBySupplierId(supplierId);
         return new ResponseEntity<>(itemDetails, HttpStatus.OK);
     }
+
     @GetMapping("/request-offer-details/{purchaseRequestId}")
     public ResponseEntity<List<PurchaseRequestItemDetail>> getDetailsByRequestId(@PathVariable Long purchaseRequestId) {
         List<PurchaseRequestItemDetail> itemDetails = itemDetailService.getDetailsByRequestId(purchaseRequestId);
         return new ResponseEntity<>(itemDetails, HttpStatus.OK);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItemDetail(@PathVariable Long id) {
         itemDetailService.deleteItemDetail(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
     @PostMapping("/edit-offer-unit-prices")
     public ResponseEntity<List<PurchaseRequestItemDetail>> editOfferUnitPrices(
             @RequestBody List<PurchaseRequestItemDetail> itemDetails) {

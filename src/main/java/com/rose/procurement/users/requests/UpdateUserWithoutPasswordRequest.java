@@ -1,10 +1,6 @@
 package com.rose.procurement.users.requests;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,8 +19,14 @@ public class UpdateUserWithoutPasswordRequest {
     private String username;
     @NotBlank
     @NotNull
+    @Max(value = 10,message = "phonenumber 8 characters")
+    private String phoneNumber;
+    @NotBlank
+    @NotNull
     private String firstName;
     @NotBlank
     @NotNull
     private String lastName;
 }
+
+

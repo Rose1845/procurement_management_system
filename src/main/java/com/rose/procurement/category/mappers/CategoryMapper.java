@@ -1,7 +1,7 @@
 package com.rose.procurement.category.mappers;
 
-import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.dtos.CategoryDto;
+import com.rose.procurement.category.entity.Category;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 

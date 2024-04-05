@@ -30,6 +30,7 @@ public class ContractController {
     public ContractDto createContract(@RequestBody @Valid ContractDto contractRequest){
         return contractService.createContract(contractRequest);
     }
+
     @GetMapping
     public List<Contract> getAllContracts(){
         return contractService.getAllContracts();

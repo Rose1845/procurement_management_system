@@ -1,9 +1,6 @@
 package com.rose.procurement.purchaseRequisition.services;
 
 import com.rose.procurement.enums.ApprovalStatus;
-import com.rose.procurement.items.entity.Item;
-import com.rose.procurement.items.repository.ItemRepository;
-import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisition;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisitionDto;
 import com.rose.procurement.purchaseRequisition.mappers.PurchaseRequisitionMapper;
@@ -19,11 +16,11 @@ public class PurchaseRequisitionService {
     private final PurchaseRequisitionRepository purchaseRequisitionRepository;
 
     public PurchaseRequisitionService(PurchaseRequisitionRepository purchaseRequisitionRepository
-                                     ) {
+    ) {
         this.purchaseRequisitionRepository = purchaseRequisitionRepository;
     }
 
-    public PurchaseRequisitionDto createPurchaseRequistion(PurchaseRequisitionDto purchaseRequisitionDto){
+    public PurchaseRequisitionDto createPurchaseRequistion(PurchaseRequisitionDto purchaseRequisitionDto) {
         PurchaseRequisition purchaseRequisition = PurchaseRequisitionMapper.MAPPER.toEntity(purchaseRequisitionDto);
         purchaseRequisition.setRequisitionTitle(purchaseRequisitionDto.getRequisitionTitle());
         purchaseRequisition.setDescription(purchaseRequisitionDto.getDescription());
@@ -34,7 +31,8 @@ public class PurchaseRequisitionService {
         PurchaseRequisitionDto saveDto = PurchaseRequisitionMapper.MAPPER.toDto(savedpurchaseR);
         return saveDto;
     }
-    public PurchaseRequisitionDto updatePurchaseRequisition(PurchaseRequisitionDto purchaseRequisitionDto,Long requisitionId){
+
+    public PurchaseRequisitionDto updatePurchaseRequisition(PurchaseRequisitionDto purchaseRequisitionDto, Long requisitionId) {
         PurchaseRequisition existingPurchaseRequisition = purchaseRequisitionRepository.findByRequisitionId(requisitionId);
         existingPurchaseRequisition.setApprovalStatus(purchaseRequisitionDto.getApprovalStatus());
         existingPurchaseRequisition.setRequisitionTitle(purchaseRequisitionDto.getRequisitionTitle());
@@ -45,14 +43,13 @@ public class PurchaseRequisitionService {
         return saveUpdatedDto;
 
 
-
     }
 
     public List<PurchaseRequisition> getAllPurchaseRequisitions() {
         return purchaseRequisitionRepository.findAll();
     }
 
-    public Optional<PurchaseRequisition> getPurchaseRequisitionById(Long  requisitionId) {
+    public Optional<PurchaseRequisition> getPurchaseRequisitionById(Long requisitionId) {
         return purchaseRequisitionRepository.findById(requisitionId);
     }
 }

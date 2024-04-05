@@ -1,7 +1,6 @@
 package com.rose.procurement.supplier.controller;
 
 import com.rose.procurement.advice.ProcureException;
-import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.repository.SupplierRepository;
@@ -41,6 +40,7 @@ public class SupplierController {
         this.reportService = reportService;
         this.supplierRepository = supplierRepository;
     }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority({'ADMIN','EMPLOYEE'})")
@@ -50,13 +50,15 @@ public class SupplierController {
 //        }
         return supplierService.createSupplier(supplierRequest);
     }
+
     @GetMapping("/all")
     public Page<Supplier> findAllPurchaseOrders1(@RequestParam(name = "page", defaultValue = "0") int page,
                                                  @RequestParam(name = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return supplierRepository.findAll(pageable);
     }
-//    @GetMapping("/jasperpdf/export")
+
+    //    @GetMapping("/jasperpdf/export")
 //    public void createPDF(HttpServletResponse response) throws IOException, JRException {
 //        response.setContentType("application/pdf");
 //        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
@@ -68,11 +70,12 @@ public class SupplierController {
 //
 //        reportService.exportJasperReport(response);
 //    }
-    @PostMapping(value = "upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<Integer> uploadSuppliers(@RequestPart("file")MultipartFile file){
+    @PostMapping(value = "upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<Integer> uploadSuppliers(@RequestPart("file") MultipartFile file) {
         return ResponseEntity.ok(supplierService.uploadSuppliers(file));
 
     }
+
     @GetMapping("/template/download/single")
     public ResponseEntity<InputStreamResource> downloadSingleSupplierTemplate() {
         InputStreamResource resource = supplierService.generateTemplate();
@@ -85,24 +88,29 @@ public class SupplierController {
                 .contentType(MediaType.parseMediaType("application/csv"))
                 .body(resource);
     }
+
     @GetMapping
-    public List<Supplier> getAllSuppliers(){
+    public List<Supplier> getAllSuppliers() {
         return supplierService.getAllSuppliers();
     }
+
     @GetMapping("/supplier/{id}")
     public Supplier getSupplier(@PathVariable("id") String vendorId) {
-       return supplierService.getSupplierById(vendorId);
+        return supplierService.getSupplierById(vendorId);
     }
+
     @PutMapping("{id}")
-    public Supplier updateSupplier(@PathVariable("id") String vendorId , @RequestBody SupplierDto supplierRequest){
+    public Supplier updateSupplier(@PathVariable("id") String vendorId, @RequestBody SupplierDto supplierRequest) {
         return supplierService.updateSupplier(vendorId, supplierRequest);
     }
+
     @DeleteMapping("{id}")
-    public String deleteSupplier(@PathVariable("id") String vendorId){
+    public String deleteSupplier(@PathVariable("id") String vendorId) {
         return supplierService.deleteSupplier(vendorId);
     }
+
     @DeleteMapping
-    public String deleteSupplier(){
+    public String deleteSupplier() {
         return supplierService.deleteAll();
     }
 

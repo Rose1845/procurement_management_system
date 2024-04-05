@@ -14,6 +14,7 @@ import com.rose.procurement.utils.address.Address;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class SupplierService {
     private final SupplierRepository supplierRepository;
 
     public SupplierService(SupplierRepository supplierRepository
-                          ) {
+    ) {
         this.supplierRepository = supplierRepository;
     }
 
@@ -59,7 +60,8 @@ public class SupplierService {
         Supplier savedSupplier = supplierRepository.save(supplier);
         return SupplierMapper.MAPPER.toDto(savedSupplier);
     }
-    public List<Supplier> getAllSuppliers(){
+
+    public List<Supplier> getAllSuppliers() {
         return new ArrayList<>(supplierRepository.findAll());
     }
 
@@ -67,8 +69,8 @@ public class SupplierService {
         return supplierRepository.findById(vendorId).get();
     }
 
-    public Supplier updateSupplier(String vendorId,SupplierDto supplierRequest){
-        Supplier supplier1 = supplierRepository.findByVendorId(vendorId).orElseThrow(()-> new IllegalStateException("supplier do not exist"));
+    public Supplier updateSupplier(String vendorId, SupplierDto supplierRequest) {
+        Supplier supplier1 = supplierRepository.findByVendorId(vendorId).orElseThrow(() -> new IllegalStateException("supplier do not exist"));
         supplier1.setName(supplierRequest.getName());
         supplier1.setAddress(supplierRequest.getAddress());
         supplier1.setEmail(supplierRequest.getEmail());
@@ -80,16 +82,17 @@ public class SupplierService {
         return supplierRepository.save(supplier1);
     }
 
-    public String deleteSupplier(String vendorId){
+    public String deleteSupplier(String vendorId) {
         Optional<Supplier> supplier = supplierRepository.findById(vendorId);
-        if(supplier.isPresent()){
+        if (supplier.isPresent()) {
             supplierRepository.deleteById(vendorId);
-        }else {
+        } else {
             return "suplier with id:" + vendorId + "do not exists";
         }
         return "supplier deleted successfully";
     }
-    public String deleteAll(){
+
+    public String deleteAll() {
         supplierRepository.deleteAll();
         return "deleted all suppliers";
     }
@@ -101,16 +104,16 @@ public class SupplierService {
     }
 
     private Set<SupplierDto> parseCsv(MultipartFile file) {
-        try(Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+        try (Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             HeaderColumnNameMappingStrategy<SupplierCsvRepresentation> headerColumnNameMappingStrategy = new HeaderColumnNameMappingStrategy<>();
             headerColumnNameMappingStrategy.setType(SupplierCsvRepresentation.class);
             CsvToBean<SupplierCsvRepresentation> csvToBean = new CsvToBeanBuilder<SupplierCsvRepresentation>(reader).withMappingStrategy(headerColumnNameMappingStrategy).withIgnoreEmptyLine(true)
                     .withIgnoreLeadingWhiteSpace(true).build();
-           return csvToBean.parse().stream().map(csvLine -> SupplierDto.builder()
-                            .email(csvLine.getEmail())
+            return csvToBean.parse().stream().map(csvLine -> SupplierDto.builder()
+                    .email(csvLine.getEmail())
                     .name(csvLine.getName())
                     .contactInformation(csvLine.getContactInformation())
-                   .contactPerson(csvLine.getContactPerson())
+                    .contactPerson(csvLine.getContactPerson())
                     .phoneNumber(csvLine.getPhoneNumber())
                     .termsAndConditions(csvLine.getTermsAndConditions())
                     .paymentType(csvLine.getPaymentType())

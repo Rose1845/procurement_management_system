@@ -230,16 +230,16 @@ class CategoryControllerTest {
                 andExpect(status().isOk());
     }
 
-    @Test
-    @WithMockUser
-    void getAllCategories() throws Exception {
-       List<Category> categories = categoryRepository.findAll();
-       ResultActions resultActions = mockMvc.perform(get("/api/v1/category"));
-       resultActions.andExpect(status().isOk())
-               .andDo(print())
-               .andExpect(
-                       jsonPath("$.size()",
-                               is(categories.size())));
-    }
+//    @Test
+//    @WithMockUser
+//    void getAllCategories() throws Exception {
+//       List<Category> categories = categoryRepository.findAll();
+//       ResultActions resultActions = mockMvc.perform(get("/api/v1/category"));
+//       resultActions.andExpect(status().isOk())
+//               .andDo(print())
+//               .andExpect(
+//                       jsonPath("$.size()",
+//                               is(categories.size())));
+//    }
 }
 

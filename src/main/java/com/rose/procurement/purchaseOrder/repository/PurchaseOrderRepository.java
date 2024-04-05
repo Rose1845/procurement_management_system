@@ -1,7 +1,5 @@
 package com.rose.procurement.purchaseOrder.repository;
 
-import com.rose.procurement.contract.entities.Contract;
-import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,13 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
-public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder,Long> {
+public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Long> {
 
     @Query(value = "SELECT " +
             "pos.purchase_order_id AS purchaseOrderId, " +
@@ -51,11 +47,14 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder,Lon
             "WHERE pos.purchase_order_id = :purchaseOrderId",
             nativeQuery = true)
     List<Object[]> findPurchaseOrderDetailsByPurchaseOrderId(@Param("purchaseOrderId") Long purchaseOrderId);
+
     Optional<PurchaseOrder> findByPurchaseOrderId(Long purchaseOrderId);
 
     @Query("SELECT po FROM PurchaseOrder po WHERE MONTH(po.createdAt) = :month")
     List<PurchaseOrder> findPurchaseOrdersByMonth(@Param("month") int month);
+
     PurchaseOrder findByPurchaseOrderTitle(String purchaseOrderTitle);
+
     @Query("SELECT p FROM PurchaseOrder p LEFT JOIN FETCH p.items  LEFT JOIN FETCH p.supplier WHERE p.purchaseOrderId = :purchaseOrderId")
     Optional<PurchaseOrder> findByIdWithItems(@Param("purchaseOrderId") Long purchaseOrderId);
 

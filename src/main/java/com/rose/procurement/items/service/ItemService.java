@@ -1,5 +1,6 @@
 package com.rose.procurement.items.service;
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.repository.CategoryRepository;
 import com.rose.procurement.items.dtos.ItemDto;
@@ -8,8 +9,6 @@ import com.rose.procurement.items.mappers.ItemMapper;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository;
-import com.rose.procurement.purchaseRequest.services.PurchaseRequestService;
-import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ public class ItemService {
     private final CategoryRepository categoryRepository;
     private final SupplierRepository supplierRepository;
     private final ItemMapper itemMapper;
-    private  final PurchaseRequestRepository purchaseRequestRepository;
+    private final PurchaseRequestRepository purchaseRequestRepository;
 
     public ItemService(ItemRepository itemRepository, CategoryRepository categoryRepository, SupplierRepository supplierRepository,
                        ItemMapper itemMapper, PurchaseRequestRepository purchaseRequestRepository) {
@@ -38,10 +37,12 @@ public class ItemService {
         this.purchaseRequestRepository = purchaseRequestRepository;
     }
 
-    public ItemDto createItem(ItemDto itemRequest) {
+    public ItemDto createItem(ItemDto itemRequest) throws ProcureException {
+        if (itemRepository.existsByItemName(itemRequest.getItemName())) {
+            throw ProcureException.builder().message("Item Name already exist").build();
+        }
         log.info("Received ItemDto: {}", itemRequest);
         Optional<Category> category = categoryRepository.findById(itemRequest.getCategoryId());
-        Optional<Supplier> supplier = supplierRepository.findById(itemRequest.getVendorId());
         Item item1 = ItemMapper.MAPPER.toEntity(itemRequest);
         item1.setItemNumber(itemRequest.getItemNumber());
         item1.setItemName(itemRequest.getItemName());
@@ -67,17 +68,20 @@ public class ItemService {
 //        return itemRepository.findById(itemId)
 //                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
     }
-    public String  deleteItem(String itemId){
+
+    public String deleteItem(String itemId) {
         Optional<Item> item = itemRepository.findById(itemId);
-        if(item.isPresent()){
+        if (item.isPresent()) {
             itemRepository.deleteById(itemId);
         }
         return "item deleted successfully";
     }
+
     public Optional<ItemDto> getItemDetails(String itemId) {
         Optional<Item> item = itemRepository.findItemDetailsById(itemId);
         return item.map(itemMapper::toDto);
     }
+
     public Item addPurchaseRequestItem(Long purchaseRequestId, Item purchaseRequestItem) {
         // Retrieve the purchase request by ID
         PurchaseRequest purchaseRequest = purchaseRequestRepository.findById(purchaseRequestId)

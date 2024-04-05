@@ -1,6 +1,5 @@
 package com.rose.procurement.purchaseRequisition.controller;
 
-import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisition;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisitionDto;
 import com.rose.procurement.purchaseRequisition.repository.PurchaseRequisitionRepository;
@@ -28,12 +27,13 @@ public class PurchaseRequisitionController {
     }
 
     @PostMapping
-    public PurchaseRequisitionDto createPurchaseRequisition(@RequestBody @Valid PurchaseRequisitionDto purchaseRequisitionDto){
+    public PurchaseRequisitionDto createPurchaseRequisition(@RequestBody @Valid PurchaseRequisitionDto purchaseRequisitionDto) {
         return purchaseRequisitionService.createPurchaseRequistion(purchaseRequisitionDto);
     }
+
     @GetMapping("/all-by-pagination")
     public Page<PurchaseRequisition> findAllRequestByPagination(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                            @RequestParam(name = "size", defaultValue = "10") int size) {
+                                                                @RequestParam(name = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return purchaseRequisitionRepository.findAll(pageable);
     }

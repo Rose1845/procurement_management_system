@@ -18,13 +18,15 @@ import com.rose.procurement.users.requests.CreateUserWithRolesRequest;
 import com.rose.procurement.users.requests.UpdateUserPasswordRequest;
 import com.rose.procurement.users.requests.UpdateUserWithoutPasswordRequest;
 import com.rose.procurement.utils.MD5UserAvatar;
-import jakarta.transaction.Transactional;
-import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +48,7 @@ public class UserServiceImpl implements UserService {
                 .firstname(userRequest.getFirstName())
                 .lastname(userRequest.getLastName())
                 .username(userRequest.getUsername())
+                .phoneNumber(userRequest.getPhoneNumber())
                 .email(userRequest.getEmail())
                 .password(userRequest.getPassword())
                 .build();
@@ -71,6 +74,7 @@ public class UserServiceImpl implements UserService {
         User newUser = User.builder()
                 .firstname(user.getFirstName())
                 .lastname(user.getLastName())
+                .phoneNumber(user.getPhoneNumber())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .email(user.getEmail())
                 .username(user.getUsername())
@@ -232,3 +236,4 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 }
+

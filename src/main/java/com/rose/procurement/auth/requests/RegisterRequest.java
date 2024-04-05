@@ -1,7 +1,5 @@
 package com.rose.procurement.auth.requests;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +22,9 @@ public class RegisterRequest {
         @NotNull
         @NotEmpty
         private String username;
+        @NotNull
+        @NotEmpty
+        private String phoneNumber;
         @NotNull
         @NotEmpty
         private String firstName;

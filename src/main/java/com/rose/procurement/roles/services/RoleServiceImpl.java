@@ -6,7 +6,6 @@ import com.rose.procurement.roles.entity.Role;
 import com.rose.procurement.roles.requests.CreateRoleRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,7 +1,5 @@
 package com.rose.procurement.users.requests;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +17,7 @@ public class CreateUserRequest {
     @NotNull
     @Size(min = 8,max = 32,message = "Password should have minimum of 8-32 characters")
     private String password;
+    private String phoneNumber;
     @NotBlank
     @NotNull
     private String username;
