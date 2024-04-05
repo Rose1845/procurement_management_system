@@ -1,15 +1,13 @@
 package com.rose.procurement.purchaseRequisition.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -21,7 +19,7 @@ import java.util.Set;
 public class PurchaseRequisitionDto {
     @NotNull
     @NotBlank
-   private String requisitionTitle;
+    private String requisitionTitle;
     @NotNull
     @NotBlank
     private String description;

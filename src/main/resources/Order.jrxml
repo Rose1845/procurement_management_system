@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="496dac46-b4e2-4b53-96f2-404b08db149a">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <parameter name="purchaseOrderId" class="java.lang.Long"/>
+    <queryString>
+        <![CDATA[SELECT
+    po.*,
+    i.item_name,
+    i.quantity,
+    i.total_price,
+    i.item_number,
+    i.unit_price,
+    s.name AS supplier_name,
+    s.p_o_box AS supplier_address_box,
+    s.country AS supplier_address_country,
+    s.city AS supplier_address_city,
+    s.location AS supplier_address_location,
+    CONCAT(u.firstname, ' ', u.lastname) AS created_by_name,
+    CASE po.approval_status
+        WHEN 0 THEN 'PENDING'
+        WHEN 1 THEN 'APPROVED'
+        WHEN 2 THEN 'REJECT'
+        WHEN 3 THEN 'ISSUED'
+        WHEN 4 THEN 'IN_DELIVERY'
+        WHEN 5 THEN 'FULLY_RECEIVED'
+        WHEN 6 THEN 'CLOSED'
+        ELSE 'UNKNOWN'
+    END AS approval_status_name
+FROM
+    purchase_order po
+JOIN
+    order_items oi ON po.purchase_order_id = oi.purchase_order_id
+JOIN
+    item i ON oi.item_id = i.item_id
+JOIN
+    supplier s ON po.supplier_id = s.vendor_id
+JOIN
+    user u ON po.created_by = u.id
+WHERE
+    po.purchase_order_id = $P{purchaseOrderId};
+]]>
+    </queryString>
+    <field name="purchase_order_id" class="java.lang.Long">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="total_amount" class="java.lang.Long">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="approval_status" class="java.lang.Integer">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="created_at" class="java.sql.Timestamp">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="created_by" class="java.lang.Integer">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="delivery_date" class="java.sql.Date">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="payment_type" class="java.lang.Integer">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="purchase_order_title" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="terms_and_conditions" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="updated_at" class="java.sql.Timestamp">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="supplier_id" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="item_name" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="quantity" class="java.lang.Integer">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="total_price" class="java.lang.Double">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="item_number" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="unit_price" class="java.lang.Double">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="supplier_name" class="java.lang.String"/>
+    <field name="supplier_address_box" class="java.lang.String"/>
+    <field name="supplier_address_country" class="java.lang.String"/>
+    <field name="supplier_address_city" class="java.lang.String"/>
+    <field name="supplier_address_location" class="java.lang.String"/>
+    <field name="created_by_name" class="java.lang.String"/>
+    <field name="approval_status_name" class="java.lang.String"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="51" splitType="Stretch">
+            <staticText>
+                <reportElement x="157" y="0" width="318" height="43" uuid="4f2a9f4c-1507-4b96-a332-06632824b8c5"/>
+                <textElement>
+                    <font fontName="SansSerif" size="24"/>
+                </textElement>
+                <text><![CDATA[Purchase Order]]></text>
+            </staticText>
+        </band>
+    </title>
+    <pageHeader>
+        <band height="141" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="100" height="20" uuid="81a24a77-a6c8-4e3b-9272-24dcd0d1f59c"/>
+                <textElement>
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Vendor]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="320" y="0" width="100" height="20" uuid="6f7c8d30-270c-4bde-9cf1-33e075700c08"/>
+                <text><![CDATA[Date Issued]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="320" y="20" width="100" height="20" uuid="b55bfe72-ad0c-49c7-a212-a9e6b714743d"/>
+                <text><![CDATA[Created On]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="318" y="40" width="100" height="20" uuid="f0f7901d-73dc-4b35-a522-57ade534c6db"/>
+                <text><![CDATA[CreatedBy]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="320" y="60" width="100" height="20" uuid="ef3e7e3a-8049-4370-87f0-df5664b98d18"/>
+                <text><![CDATA[Status]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="420" y="0" width="100" height="20" uuid="1213f331-bfff-4eb1-927b-89b1a8cc75c7"/>
+                <textFieldExpression><![CDATA[$F{delivery_date}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="40" width="157" height="20" uuid="0f38d063-541c-4dcc-9ddf-2b68646fe39f"/>
+                <textFieldExpression><![CDATA[$F{supplier_address_box}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="60" width="157" height="20" uuid="1ae31266-dcf7-4dd5-9dfa-9dfae1fda260"/>
+                <textFieldExpression><![CDATA[$F{supplier_address_city}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="80" width="200" height="20" uuid="eabac97d-2791-4a3a-89f3-a586229b3764"/>
+                <textFieldExpression><![CDATA[$F{supplier_address_location}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="418" y="84" width="135" height="20" uuid="e5b540f0-81b8-40d0-8321-1a21b2090d3e"/>
+                <textFieldExpression><![CDATA[$F{purchase_order_title}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="420" y="20" width="100" height="20" uuid="d42b4217-9e7c-4529-9318-8bf386bf2f10"/>
+                <textFieldExpression><![CDATA[$F{created_at}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="20" width="100" height="20" uuid="a07fa12e-2cb3-4be3-a4b2-f49228eab2aa"/>
+                <textFieldExpression><![CDATA[$F{supplier_name}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="320" y="80" width="100" height="20" uuid="c013b9de-48d5-43c2-99b4-65d9523a3ae2"/>
+                <text><![CDATA[Purchase Order Title]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="418" y="40" width="121" height="20" uuid="ca259cb9-2217-40b8-a0e5-34983501bba4"/>
+                <textFieldExpression><![CDATA[$F{created_by_name}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="420" y="60" width="133" height="20" uuid="48e6684d-39f0-4561-aaac-1137b1a0bd1b"/>
+                <textFieldExpression><![CDATA[$F{approval_status_name}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageHeader>
+    <columnHeader>
+        <band height="73" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="100" height="20" uuid="1994caa9-bd46-496b-a8f2-a8f958c30261"/>
+                <textElement>
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[BIll To ]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="300" y="0" width="139" height="20" uuid="9ddf1926-a78d-435d-878d-df182c4dcec8"/>
+                <textElement>
+                    <font size="14"/>
+                </textElement>
+                <text><![CDATA[Delivery Address]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="53" width="100" height="20" uuid="54169b37-edd4-4f8b-8b95-616fd352cbc5"/>
+                <text><![CDATA[Item Name]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="100" y="53" width="100" height="20" uuid="7b0890c5-8095-4003-8742-67e4023017f1"/>
+                <text><![CDATA[Item NUmber]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="200" y="53" width="100" height="20" uuid="df6eafba-c2d8-4ad4-8397-c5291ea3f605"/>
+                <text><![CDATA[Quantity]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="300" y="53" width="100" height="20" uuid="de0ed58b-0e19-4844-88c8-212f0bf45e35"/>
+                <text><![CDATA[unit_price]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="400" y="53" width="100" height="20" uuid="2fa8fd32-d421-405d-813a-41c25495b706"/>
+                <text><![CDATA[total_price]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="68" splitType="Stretch">
+            <textField>
+                <reportElement x="100" y="0" width="100" height="20" uuid="e33c2947-7dff-423d-9e1a-09e92f3a1008"/>
+                <textFieldExpression><![CDATA[$F{item_number}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="200" y="0" width="100" height="20" uuid="14d1c966-7c2b-4fc1-ae15-4f0ea59d1103"/>
+                <textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="300" y="0" width="100" height="20" uuid="2bb3792f-d1bc-4cdb-853d-531b82ab92d1"/>
+                <textFieldExpression><![CDATA[$F{unit_price}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="400" y="0" width="100" height="20" uuid="470c61d2-b842-4202-aeb7-bf426d0b1c49"/>
+                <textFieldExpression><![CDATA[$F{total_price}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="0" width="100" height="20" uuid="40b65fad-fea4-4f4b-acb5-56dedbc05687"/>
+                <textFieldExpression><![CDATA[$F{item_name}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="404" y="20" width="100" height="20" uuid="ed3c447c-949d-4c5d-bcc5-5f8a322f8727"/>
+                <textFieldExpression><![CDATA[$F{total_amount}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="300" y="20" width="100" height="20" uuid="0a143ff0-5e92-4fcd-bea3-0dd8c1c461d5"/>
+                <text><![CDATA[Total  Amount]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="157" y="48" width="150" height="20" uuid="8dae20bc-cd88-407f-9ddc-80a146363938"/>
+                <textFieldExpression><![CDATA[$F{terms_and_conditions}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="48" width="157" height="20" uuid="6cee644b-a957-43c1-a069-da25a0a97536"/>
+                <textElement>
+                    <font size="12"/>
+                </textElement>
+                <text><![CDATA[Terms and Conditons]]></text>
+            </staticText>
+        </band>
+    </detail>
+    <pageFooter>
+        <band height="34">
+            <staticText>
+                <reportElement x="300" y="10" width="100" height="20" uuid="923a6b10-f4bb-4a0f-abc2-4d963c1203b6"/>
+                <text><![CDATA[Generated At:]]></text>
+            </staticText>
+            <textField pattern="dd/MM/yyyy HH.mm.ss">
+                <reportElement x="400" y="10" width="153" height="20" uuid="95c0f8f9-586d-4e92-a2d1-336310467ab5"/>
+                <textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>

@@ -1,5 +1,6 @@
 package com.rose.procurement.category.service;
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.category.dtos.CategoryDto;
 import com.rose.procurement.category.entity.Category;
 import org.springframework.core.io.InputStreamResource;
@@ -13,7 +14,7 @@ public interface CategoryService {
 
 
 
-    CategoryDto createCategory(CategoryDto categoryDto);
+    CategoryDto createCategory(CategoryDto categoryDto) throws ProcureException;
 
 
     List<Category> getAllCategories();

@@ -9,6 +9,7 @@ import org.mapstruct.factory.Mappers;
 public interface SupplierMapper {
 
     SupplierMapper MAPPER = Mappers.getMapper(SupplierMapper.class);
+
     Supplier toEntity(SupplierDto supplierDto);
 
     SupplierDto toDto(Supplier supplier);

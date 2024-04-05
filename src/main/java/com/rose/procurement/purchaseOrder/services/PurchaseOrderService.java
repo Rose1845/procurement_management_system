@@ -5,7 +5,6 @@ import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.service.ContractService;
 import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ApprovalStatus;
-import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
@@ -17,29 +16,30 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
+import org.webjars.NotFoundException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class PurchaseOrderService {
 
-private final PurchaseOrderRepository purchaseOrderRepository;
-private final SupplierRepository supplierRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
+    private final SupplierRepository supplierRepository;
     private final PurchaseOrderMapper purchaseOrderMapper;
     private final ContractService contractService;
     private final EmailService emailService;
+
     public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository,
                                 SupplierRepository supplierRepository, PurchaseOrderMapper purchaseOrderMapper, ContractService contractService, EmailService emailService) {
         this.purchaseOrderRepository = purchaseOrderRepository;
@@ -56,20 +56,24 @@ private final SupplierRepository supplierRepository;
 
         purchaseOrder.setPurchaseOrderTitle(purchaseOrderRequest.getPurchaseOrderTitle());
         supplier.ifPresent(purchaseOrder::setSupplier);
-       purchaseOrder.setTermsAndConditions(purchaseOrderRequest.getTermsAndConditions());
-       purchaseOrder.setApprovalStatus(ApprovalStatus.PENDING);
-       purchaseOrder.setPaymentType(purchaseOrderRequest.getPaymentType());
+        purchaseOrder.setTermsAndConditions(purchaseOrderRequest.getTermsAndConditions());
+        purchaseOrder.setApprovalStatus(ApprovalStatus.PENDING);
+        purchaseOrder.setPaymentType(purchaseOrderRequest.getPaymentType());
         Set<Item> items = new HashSet<>(purchaseOrder.getItems());
-        double totalAmount = purchaseOrder.getItems().stream().mapToDouble(Item::getTotalPrice).sum();
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (Item item : items) {
+            totalAmount = totalAmount.add(item.getTotalPrice());
+        }
         purchaseOrder.setTotalAmount(totalAmount);
-        purchaseOrder.setItems(new HashSet<>(items));
+        purchaseOrder.setItems(items);
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate());
         purchaseOrder.setUpdatedAt(LocalDate.now().atStartOfDay());
         purchaseOrder.setCreatedAt(LocalDate.now().atStartOfDay());
         PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
         return purchaseOrderMapper.toDto(savedPurchaseOrder);
     }
-    public PurchaseOrderDto createPurchaseOrderFromContract(Contract contract,PurchaseOrderDto purchaseOrderRequest) {
+
+    public PurchaseOrderDto createPurchaseOrderFromContract(Contract contract, PurchaseOrderDto purchaseOrderRequest) {
         // Assuming you have the necessary information in the Contract entity
         Optional<Supplier> supplier = Optional.ofNullable(contract.getSupplier());
 
@@ -81,7 +85,10 @@ private final SupplierRepository supplierRepository;
         // Set other properties as needed
         // Copy items from the contract to the purchase order
         Set<Item> items = new HashSet<>(contract.getItems());
-        double totalAmount = items.stream().mapToDouble(Item::getTotalPrice).sum();
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (Item item : items) {
+            totalAmount = totalAmount.add(item.getTotalPrice());
+        }
         purchaseOrder.setTotalAmount(totalAmount);
         purchaseOrder.setItems(new HashSet<>(items));
         purchaseOrder.setDeliveryDate(purchaseOrderRequest.getDeliveryDate()); // Set your delivery date logic here
@@ -93,62 +100,88 @@ private final SupplierRepository supplierRepository;
         return PurchaseOrderMapper.MAPPER.toDto(savedPurchaseOrder);
     }
 
-   public PurchaseOrder updatePurchaseOrder(Long purchaseOrderId, PurchaseOrderDto purchaseOrderDto){
-        Optional<PurchaseOrder> purchaseOrder= purchaseOrderRepository.findById(purchaseOrderId);
-        if(purchaseOrder.isPresent()){
+    public PurchaseOrder updatePurchaseOrder(Long purchaseOrderId, PurchaseOrderDto purchaseOrderDto) {
+        Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
+        if (purchaseOrder.isPresent()) {
             purchaseOrder.get().setPurchaseOrderTitle(purchaseOrderDto.getPurchaseOrderTitle());
             purchaseOrder.get().setApprovalStatus(purchaseOrderDto.getApprovalStatus());
             purchaseOrder.get().setPaymentType(purchaseOrderDto.getPaymentType());
             purchaseOrder.get().setTermsAndConditions(purchaseOrderDto.getTermsAndConditions());
             purchaseOrder.get().setDeliveryDate(purchaseOrderDto.getDeliveryDate());
             purchaseOrder.get().setItems(purchaseOrderDto.getItems());
-            double totalAmount = purchaseOrderDto.getItems().stream().mapToDouble(Item::getTotalPrice).sum();
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            for (Item item : purchaseOrder.get().getItems()) {
+                totalAmount = totalAmount.add(item.getTotalPrice());
+            }
             purchaseOrderDto.setTotalAmount(totalAmount);
-            Supplier supplier = supplierRepository.findById(purchaseOrderDto.getVendorId()).orElseThrow(()->new RuntimeException("no supplier with id"+ purchaseOrderDto.getVendorId()));
+            Supplier supplier = supplierRepository.findById(purchaseOrderDto.getVendorId()).orElseThrow(() -> new RuntimeException("no supplier with id" + purchaseOrderDto.getVendorId()));
             purchaseOrder.get().setSupplier(supplier);
             purchaseOrder.get().setUpdatedAt(LocalDate.now().atStartOfDay());
-        }
-        else {
+        } else {
             throw new RuntimeException("An error occurred");
         }
         return purchaseOrderRepository.save(purchaseOrder.get());
-   }
-    public List<PurchaseOrder> getAllOrders(){
+    }
+
+    public List<PurchaseOrder> getAllOrders() {
         return new ArrayList<>(purchaseOrderRepository.findAll());
     }
 
-
-    public Page<PurchaseOrder> findPurchaseOrderWithPagination(int offSet,int pageSize){
-        return purchaseOrderRepository.findAll(PageRequest.of(offSet,pageSize));
+    public List<PurchaseOrder> getOrdersForSupplierById(String supplierId) {
+        Supplier supplier = supplierRepository.findById(supplierId).orElseThrow(() -> new NotFoundException("Supplier not found with id: " + supplierId));
+        return purchaseOrderRepository.findBySupplier(supplier);
     }
 
-    public Page<PurchaseOrder> findAllPurchaseOrderWithPaginationAndSorting(int offSet,int pageSize,String field){
-        return purchaseOrderRepository.findAll(PageRequest.of(offSet,pageSize).withSort(Sort.by(field)));
+    public List<PurchaseOrder> getOrdersByStatus(String status) {
+        PurchaseOrder exampleOrder = new PurchaseOrder();
+        exampleOrder.setApprovalStatus(ApprovalStatus.valueOf(status)); // Set status
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withStringMatcher(ExampleMatcher.StringMatcher.EXACT) // Match string exactly
+                .withIgnoreNullValues(); // Ignore null values in the example
+
+        Example<PurchaseOrder> example = Example.of(exampleOrder, matcher);
+
+        return purchaseOrderRepository.findAll(example);
     }
+
+
+    public Page<PurchaseOrder> findPurchaseOrderWithPagination(int offSet, int pageSize) {
+        return purchaseOrderRepository.findAll(PageRequest.of(offSet, pageSize));
+    }
+
+    public Page<PurchaseOrder> findAllPurchaseOrderWithPaginationAndSorting(int offSet, int pageSize, String field) {
+        return purchaseOrderRepository.findAll(PageRequest.of(offSet, pageSize).withSort(Sort.by(field)));
+    }
+
     public Set<Item> getItemsForPurchaseOrder(Long purchaseOrderId) {
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId)
                 .orElseThrow(() -> new EntityNotFoundException("PurchaseOrder not found with id: " + purchaseOrderId));
         return purchaseOrder.getItems();
     }
+
     public Optional<PurchaseOrderDto> getPurchaseOrderWithItems(Long purchaseOrderId) {
         Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findByIdWithItems(purchaseOrderId);
         return purchaseOrder.map(purchaseOrderMapper::toDto);
     }
 
-    public List<Object[]> findPurchaseOrderDetailsByPurchaseOrderId(Long purchaseOrderId){
+    public List<Object[]> findPurchaseOrderDetailsByPurchaseOrderId(Long purchaseOrderId) {
         return purchaseOrderRepository.findPurchaseOrderDetailsByPurchaseOrderId(purchaseOrderId);
     }
-    public List<PurchaseOrder> findPurchaseOrdersByMonth(int month){
+
+    public List<PurchaseOrder> findPurchaseOrdersByMonth(int month) {
         return purchaseOrderRepository.findPurchaseOrdersByMonth(month);
     }
-    public PurchaseOrder getPurchaseOrderByPurchaseOrderTitle(String purchaseOrderTitle){
+
+    public PurchaseOrder getPurchaseOrderByPurchaseOrderTitle(String purchaseOrderTitle) {
         return purchaseOrderRepository.findByPurchaseOrderTitle(purchaseOrderTitle);
     }
 
     public Optional<PurchaseOrder> findPurchaseOrderById(Long purchaseOrderId) {
         return purchaseOrderRepository.findById(purchaseOrderId);
     }
-    public String deletePurchaseOrder(Long purchaseOrderId){
+
+    public String deletePurchaseOrder(Long purchaseOrderId) {
         purchaseOrderRepository.deleteById(purchaseOrderId);
         return "deleted succesffully";
     }
@@ -223,23 +256,25 @@ private final SupplierRepository supplierRepository;
         }
 
     }
+
     public PurchaseOrder updateApprovalStatus(Long purchaseOrderId, ApprovalStatus approvalStatus) throws ProcureException {
         log.info("approving...");
         // Retrieve the existing contract from the database
-        PurchaseOrder existingOrder = purchaseOrderRepository.findById(purchaseOrderId).orElseThrow(()->new ProcureException("id already exists"));
+        PurchaseOrder existingOrder = purchaseOrderRepository.findById(purchaseOrderId).orElseThrow(() -> new ProcureException("id already exists"));
 //        existingOrder.checkAndSetExpiredStatus();
         // Update the approval status
-        try{
+        try {
             existingOrder.setApprovalStatus(approvalStatus);
             // Save the updated contract in the databasecharacters
             return purchaseOrderRepository.save(existingOrder);
-        }catch(Exception e){
-           throw  ProcureException.builder().metadata("error").message(e.getMessage()).build();
+        } catch (Exception e) {
+            throw ProcureException.builder().metadata("error").message(e.getMessage()).build();
         }
     }
+
     public void generateAndExportReport(Long purchaseOrderId) throws JRException, FileNotFoundException {
         Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
-        File file = ResourceUtils.getFile("classpath:purchase_order.jrxml");
+        File file = ResourceUtils.getFile("purchase_order.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
 
         // Your SQL query and other logic for report generation go here
@@ -251,6 +286,34 @@ private final SupplierRepository supplierRepository;
 
         // Export the report to a file
         JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
+    }
+
+    public void generateAndExportReport1(Long purchaseOrderId) throws JRException, FileNotFoundException {
+        // Assuming you have a JDBC URL, username, and password for your database
+        String jdbcUrl = "jdbc:mysql://localhost:3306/procure";
+        String username = "rose";
+        String password = "Atieno18_";
+
+        // Obtain the .jrxml file
+        File file = ResourceUtils.getFile("classpath:Order.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+
+        // Parameters to be passed to the report
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("purchaseOrderId", purchaseOrderId);
+
+        // Establishing a database connection
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password)) {
+            // Filling the report with data from the database, parameters, and the connection
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
+
+            // Export the report to a file
+            JasperExportManager.exportReportToPdfFile(jasperPrint, "output.pdf");
+        } catch (Exception e) {
+            // Handle exceptions such as SQLExceptions
+            e.printStackTrace();
+            throw new RuntimeException("Error while generating report", e);
+        }
     }
 
 }

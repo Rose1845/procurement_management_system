@@ -1,20 +1,13 @@
 package com.rose.procurement.contract.dtos;
 
-import com.rose.procurement.items.dtos.ItemDto;
 import com.rose.procurement.items.entity.Item;
-import com.rose.procurement.supplier.entities.Supplier;
-import com.rose.procurement.supplier.entities.SupplierDto;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
-import jakarta.websocket.server.ServerEndpoint;
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**

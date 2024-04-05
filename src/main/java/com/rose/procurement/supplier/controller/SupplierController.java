@@ -1,17 +1,23 @@
 package com.rose.procurement.supplier.controller;
 
+import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
+import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.supplier.services.ReportService;
 import com.rose.procurement.supplier.services.SupplierService;
 import jakarta.validation.Valid;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,21 +32,33 @@ import java.util.List;
 public class SupplierController {
     private final SupplierService supplierService;
     private final ReportService reportService;
+    private final SupplierRepository supplierRepository;
 
 
-    public SupplierController(SupplierService supplierService, ReportService reportService) {
+    public SupplierController(SupplierService supplierService, ReportService reportService, SupplierRepository supplierRepository) {
         this.supplierService = supplierService;
         this.reportService = reportService;
+        this.supplierRepository = supplierRepository;
     }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SupplierDto createSupplier(@RequestBody @Valid SupplierDto supplierRequest){
+    @PreAuthorize("hasAnyAuthority({'ADMIN','EMPLOYEE'})")
+    public SupplierDto createSupplier(@RequestBody @Valid SupplierDto supplierRequest) throws ProcureException {
 //        if(result.hasErrors()){
 //            throw new MethodArgumentNotValidException((MethodParameter) null, result);
 //        }
         return supplierService.createSupplier(supplierRequest);
     }
-//    @GetMapping("/jasperpdf/export")
+
+    @GetMapping("/all")
+    public Page<Supplier> findAllPurchaseOrders1(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                 @RequestParam(name = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return supplierRepository.findAll(pageable);
+    }
+
+    //    @GetMapping("/jasperpdf/export")
 //    public void createPDF(HttpServletResponse response) throws IOException, JRException {
 //        response.setContentType("application/pdf");
 //        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd:hh:mm:ss");
@@ -52,11 +70,12 @@ public class SupplierController {
 //
 //        reportService.exportJasperReport(response);
 //    }
-    @PostMapping(value = "upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<Integer> uploadSuppliers(@RequestPart("file")MultipartFile file){
+    @PostMapping(value = "upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<Integer> uploadSuppliers(@RequestPart("file") MultipartFile file) {
         return ResponseEntity.ok(supplierService.uploadSuppliers(file));
 
     }
+
     @GetMapping("/template/download/single")
     public ResponseEntity<InputStreamResource> downloadSingleSupplierTemplate() {
         InputStreamResource resource = supplierService.generateTemplate();
@@ -69,24 +88,29 @@ public class SupplierController {
                 .contentType(MediaType.parseMediaType("application/csv"))
                 .body(resource);
     }
+
     @GetMapping
-    public List<Supplier> getAllSuppliers(){
+    public List<Supplier> getAllSuppliers() {
         return supplierService.getAllSuppliers();
     }
+
     @GetMapping("/supplier/{id}")
     public Supplier getSupplier(@PathVariable("id") String vendorId) {
-       return supplierService.getSupplierById(vendorId);
+        return supplierService.getSupplierById(vendorId);
     }
+
     @PutMapping("{id}")
-    public Supplier updateSupplier(@PathVariable("id") String vendorId , @RequestBody SupplierDto supplierRequest){
+    public Supplier updateSupplier(@PathVariable("id") String vendorId, @RequestBody SupplierDto supplierRequest) {
         return supplierService.updateSupplier(vendorId, supplierRequest);
     }
+
     @DeleteMapping("{id}")
-    public String deleteSupplier(@PathVariable("id") String vendorId){
+    public String deleteSupplier(@PathVariable("id") String vendorId) {
         return supplierService.deleteSupplier(vendorId);
     }
+
     @DeleteMapping
-    public String deleteSupplier(){
+    public String deleteSupplier() {
         return supplierService.deleteAll();
     }
 

@@ -1,6 +1,7 @@
 package com.rose.procurement.delivery;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class DeliveryController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
     public Delivery getDeliveryById(@PathVariable Long id) {
         return deliveryService.getDeliveryById(id);
     }
@@ -43,6 +45,7 @@ public class DeliveryController {
 //        }
 //    }
 @PostMapping("/{purchaseOrderId}/deliveries")
+@PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
 public Delivery createDeliveryForPurchaseOrder(
         @PathVariable Long purchaseOrderId,
         @RequestBody DeliveryDTo deliveryDTo

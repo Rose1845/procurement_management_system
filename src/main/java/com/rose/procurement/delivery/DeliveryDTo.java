@@ -1,6 +1,5 @@
 package com.rose.procurement.delivery;
 
-import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

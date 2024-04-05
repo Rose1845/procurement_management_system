@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.io.Serializable;
-
 /**
  * DTO for {@link Supplier}
  */
@@ -18,7 +16,7 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SupplierDto{
+public class SupplierDto {
     @NotNull
     @NotEmpty
     @NotBlank
@@ -39,7 +37,7 @@ public class SupplierDto{
     @NotBlank
     private String phoneNumber;
     @NotNull
-    private  PaymentType paymentType;
+    private PaymentType paymentType;
     @NotNull
     private String termsAndConditions;
 }

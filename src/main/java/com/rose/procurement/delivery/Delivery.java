@@ -1,7 +1,5 @@
 package com.rose.procurement.delivery;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import jakarta.persistence.*;
 import lombok.*;

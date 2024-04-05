@@ -5,15 +5,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
-
-import java.util.stream.Stream;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiResponse<T> {
-    int recordCount;
-    T response;
+    private long recordCount; // Consider changing to long to handle large datasets
+    private T response;
+    private int totalPages;
+    private long totalElements;
 
-    public ApiResponse(Stream<PurchaseOrder> purchaseOrderStream, Page<PurchaseOrder> purchaseOrders) {
+    // Constructor for pagination
+    public ApiResponse(Page<PurchaseOrder> purchaseOrders) {
+        this.recordCount = purchaseOrders.getSize();
+        this.response = (T) purchaseOrders.getContent(); // Get the actual list of PurchaseOrders
+        this.totalPages = purchaseOrders.getTotalPages();
+        this.totalElements = purchaseOrders.getTotalElements();
     }
+
+
 }
