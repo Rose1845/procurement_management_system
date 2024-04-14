@@ -34,15 +34,18 @@ public class SecurityConfiguration {
             "/swagger-resources/**",
             "/configuration/ui",
             "/configuration/security",
+            "/api/v1/forgotPassword/**",
             "/swagger-ui/**",
             "/webjars/**",
             "api/newsletter/subscribe/**",
             "/api/demo/**",
 //            "/api/v1/items",
 //            "/api/v1/roles/**",
-//            "/pai/v1/purchase-request/**",
+            "/api/v1/contract/contract-items/**",
+            "/api/v1/contract/contract-items/**",
+            "/api/v1/purchase-request/**",
             "api/send-to-supplier/**",
-//            "/api/v1/suppliers/**",
+            "/api/v1/suppliers/supplier/**",
             "/api/contact/message",
             "/swagger-ui.html"};
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -89,4 +92,5 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/api/v1/**", corsConfiguration);
         return new CorsFilter(source);
     }
+
 }

@@ -35,7 +35,6 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-
     public RegistrationResponse register(RegisterRequest request) throws ProcureException {
 
         Optional<Role> defaultRole= Optional.ofNullable(this.validateUserExistAndGetDefaultRole(request, userDao, roleDao));
@@ -45,6 +44,7 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .username(request.getUsername())
+                .phoneNumber(request.getPhoneNumber())
                 .avatar(MD5UserAvatar.generateAvatar(request.getEmail()))
                 .roles(Set.of(defaultRole.get()))
                 .build();

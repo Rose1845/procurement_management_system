@@ -56,7 +56,7 @@ public class Item {
     @ManyToMany(mappedBy = "items", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Contract> contracts;
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnore
     private List<PurchaseRequestItemDetail> itemDetails;
     @ManyToMany(mappedBy = "items", fetch = FetchType.LAZY)

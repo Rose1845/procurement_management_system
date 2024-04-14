@@ -33,7 +33,6 @@ public class AuthController {
     ) throws ProcureException {
         return ResponseEntity.ok().body(authService.register(request)).getBody();
     }
-
 //    @SneakyThrows
     @PostMapping("/login")
     public ResponseEntity<Object> authenticate(

@@ -54,7 +54,7 @@ public class PurchaseOrder {
     @OneToOne(mappedBy = "purchaseOrder")
     @JsonIgnore
     private Delivery delivery;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(
             name = "order_items",
             joinColumns = {

@@ -13,6 +13,7 @@ import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -145,7 +146,6 @@ public class PurchaseOrderService {
         return purchaseOrderRepository.findAll(example);
     }
 
-
     public Page<PurchaseOrder> findPurchaseOrderWithPagination(int offSet, int pageSize) {
         return purchaseOrderRepository.findAll(PageRequest.of(offSet, pageSize));
     }
@@ -180,7 +180,7 @@ public class PurchaseOrderService {
     public Optional<PurchaseOrder> findPurchaseOrderById(Long purchaseOrderId) {
         return purchaseOrderRepository.findById(purchaseOrderId);
     }
-
+    @Transactional
     public String deletePurchaseOrder(Long purchaseOrderId) {
         purchaseOrderRepository.deleteById(purchaseOrderId);
         return "deleted succesffully";
