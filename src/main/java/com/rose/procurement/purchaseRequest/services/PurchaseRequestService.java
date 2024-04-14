@@ -64,7 +64,7 @@ public class PurchaseRequestService {
         List<PurchaseRequestItemDetail> purchaseRequestItemDetails = createOfferForPurchaseRequest2(savedRequest.getPurchaseRequestId(), purchaseRequest.getItemDetails());
         // Associate the offer with the purchase request
         savedRequest.setItemDetails(purchaseRequestItemDetails);
-        sendApprovalEmailToSuppliers(savedRequest.getPurchaseRequestId().longValue());
+        sendApprovalEmailToSuppliers(savedRequest.getPurchaseRequestId());
         // Additional logic or validation can be added here before saving
         return PurchaseRequestMapper.INSTANCE.toDto(savedRequest);
     }
@@ -224,15 +224,12 @@ public class PurchaseRequestService {
         }
     }
 
-
     public List<PurchaseRequestItemDetail> editOfferUnitPrices2(Long purchaseRequestId, String supplierId, List<PurchaseRequestItemDetail> itemDetails) {
         Optional<PurchaseRequest> purchaseRequestOptional = purchaseRequestRepository.findById(purchaseRequestId);
         if (purchaseRequestOptional.isEmpty()) {
             throw new EntityNotFoundException("Purchase request not found");
         }
-
         PurchaseRequest purchaseRequest = purchaseRequestOptional.get();
-
         // Iterate through each updated item detail
         for (PurchaseRequestItemDetail updatedItemDetail : itemDetails) {
             // Find the corresponding item detail in the purchase request
@@ -241,7 +238,6 @@ public class PurchaseRequestService {
                             itemDetail.getSupplier() != null && itemDetail.getSupplier().getVendorId().equals(supplierId)
                                     && itemDetail.getItem().getItemId().equals(updatedItemDetail.getItem().getItemId()))
                     .findFirst();
-
             // If the item detail exists, update its offer unit price
             existingItemDetailOptional.ifPresent(existingItemDetail -> {
                 // Update offer unit price

@@ -64,10 +64,10 @@ public class Supplier {
     @ManyToMany(mappedBy = "suppliers")
     @JsonIgnore
     private Set<PurchaseRequest> purchaseRequests;
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<PurchaseRequestItemDetail> itemDetails;
-    @OneToMany(mappedBy = "supplier")
+    @OneToMany(mappedBy = "supplier",cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<PurchaseOrder> purchaseOrder;
     //    @JsonBackReference

@@ -1,6 +1,7 @@
 package com.rose.procurement.users.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rose.procurement.auth.entity.ForgotPassword;
 import com.rose.procurement.org.Organization;
 import com.rose.procurement.roles.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,7 +45,13 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name = "role_side_id")})
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Set<Role> roles=new HashSet<>();
-
+    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+//    @JoinTable(
+//            name = "user_forgot_password",
+//            joinColumns = { @JoinColumn(name = "user_id") },
+//            inverseJoinColumns = { @JoinColumn(name = "forgot_password_id") }
+//    )
+    private List<ForgotPassword> forgottenPasswords;
 
      /**
      * Disabled this to avoid stack overflow error on recursive call of null user with token

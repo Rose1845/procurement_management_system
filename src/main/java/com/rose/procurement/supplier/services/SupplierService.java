@@ -11,6 +11,7 @@ import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.mappers.SupplierMapper;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import com.rose.procurement.utils.address.Address;
+import jakarta.transaction.Transactional;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,7 +82,7 @@ public class SupplierService {
         supplier1.setTermsAndConditions(supplierRequest.getTermsAndConditions());
         return supplierRepository.save(supplier1);
     }
-
+    @Transactional
     public String deleteSupplier(String vendorId) {
         Optional<Supplier> supplier = supplierRepository.findById(vendorId);
         if (supplier.isPresent()) {
@@ -96,7 +97,6 @@ public class SupplierService {
         supplierRepository.deleteAll();
         return "deleted all suppliers";
     }
-
     public Integer uploadSuppliers(MultipartFile file) {
         Set<SupplierDto> suppliers = parseCsv(file);
         supplierRepository.saveAll(convertToEntities(suppliers));

@@ -27,7 +27,7 @@ public class ItemController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAnyAuthority({'ADMIN','EMPLOYEE'})")
+//    @PreAuthorize("hasAnyAuthority({'ADMIN','EMPLOYEE'})")
     public ItemDto createItem(@RequestBody @Valid ItemDto itemRequest) throws ProcureException {
         return itemService.createItem(itemRequest);
     }
@@ -50,7 +50,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE'})")
+//    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE'})")
     public ItemDto getItemById(@PathVariable("id") String itemId) {
         return itemService.getItemById(itemId);
     }

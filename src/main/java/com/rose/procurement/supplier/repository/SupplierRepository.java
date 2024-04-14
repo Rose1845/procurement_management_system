@@ -2,7 +2,10 @@ package com.rose.procurement.supplier.repository;
 
 import com.rose.procurement.supplier.entities.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -19,4 +22,9 @@ public interface SupplierRepository extends JpaRepository<Supplier, String> {
     boolean existsByName(String name);
 
     boolean existsByPhoneNumber(String phoneNumber);
+
+    @Transactional
+    @Modifying
+    @Query("delete from Supplier s")
+    int deleteFirstBy();
 }

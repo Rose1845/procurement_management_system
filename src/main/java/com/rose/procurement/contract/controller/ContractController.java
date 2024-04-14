@@ -21,16 +21,14 @@ import java.util.Set;
 @RequestMapping("api/v1/contract")
 public class ContractController {
     private final ContractService contractService;
-
     public ContractController(ContractService contractService) {
         this.contractService = contractService;
     }
     @PostMapping
-    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
+//    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
     public ContractDto createContract(@RequestBody @Valid ContractDto contractRequest){
         return contractService.createContract(contractRequest);
     }
-
     @GetMapping
     public List<Contract> getAllContracts(){
         return contractService.getAllContracts();
@@ -50,6 +48,7 @@ public class ContractController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
 //    @GetMapping("send-contract/{id}")
 //    public Contract contractApproval(@PathVariable("id") String contractId) throws ProcureException {
 //        return contractService.sendContractForApproval(contractId);
@@ -65,7 +64,6 @@ public class ContractController {
     @PostMapping("clone-contract/{id}")
     public Optional<ContractDto> cloneContract(@PathVariable("id") String contractId){
         return contractService.cloneContract(contractId);
-
     }
     @PutMapping("{id}")
     public Contract updateContract(@PathVariable("id") String contractId,@RequestBody ContractDto contractRequest) throws ProcureException {
@@ -78,8 +76,8 @@ public class ContractController {
     @PostMapping("/send-to-supplier/{id}")
     public String sendContractToSupplier(@PathVariable("id") String contractId) throws ProcureException {
         return   contractService.sendApprovalEmailToSupplier(contractId);
-
     }
+
     // Step 3: Edit Approval Status by Supplier
     @PatchMapping("/edit-contract/{contractId}")
     public ResponseEntity<Contract> editContractApprovalStatus(
