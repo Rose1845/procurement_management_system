@@ -1,5 +1,6 @@
 package com.rose.procurement.contract.dtos;
 
+import com.rose.procurement.enums.ContractStatus;
 import com.rose.procurement.items.entity.Item;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
 public class ContractDto{;
     @NotNull
@@ -34,6 +36,7 @@ public class ContractDto{;
     @NotNull
     @NotBlank
     private String termsAndConditions;
+    private ContractStatus contractStatus;
     @NotNull
     private Set<Item> items;
     @NotNull

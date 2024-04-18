@@ -3,12 +3,15 @@ package com.rose.procurement.items.service;
 import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.repository.CategoryRepository;
+import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.dtos.ItemDto;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.mappers.ItemMapper;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository;
+import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +47,6 @@ public class ItemService {
         log.info("Received ItemDto: {}", itemRequest);
         Optional<Category> category = categoryRepository.findById(itemRequest.getCategoryId());
         Item item1 = ItemMapper.MAPPER.toEntity(itemRequest);
-        item1.setItemNumber(itemRequest.getItemNumber());
         item1.setItemName(itemRequest.getItemName());
         item1.setQuantity(itemRequest.getQuantity());
         item1.setUnitPrice(itemRequest.getUnitPrice());
@@ -92,5 +94,16 @@ public class ItemService {
         purchaseRequest.getItems().add(purchaseRequestItem);
 
         return itemRepository.save(purchaseRequestItem);
+    }
+    public Item updateItem(String itemId, ItemDto supplierRequest) {
+        Item supplier1 = itemRepository.findById(itemId).orElseThrow(() -> new IllegalStateException("item do not exist"));
+
+        supplier1.setItemName(supplierRequest.getItemName());
+        supplier1.setQuantity(supplierRequest.getQuantity());
+        supplier1.setItemDescription(supplierRequest.getItemDescription());
+        supplier1.setUnitPrice(supplierRequest.getUnitPrice());
+        Optional<Category> category =  categoryRepository.findById(supplierRequest.getCategoryId());
+        supplier1.setCategory(category.get());
+        return itemRepository.save(supplier1);
     }
 }

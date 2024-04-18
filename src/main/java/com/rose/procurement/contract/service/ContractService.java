@@ -9,6 +9,7 @@ import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ContractStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,9 +31,6 @@ public class ContractService {
     private final ContractRepository contractRepository;
     private final EmailService emailService;
     private final ContractMapper contractMapper;
-
-
-
 
     public ContractService(SupplierRepository supplierRepository, ContractRepository contractRepository,
                            ItemRepository itemRepository, EmailService emailService, ContractMapper contractMapper) {
@@ -96,7 +94,6 @@ public class ContractService {
     public Contract updateContract(String contractId,ContractDto contractRequest) throws ProcureException {
         Contract contract = contractRepository.findById(contractId).orElseThrow(()-> new ProcureException("contract id do not exists"));
         contract.setContractStatus(checkContractEndDateExpired(contractRequest.getContractEndDate()) ? ContractStatus.EXPIRED : ContractStatus.OPEN);
-
         contract.setContractEndDate(contractRequest.getContractEndDate());
             contract.setContractTitle(contractRequest.getContractTitle());
             contract.setContractType(contractRequest.getContractType());
@@ -106,17 +103,23 @@ public class ContractService {
             contract.setContractStartDate(contractRequest.getContractStartDate());
         return contractRepository.save(contract);
     }
+
     public Optional<ContractDto> getContractWithItems(String contractId) {
         Optional<Contract> contractOptional = contractRepository.findByIdWithItems(contractId);
+        if(contractOptional.get().checkContractEndDateExpired())
+            contractOptional.get().setContractStatus(ContractStatus.EXPIRED);
         return contractOptional.map(contractMapper::toDto);
     }
     public Set<Item> getContractItems(String contractId) {
         Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new EntityNotFoundException("contract  not found with id: " + contractId));
-
         return contract.getItems();
 //        return contractRepository.findItemsByContractId(contractId);
     }
+    public List<Contract> findContractsByMonth(int month) {
+        return contractRepository.findContractByMonth(month);
+    }
+
      /** send email to supplier for contract approval **/
 //    public Contract sendContractForApproval(String contractId) throws ProcureException {
 //        // Retrieve the contract from the database
@@ -198,8 +201,9 @@ public class ContractService {
                     .contractStartDate(originalContract.getContractStartDate())
                     .contractEndDate(originalContract.getContractEndDate())
                     .termsAndConditions(originalContract.getTermsAndConditions())
-                    .contractStatus(ContractStatus.OPEN) // Set approval status for the clone
-                    .items(originalContract.getItems()) // Copy items
+                    .contractStatus(ContractStatus.OPEN)
+                    // Set approval status for the clone
+                    .items(new HashSet<>(originalContract.getItems())) // Copy items
                     .supplier(originalContract.getSupplier()) // Copy supplier
                     .createdAt(LocalDateTime.now()) // Reset creation timestamp
                     .updatedAt(LocalDateTime.now()) // Reset update timestamp

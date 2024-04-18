@@ -1,12 +1,17 @@
 package com.rose.procurement.purchaseOrder.repository;
 
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +64,18 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
     Optional<PurchaseOrder> findByIdWithItems(@Param("purchaseOrderId") Long purchaseOrderId);
 
     List<PurchaseOrder> findBySupplier(Supplier supplier);
+    Page<PurchaseOrder> findByCreatedAtBetween(LocalDate startDate, LocalDate endDate, Pageable pageable);
+    Page<PurchaseOrder> findByApprovalStatusAndSupplier_VendorId(ApprovalStatus approvalStatus, String supplierId, Pageable pageable);
+
+    Page<PurchaseOrder> findByApprovalStatus(ApprovalStatus approvalStatus, Pageable pageable);
+
+    Page<PurchaseOrder> findBySupplier_VendorId(String supplierId, Pageable pageable);
+
+
+
+
+    Page<PurchaseOrder> findAll(Specification<PurchaseOrder> specification, Pageable pageable);
+
 
 //@Query(value = "SELECT po.purchase_order_title AS po_name, po.created_by AS po_created_by, po.approval_status AS po_status, " +
 //        "po.payment_type AS po_payment_terms, po.terms_and_conditions AS po_terms_and_conditions, " +

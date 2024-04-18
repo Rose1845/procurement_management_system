@@ -11,7 +11,6 @@ import com.rose.procurement.purchaseOrder.entities.PurchaseOrderDto;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import com.rose.procurement.purchaseOrder.services.PurchaseOrderService;
 import com.rose.procurement.supplier.repository.SupplierRepository;
-import com.rose.procurement.utils.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,11 +20,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -47,8 +46,7 @@ public class PurchaseOrderController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority({'ADMIN'})")
-
+//    @PreAuthorize("hasAuthority({'ADMIN'})")
     public PurchaseOrderDto createPurchaseOrder(@RequestBody @Valid PurchaseOrderDto purchaseOrderRequest) {
         return purchaseOrderService.createPurchaseOrder(purchaseOrderRequest);
     }
@@ -69,6 +67,26 @@ public class PurchaseOrderController {
             // Handle exceptions as needed
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    @GetMapping("/filtered")
+    public Page<PurchaseOrder> getFilteredPurchaseOrdersWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String supplierId,
+            @RequestParam(required = false) ApprovalStatus approvalStatus
+    ) {
+        return purchaseOrderService.findFilteredPurchaseOrders(page, size, supplierId, ApprovalStatus.valueOf(String.valueOf(approvalStatus)));
+    }
+    @PostMapping("/clone-order/{id}")
+    public Optional<PurchaseOrder> cloneOrder(@PathVariable("id") Long purchaseOrderId){
+        return purchaseOrderService.cloneOrder(purchaseOrderId);
+    }
+    @GetMapping("/search-by-date-range")
+    public Page<PurchaseOrder> searchPurchaseOrdersByDateRange(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate
+    ) {
+        return purchaseOrderService.searchPurchaseOrdersByDateRange(startDate, endDate);
     }
 
     @GetMapping("/{id}")
@@ -103,18 +121,35 @@ public class PurchaseOrderController {
         return purchaseOrderService.getPurchaseOrderWithItems(purchaseOrderId);
     }
 
-    @GetMapping("/paginate")
-    public ApiResponse<PurchaseOrder> findAllPurchaseOrders(@RequestParam(name = "offSet") int offSet,
-                                                            @RequestParam(name = "pageSize") int pageSize) {
-        Page<PurchaseOrder> purchaseOrders = purchaseOrderService.findPurchaseOrderWithPagination(offSet, pageSize);
-        return new ApiResponse<>(purchaseOrders);
-    }
+//    @GetMapping("/paginate")
+//    public ApiResponse<PurchaseOrder> findAllPurchaseOrders(@RequestParam(name = "offSet") int offSet,
+//                                                            @RequestParam(name = "pageSize") int pageSize) {
+//        Page<PurchaseOrder> purchaseOrders = purchaseOrderService.findPurchaseOrderWithPagination(offSet, pageSize);
+//        return new ApiResponse<>(purchaseOrders);
+//    }
 
     @GetMapping("/paginations")
-    public Page<PurchaseOrder> findAllPurchaseOrders1(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                      @RequestParam(name = "size", defaultValue = "10") int size) {
+    public Page<PurchaseOrder> findAllPurchaseOrders1(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(required = false) ApprovalStatus approvalStatus,
+            @RequestParam(required = false) String supplierId) {
         Pageable pageable = PageRequest.of(page, size);
-        return purchaseOrderRepository.findAll(pageable);
+        Page<PurchaseOrder> filteredOrders = null;
+        if (approvalStatus != null && supplierId != null) {
+            // Filter by both approval status and supplier with pagination
+            filteredOrders = purchaseOrderRepository.findByApprovalStatusAndSupplier_VendorId(approvalStatus, supplierId, pageable);
+        } else if (approvalStatus != null) {
+            // Filter only by approval status with pagination
+            filteredOrders = purchaseOrderRepository.findByApprovalStatus(approvalStatus, pageable);
+        } else if (supplierId != null) {
+            // Filter only by supplier with pagination
+            filteredOrders = purchaseOrderRepository.findBySupplier_VendorId(supplierId, pageable);
+        } else {
+            // No filters applied, return all orders with pagination
+            filteredOrders = purchaseOrderRepository.findAll(pageable);
+        }
+        return filteredOrders;
     }
 
     @GetMapping("/{purchaseOrderId}/items")

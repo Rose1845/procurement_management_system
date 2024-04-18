@@ -20,6 +20,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 @Entity
@@ -110,5 +111,25 @@ public class Item {
 //    public BigDecimal getTotalPrice() {
 //        return BigDecimal.valueOf(quantity).multiply(BigDecimal.valueOf(unitPrice));
 //    }
+private String generateItemNumber() {
+    // Generate 3 random letters
+    String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    StringBuilder randomLetters = new StringBuilder();
+    Random random = new Random();
+    for (int i = 0; i < 3; i++) {
+        randomLetters.append(letters.charAt(random.nextInt(letters.length())));
+    }
+    // Generate 2 random numbers
+    int randomNumber = random.nextInt(90) + 10;
+    // Combine "QR", letters, and numbers
+    return "IN" + randomLetters.toString() + randomNumber;
+}
 
+    @PrePersist
+    private void prePersist() {
+        // Set invoiceNumber before persisting the entity
+        if (itemNumber == null || itemNumber.isEmpty()) {
+            itemNumber = generateItemNumber();
+        }
+    }
 }

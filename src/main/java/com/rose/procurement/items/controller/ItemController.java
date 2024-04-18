@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,6 +52,11 @@ public class ItemController {
 //    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE'})")
     public ItemDto getItemById(@PathVariable("id") String itemId) {
         return itemService.getItemById(itemId);
+    }
+    @PutMapping("/{id}")
+//    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE'})")
+    public Item updateItem(@PathVariable("id") String itemId, @RequestBody ItemDto itemDto) {
+        return itemService.updateItem(itemId,itemDto);
     }
 
     @DeleteMapping("{id}")

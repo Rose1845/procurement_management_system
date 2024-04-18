@@ -51,6 +51,7 @@ public class User implements UserDetails {
 //            joinColumns = { @JoinColumn(name = "user_id") },
 //            inverseJoinColumns = { @JoinColumn(name = "forgot_password_id") }
 //    )
+    @JsonIgnore
     private List<ForgotPassword> forgottenPasswords;
 
      /**

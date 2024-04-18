@@ -7,6 +7,7 @@ import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.service.ContractService;
 import com.rose.procurement.enums.ContractStatus;
 import com.rose.procurement.items.entity.Item;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -87,7 +88,10 @@ public class ContractController {
         Contract updatedContract = contractService.updateApprovalStatus(contractId, ContractStatus.valueOf(contractStatus));
         return ResponseEntity.ok(updatedContract);
     }
-
+    @GetMapping("co/{month}")
+    public List<Contract> findContractsByMonth(@PathVariable("month") int month) {
+        return contractService.findContractsByMonth(month);
+    }
     // Step 4: Alert Organization of Supplier's Response (This could be done asynchronously in a real application)
     // This is just an example, you may want to use a message queue for real-world scenarios.
     @Async

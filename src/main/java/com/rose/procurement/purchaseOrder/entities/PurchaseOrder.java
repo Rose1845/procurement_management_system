@@ -9,24 +9,25 @@ import com.rose.procurement.invoice.Invoice;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @Table(name = "purchase_order")
 @EntityListeners(AuditingEntityListener.class)
@@ -54,7 +55,7 @@ public class PurchaseOrder {
     @OneToOne(mappedBy = "purchaseOrder")
     @JsonIgnore
     private Delivery delivery;
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "order_items",
             joinColumns = {

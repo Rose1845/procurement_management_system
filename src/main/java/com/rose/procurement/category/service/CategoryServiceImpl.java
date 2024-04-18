@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) throws ProcureException {
         if (categoryRepository.existsByCategoryName(categoryDto.getCategoryName())) {
-            throw ProcureException.builder().message("Category name   already exist").build();
+            throw ProcureException.builder().metadata("eixts").message("Category name   already exist").build();
         }
         log.info("Received category payload",categoryDto);
         Category category = CategoryMapper.MAPPER.toEntity(categoryDto);

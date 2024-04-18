@@ -1,95 +1,30 @@
-version: "3"
+version: '3.8'
+
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    restart: always
-    ports:
-      - "27017:27017"
+  mysql:
+    image: mysql:latest
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: Atieno18_
+      MYSQL_DATABASE: procure
+    ports:
+      - "3307:3306"
     volumes:
-      - ${DATA}/mongodb_data:/data/db
-    networks:
-      - db_net # Connect this service to the 'db_net' external network
+      - mysql_data:/var/lib/mysql  # Mount a volume for MySQL data on the host
 
-  redis:
-    image: redis:latest
-    container_name: redis
-    restart: always
+  procure-app:
+    image: nyaugenya/procument:latest # This is the image of spring-boot app pulling from docker-hub repo
+    container_name: procurement_management_system
+    depends_on:
+      - mysql
     ports:
-      - "6379:6379"
+      - "8081:8081"
     environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/procure
+      SPRING_DATASOURCE_USERNAME: rose
+      SPRING_DATASOURCE_PASSWORD: Atieno18_
     volumes:
-      - ${DATA}/redis_data:/data/db
-    networks:
-      - db_net # Connect this service to the 'db_net' external network
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    restart: always
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-    networks:
-      - db_net # Connect this service to the 'db_net' external network
-
-  mariadb:
-    image: mariadb:latest
-    restart: always
-    container_name: mariadb
-    ports:
-      - "3309:3309"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - ${DATA}/mariadb_data:/var/lib/mysql
-    networks:
-      - db_net # Connect this service to the 'db_net' external network
-
-  postgres:
-    image: postgres:alpine
-    container_name: postgres
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - ${DATA}/postgres_data:/var/lib/postgresql/data
-    networks:
-      - db_net # Connect this service to the 'db_net' external network
-
-#
-#  portainer:
-#    image: portainer/portainer-ce:latest
-#    container_name: portainer
-#    command: -H unix:///var/run/docker.sock
-#    ports:
-#      - "9000:9000"
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
-#      - ${DATA}/portainer_data:/data
-#    restart: always
-
-networks:
-  db_net:
-    external: true # Define the 'db_net' external network
+      - backend_data:/app/data  # Mount a volume for application data
 
 volumes:
-  portainer_data:
-  mongodb_data:
-  mariadb_data:
-  postgres_data:
-  redis_data:
+  mysql_data:  # Define the volume for MySQL data
+  backend_data:  # Define the volume for application data
