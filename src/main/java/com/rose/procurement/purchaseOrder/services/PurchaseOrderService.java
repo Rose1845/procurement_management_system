@@ -122,26 +122,47 @@ public class PurchaseOrderService {
     }
 
     public PurchaseOrder updatePurchaseOrder(Long purchaseOrderId, PurchaseOrderDto purchaseOrderDto) {
-        Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
-        if (purchaseOrder.isPresent()) {
-            purchaseOrder.get().setPurchaseOrderTitle(purchaseOrderDto.getPurchaseOrderTitle());
-            purchaseOrder.get().setApprovalStatus(purchaseOrderDto.getApprovalStatus());
-            purchaseOrder.get().setPaymentType(purchaseOrderDto.getPaymentType());
-            purchaseOrder.get().setTermsAndConditions(purchaseOrderDto.getTermsAndConditions());
-            purchaseOrder.get().setDeliveryDate(purchaseOrderDto.getDeliveryDate());
-            purchaseOrder.get().setItems(purchaseOrderDto.getItems());
-            BigDecimal totalAmount = BigDecimal.ZERO;
-            for (Item item : purchaseOrder.get().getItems()) {
-                totalAmount = totalAmount.add(item.getTotalPrice());
-            }
-            purchaseOrderDto.setTotalAmount(totalAmount);
-            Supplier supplier = supplierRepository.findById(purchaseOrderDto.getVendorId()).orElseThrow(() -> new RuntimeException("no supplier with id" + purchaseOrderDto.getVendorId()));
-            purchaseOrder.get().setSupplier(supplier);
-            purchaseOrder.get().setUpdatedAt(LocalDate.now().atStartOfDay());
-        } else {
-            throw new RuntimeException("An error occurred");
-        }
-        return purchaseOrderRepository.save(purchaseOrder.get());
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId).orElseThrow(() -> new IllegalStateException("Order do not exist"));
+        Optional<Supplier> supplier = supplierRepository.findById(purchaseOrderDto.getVendorId());
+
+//        PurchaseOrder purchaseOrder = PurchaseOrderMapper.MAPPER.toEntity(purchaseOrderDto);
+
+        purchaseOrder.setSupplier(supplier.get());
+        purchaseOrder.setPaymentType(purchaseOrderDto.getPaymentType());
+        purchaseOrder.setDeliveryDate(purchaseOrderDto.getDeliveryDate());
+        purchaseOrder.setUpdatedAt(LocalDate.now().atStartOfDay());
+        purchaseOrder.setTermsAndConditions(purchaseOrderDto.getTermsAndConditions());
+//        BigDecimal totalAmount = BigDecimal.ZERO;
+//        for (Item item : purchaseOrderDto.getItems()) {
+//                totalAmount = totalAmount.add(item.getTotalPrice());
+//        }
+        BigDecimal totalAmount = calculateTotalAmount(purchaseOrder.getItems());
+        purchaseOrder.setTotalAmount(totalAmount);
+        Set<Item> items = purchaseOrderDto.getItems();
+        purchaseOrder.setTotalAmount(totalAmount);
+        purchaseOrder.setItems(items);
+        purchaseOrder.setPurchaseOrderTitle(purchaseOrderDto.getPurchaseOrderTitle());
+        return purchaseOrderRepository.save(purchaseOrder);
+//        if (purchaseOrder.isPresent()) {
+//            purchaseOrder.get().setPurchaseOrderTitle(purchaseOrderDto.getPurchaseOrderTitle());
+//            purchaseOrder.get().setApprovalStatus(purchaseOrderDto.getApprovalStatus());
+//            purchaseOrder.get().setPaymentType(purchaseOrderDto.getPaymentType());
+//            purchaseOrder.get().setTermsAndConditions(purchaseOrderDto.getTermsAndConditions());
+//            purchaseOrder.get().setDeliveryDate(purchaseOrderDto.getDeliveryDate());
+//            purchaseOrder.get().setItems(purchaseOrderDto.getItems());
+//            BigDecimal totalAmount = BigDecimal.ZERO;
+//            for (Item item : purchaseOrder.get().getItems()) {
+//                totalAmount = totalAmount.add(item.getTotalPrice());
+//            }
+//            purchaseOrderDto.setTotalAmount(totalAmount);
+//            Supplier supplier = supplierRepository.findById(purchaseOrderDto.getVendorId()).orElseThrow(() -> new RuntimeException("no supplier with id" + purchaseOrderDto.getVendorId()));
+//            purchaseOrder.get().setSupplier(supplier);
+//            purchaseOrder.get().setUpdatedAt(LocalDate.now().atStartOfDay());
+//            purchaseOrderRepository.save(purchaseOrder);
+//        } else {
+//            throw new RuntimeException("An error occurred");
+//        }
+//        return purchaseOrderRepository.save(purchaseOrder.get());
     }
 
     public List<PurchaseOrder> getAllOrders() {
@@ -195,7 +216,6 @@ public class PurchaseOrderService {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // Sort by createdAt field in descending order
         return purchaseOrderRepository.findAll(PageRequest.of(offSet, pageSize,sort));
     }
-
     public Page<PurchaseOrder> findAllPurchaseOrderWithPaginationAndSorting(int offSet, int pageSize, String field) {
         return purchaseOrderRepository.findAll(PageRequest.of(offSet, pageSize).withSort(Sort.by(field)));
     }
@@ -207,24 +227,19 @@ public class PurchaseOrderService {
                 .orElseThrow(() -> new EntityNotFoundException("PurchaseOrder not found with id: " + purchaseOrderId));
         return purchaseOrder.getItems();
     }
-
     public Optional<PurchaseOrderDto> getPurchaseOrderWithItems(Long purchaseOrderId) {
         Optional<PurchaseOrder> purchaseOrder = purchaseOrderRepository.findByIdWithItems(purchaseOrderId);
         return purchaseOrder.map(purchaseOrderMapper::toDto);
     }
-
     public List<Object[]> findPurchaseOrderDetailsByPurchaseOrderId(Long purchaseOrderId) {
         return purchaseOrderRepository.findPurchaseOrderDetailsByPurchaseOrderId(purchaseOrderId);
     }
-
     public List<PurchaseOrder> findPurchaseOrdersByMonth(int month) {
         return purchaseOrderRepository.findPurchaseOrdersByMonth(month);
     }
-
     public PurchaseOrder getPurchaseOrderByPurchaseOrderTitle(String purchaseOrderTitle) {
         return purchaseOrderRepository.findByPurchaseOrderTitle(purchaseOrderTitle);
     }
-
     public Optional<PurchaseOrder> findPurchaseOrderById(Long purchaseOrderId) {
         return purchaseOrderRepository.findById(purchaseOrderId);
     }
@@ -235,7 +250,6 @@ public class PurchaseOrderService {
     }
     public Optional<PurchaseOrder> cloneOrder(Long purchaseOrderId) {
         Optional<PurchaseOrder> originalOrderOptional = purchaseOrderRepository.findByIdWithItems(purchaseOrderId);
-
         return originalOrderOptional.map(originalOrder -> {
             // Create a deep copy of the original contract
             PurchaseOrder clonedOrder= PurchaseOrder.builder()
@@ -254,15 +268,11 @@ public class PurchaseOrderService {
         });
     }
 
-
     public PurchaseOrderDto sendPurchaseOrderToSupplier(Long purchaseOrderId) {
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderRepository.findById(purchaseOrderId);
 
         if (optionalPurchaseOrder.isPresent()) {
             PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
-
-            // Assuming you have a method to send an email to the supplier
-
             // Update the purchase order status or perform any other necessary actions
             purchaseOrder.setApprovalStatus(ApprovalStatus.PENDING); // You can set the appropriate status
 
@@ -287,7 +297,7 @@ public class PurchaseOrderService {
 
         if (optionalPurchaseOrder.isPresent()) {
             PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
-            String approvalLink = "http://localhost:8081/api/v1/purchase-order/approve/" + purchaseOrder.getPurchaseOrderId();
+            String approvalLink = "http://192.168.1.106:3000/public/order/approve/" + purchaseOrder.getPurchaseOrderId();
 
             // Assuming you have a method to send an email to the supplier
 
@@ -306,8 +316,6 @@ public class PurchaseOrderService {
             // Send the email
             emailService.sendEmail(purchaseOrder.getSupplier().getEmail(), subject, text);
             log.info("done sending");
-
-
             // Update the purchase order status or perform any other necessary actions
             purchaseOrder.setApprovalStatus(ApprovalStatus.ISSUED); // You can set the appropriate status
 

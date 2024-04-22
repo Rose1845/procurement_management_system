@@ -1,6 +1,8 @@
 package com.rose.procurement.supplier.repository;
 
 import com.rose.procurement.supplier.entities.Supplier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +29,6 @@ public interface SupplierRepository extends JpaRepository<Supplier, String> {
     @Modifying
     @Query("delete from Supplier s")
     int deleteFirstBy();
+
+    Page<Supplier> findByNameContaining(String name, Pageable pageable);
 }

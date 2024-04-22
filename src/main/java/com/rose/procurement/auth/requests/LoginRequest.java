@@ -20,6 +20,5 @@ public class LoginRequest {
     private String username;
     @NotNull
     @NotBlank
-    @Size(min = 8,max = 32,message = "Password should have minimum of 8-32 characters")
     private String password;
 }

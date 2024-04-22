@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,6 +50,15 @@ public class PurchaseOrderController {
 //    @PreAuthorize("hasAuthority({'ADMIN'})")
     public PurchaseOrderDto createPurchaseOrder(@RequestBody @Valid PurchaseOrderDto purchaseOrderRequest) {
         return purchaseOrderService.createPurchaseOrder(purchaseOrderRequest);
+    }
+
+    @GetMapping("/latest")
+    public Page<PurchaseOrder> getLatestOrders() {
+        // Create a pageable request for the first page with 5 orders
+        PageRequest pageRequest = PageRequest.of(0, 5);
+
+        // Retrieve the 5 latest created orders using the custom method
+        return purchaseOrderRepository.findTop5ByOrderByCreatedAtDesc(pageRequest);
     }
 
     @PostMapping("/create-from-contract/{contractId}")
@@ -99,18 +109,7 @@ public class PurchaseOrderController {
         return ResponseEntity.ok(purchaseOrderService.deletePurchaseOrder(purchaseOrderId));
     }
 
-    //    @GetMapping("/by-supplier/{supplierId}")
-//    public ResponseEntity<List<PurchaseOrder>> getOrdersBySupplier(@PathVariable String vendorId) {
-//        Optional<Supplier> supplier = supplierRepository.findById(vendorId);
-//
-//        if (supplier.isPresent()) {
-//            List<PurchaseOrder> orders = purchaseOrderService.getOrdersBySupplier(supplier.get().getVendorId());
-//            return new ResponseEntity<>(orders, HttpStatus.OK);
-//        } else {
-//            // Handle case where supplier is not found
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
+
     @GetMapping
     public List<PurchaseOrder> getAllPO() {
         return purchaseOrderService.getAllOrders();
@@ -133,23 +132,51 @@ public class PurchaseOrderController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(required = false) ApprovalStatus approvalStatus,
-            @RequestParam(required = false) String supplierId) {
-        Pageable pageable = PageRequest.of(page, size);
+            @RequestParam(required = false) String supplierId,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(defaultValue = "ASC") String sortDirection,
+            @RequestParam(required = false) String purchaseOrderTitle,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate
+    ) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
         Page<PurchaseOrder> filteredOrders = null;
-        if (approvalStatus != null && supplierId != null) {
-            // Filter by both approval status and supplier with pagination
+        if (purchaseOrderTitle != null && !purchaseOrderTitle.isEmpty() && startDate != null && endDate != null) {
+            // Search by name and createdAt date range with pagination and sorting
+            filteredOrders = purchaseOrderRepository.findByPurchaseOrderTitleContainingAndCreatedAtBetween(
+                    purchaseOrderTitle, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay(), pageable);
+        } else if (purchaseOrderTitle != null && !purchaseOrderTitle.isEmpty()) {
+            // Search by name with pagination and sorting
+            filteredOrders = purchaseOrderRepository.findByPurchaseOrderTitleContaining(purchaseOrderTitle, pageable);
+        } else if (startDate != null && endDate != null) {
+            // Search by createdAt date range with pagination and sorting
+            filteredOrders = purchaseOrderRepository.findByCreatedAtBetween(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay(), pageable);
+        } else if (approvalStatus != null && supplierId != null) {
+            // Filter by both approval status and supplier with pagination and sorting
             filteredOrders = purchaseOrderRepository.findByApprovalStatusAndSupplier_VendorId(approvalStatus, supplierId, pageable);
         } else if (approvalStatus != null) {
-            // Filter only by approval status with pagination
+            // Filter only by approval status with pagination and sorting
             filteredOrders = purchaseOrderRepository.findByApprovalStatus(approvalStatus, pageable);
         } else if (supplierId != null) {
-            // Filter only by supplier with pagination
+            // Filter only by supplier with pagination and sorting
             filteredOrders = purchaseOrderRepository.findBySupplier_VendorId(supplierId, pageable);
         } else {
-            // No filters applied, return all orders with pagination
+            // No filters applied, return all orders with pagination and sorting
             filteredOrders = purchaseOrderRepository.findAll(pageable);
         }
         return filteredOrders;
+    }
+
+    @GetMapping("/paginate")
+    public Page<PurchaseOrder> searchOrders(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+
+     return purchaseOrderRepository.findAll(pageable);
     }
 
     @GetMapping("/{purchaseOrderId}/items")
@@ -177,12 +204,12 @@ public class PurchaseOrderController {
 
     }
 
-    @GetMapping("p-orders/{month}")
+    @GetMapping("/p-orders/{month}")
     public List<PurchaseOrder> findPurchaseOrdersByMonth(@PathVariable("month") int month) {
         return purchaseOrderService.findPurchaseOrdersByMonth(month);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public PurchaseOrder updatePO(@PathVariable("id") Long purchaseOrderId, @RequestBody PurchaseOrderDto purchaseOrderDto) {
         return purchaseOrderService.updatePurchaseOrder(purchaseOrderId, purchaseOrderDto);
     }
@@ -231,7 +258,6 @@ public class PurchaseOrderController {
     @PatchMapping("/approve/{id}")
     public String editContractApprovalStatus(
             @PathVariable("id") Long purchaseOrderId,
-
             @RequestParam String approvalStatus) {
         // Implement logic to update the contract approval status
         try {
@@ -240,7 +266,7 @@ public class PurchaseOrderController {
 
         } catch (ProcureException | Exception e) {
             ResponseEntity.badRequest().body(e.getMessage());
-            return "an error occured";
+            return "an error occurred";
 
         }
     }

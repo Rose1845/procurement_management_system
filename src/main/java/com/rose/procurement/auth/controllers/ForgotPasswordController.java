@@ -38,7 +38,6 @@ public class ForgotPasswordController {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     // send mail for email verification
     @PostMapping("/verifyMail")
     public ResponseEntity<String> verifyEmail(@RequestBody EmailInput emailInput) throws ProcureException {
@@ -89,11 +88,11 @@ public class ForgotPasswordController {
     @PostMapping("/changePassword/{email}")
     public ResponseEntity<String> changePasswordHandler(@RequestBody ChangePassword changePassword,
                                                         @PathVariable String email) {
-        if (!Objects.equals(changePassword.password(), changePassword.repeatPassword())) {
+        if (!Objects.equals(changePassword.getPassword(), changePassword.getRepeatPassword())) {
             return new ResponseEntity<>("Please enter the password again!", HttpStatus.EXPECTATION_FAILED);
         }
 
-        String encodedPassword = passwordEncoder.encode(changePassword.password());
+        String encodedPassword = passwordEncoder.encode(changePassword.getPassword());
         userRepository.updatePassword(email, encodedPassword);
 
         return ResponseEntity.ok("Password has been changed!");

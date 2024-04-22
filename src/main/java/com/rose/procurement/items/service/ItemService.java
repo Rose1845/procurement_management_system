@@ -97,13 +97,15 @@ public class ItemService {
     }
     public Item updateItem(String itemId, ItemDto supplierRequest) {
         Item supplier1 = itemRepository.findById(itemId).orElseThrow(() -> new IllegalStateException("item do not exist"));
-
         supplier1.setItemName(supplierRequest.getItemName());
         supplier1.setQuantity(supplierRequest.getQuantity());
         supplier1.setItemDescription(supplierRequest.getItemDescription());
         supplier1.setUnitPrice(supplierRequest.getUnitPrice());
+        BigDecimal totalPrice = BigDecimal.valueOf(supplier1.getQuantity()).multiply(supplier1.getUnitPrice());
+        supplier1.setTotalPrice(totalPrice);
         Optional<Category> category =  categoryRepository.findById(supplierRequest.getCategoryId());
         supplier1.setCategory(category.get());
         return itemRepository.save(supplier1);
     }
+
 }

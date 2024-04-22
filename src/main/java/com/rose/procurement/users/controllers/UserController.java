@@ -55,10 +55,10 @@ public class UserController {
     public User removeUserRoles(@RequestPart @Valid Set<Long> request, @PathVariable @NotEmpty Long userId) throws ProcureException {
         return userService.removeRolesFromUser(userId,request);
     }
-
     @PatchMapping("/{userId}/update/add-role")
     @PreAuthorize("hasAuthority({'ADMIN'})")
-    public User addRoleToUser(@RequestPart @Valid Set<Long> useRoles, @PathVariable @NotEmpty Long userId) throws ProcureException {
-        return userService.addRolesToUser(userId,useRoles);
+    public User addRoleToUser(@Valid @RequestBody Set<Long> useRoles, @PathVariable  Long userId) throws ProcureException {
+        return userService.addRolesToUser(userId, useRoles);
     }
+
 }

@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,10 +72,18 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
 
     Page<PurchaseOrder> findBySupplier_VendorId(String supplierId, Pageable pageable);
 
+    Page<PurchaseOrder> findByPurchaseOrderTitleContainingAndCreatedAtBetween(
+            String purchaseOrderTitle, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
+    Page<PurchaseOrder> findByPurchaseOrderTitleContaining(String title, Pageable pageable);
+
+    Page<PurchaseOrder> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
 
     Page<PurchaseOrder> findAll(Specification<PurchaseOrder> specification, Pageable pageable);
+
+    Page<PurchaseOrder> findTop5ByOrderByCreatedAtDesc(Pageable pageable);
+
 
 
 //@Query(value = "SELECT po.purchase_order_title AS po_name, po.created_by AS po_created_by, po.approval_status AS po_status, " +

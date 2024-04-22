@@ -21,5 +21,4 @@ public class InvoiceDto{
     @NotNull
     private LocalDate invoiceDate;
     private Long purchaseOrderId;
-
 }

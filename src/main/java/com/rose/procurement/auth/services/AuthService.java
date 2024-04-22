@@ -8,6 +8,7 @@ import com.rose.procurement.auth.responses.RegistrationResponse;
 import com.rose.procurement.config.JwtService;
 import com.rose.procurement.roles.dao.RoleDao;
 import com.rose.procurement.roles.entity.Role;
+import com.rose.procurement.roles.services.RoleServiceImpl;
 import com.rose.procurement.token.dao.TokenDao;
 import com.rose.procurement.token.entity.Token;
 import com.rose.procurement.token.nums.TokenType;
@@ -33,10 +34,11 @@ public class AuthService {
     private final TokenDao tokenDao;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RoleServiceImpl roleService;
     private final AuthenticationManager authenticationManager;
 
     public RegistrationResponse register(RegisterRequest request) throws ProcureException {
-
+//        roleService.initializeRoles();
         Optional<Role> defaultRole= Optional.ofNullable(this.validateUserExistAndGetDefaultRole(request, userDao, roleDao));
         User newUser= User.builder()
                 .firstname(request.getFirstName())

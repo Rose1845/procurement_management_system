@@ -19,9 +19,16 @@ import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -79,7 +86,7 @@ public class PurchaseRequestService {
         if (optionalPurchaseRequest.isPresent()) {
             PurchaseRequest purchaseRequest = optionalPurchaseRequest.get();
 
-            String approvalLinkBase = "/api/v1/purchase-request/" + purchaseRequest.getPurchaseRequestId() + "/edit2-offer-unit-prices2?supplierId=";
+            String approvalLinkBase = "http://192.168.1.106:3000/public/quotes/view/"+purchaseRequest.getPurchaseRequestId()+"?supplierId=";
 
             for (Supplier supplier : purchaseRequest.getSuppliers()) {
                 String approvalLink = approvalLinkBase + supplier.getVendorId();
@@ -192,6 +199,8 @@ public class PurchaseRequestService {
             // Save the Purchase Order
             purchaseOrderRepository.save(purchaseOrder);
             log.info("Purchase Order created and saved.");
+//            sendCancellationEmailsToOtherSuppliers(purchaseRequest, supplierId);
+
         } else {
             log.info("No offer accepted for the specified supplier.");
         }
@@ -204,11 +213,10 @@ public class PurchaseRequestService {
                 .collect(Collectors.toSet());
         for (Supplier supplier : otherSuppliers) {
             log.info("sending email");
-
             // Check if email, subject, and body are not null before sending the email
             if (supplier.getEmail() != null && purchaseRequest.getPurchaseRequestId() != null) {
                 String emailSubject = "Offer Cancellation Notice";
-                String emailBody = "Your offer for the purchase request " + purchaseRequest.getPurchaseRequestId() + " has been cancelled.";
+                String emailBody = "Your offer for the purchase request " + purchaseRequest.getPurchaseRequestTitle() + " has been cancelled.";
                 emailService.sendEmail(supplier.getEmail(), emailSubject, emailBody);
                 log.info("email sent!");
             } else {
@@ -295,6 +303,10 @@ public class PurchaseRequestService {
         log.info("Ending acceptOffer.");
         return acceptedItemDetails;
     }
+
+
+
+
 
 }
 

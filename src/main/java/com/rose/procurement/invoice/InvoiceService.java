@@ -1,6 +1,8 @@
 package com.rose.procurement.invoice;
 
 import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.contract.entities.Contract;
+import com.rose.procurement.enums.ContractStatus;
 import com.rose.procurement.enums.InvoiceStatus;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
@@ -45,6 +47,14 @@ public class InvoiceService {
         purchaseOrder.ifPresent(invoiceDto1::setPurchaseOrder);
         Invoice savedInvoice = invoiceRepository.save(invoiceDto1);
         return invoiceMapper.toDto(savedInvoice);
+    }
+    public Invoice updateInvoiceStatus(String invoiceId, InvoiceStatus invoiceStatus) throws ProcureException {
+        // Retrieve the existing contract from the database
+        Invoice existingInvoice = invoiceRepository.findById(invoiceId).orElseThrow(()->new ProcureException("id already exists"));
+        // Update the approval status
+        existingInvoice.setInvoiceStatus(invoiceStatus);
+        // Save the updated contract in the database
+        return invoiceRepository.save(existingInvoice);
     }
     public List<?> getInvoiceWithDetails(String invoiceId) {
         return invoiceRepository.findInvoiceWithDetailsById(invoiceId);

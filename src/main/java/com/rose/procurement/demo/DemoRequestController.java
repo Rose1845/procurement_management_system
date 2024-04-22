@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/api/demo")
+@RequestMapping("/api/v1/demo")
 public class DemoRequestController {
 
     private final DemoRequestRepository demoRequestRepository;
@@ -22,11 +22,15 @@ public class DemoRequestController {
     @PostMapping("/request")
     public ResponseEntity<String> requestDemo(@RequestBody DemoRequest demoRequest) {
         // Set request date
-        demoRequest.setRequestDate(new Date());
-
+        DemoRequest demoRequest1 = new DemoRequest();
+        demoRequest1.setEmail(demoRequest.getEmail());
+        demoRequest1.setDescription(demoRequest.getDescription());
+        demoRequest1.setFirstName(demoRequest.getFirstName());
+        demoRequest1.setPhoneNumber(demoRequest.getPhoneNumber());
+        demoRequest1.setLastName(demoRequest.getLastName());
+        demoRequest1.setCompanyName(demoRequest.getCompanyName());
         // Save demo request to the database
-        demoRequestRepository.save(demoRequest);
-
+        demoRequestRepository.save(demoRequest1);
         // Return a success response
         return new ResponseEntity<>("Demo request submitted successfully", HttpStatus.OK);
     }

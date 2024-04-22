@@ -30,7 +30,17 @@ public class RoleServiceImpl implements RoleService {
                     .description("Admin role")
                     .isDefault(true)
                     .build();
-            return Optional.of(roleDao.saveAll(List.of(adminRole)));
+             Role employeeRole = Role.builder()
+                .name("EMPLOYEE")
+                .description("Employee role")
+                .isDefault(true)
+                .build();
+            Role approverRole = Role.builder()
+                .name("APPROVER")
+                .description("Approve role")
+                .isDefault(true)
+                .build();
+            return Optional.of(roleDao.saveAll(List.of(adminRole,employeeRole,approverRole)));
 
     }
 

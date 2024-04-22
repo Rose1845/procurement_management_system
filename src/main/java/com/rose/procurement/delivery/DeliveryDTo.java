@@ -17,6 +17,8 @@ public class DeliveryDTo {
     private String receivedBy;
     private Set<DeliveryItemDTo> itemDToSet;
     private LocalDateTime deliveredOn;
+    private String deliveredVia;
+
     private LocalDateTime expectedOn;
     private LocalDateTime receivedOn;
 }

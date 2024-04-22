@@ -1,5 +1,6 @@
 package com.rose.procurement.purchaseRequest.entities;
 
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.supplier.entities.Supplier;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -33,10 +34,10 @@ public class PurchaseRequestDto {
     @NotNull
     @FutureOrPresent
     private LocalDate deliveryDate;
-
     @NotNull
     @NotBlank
     private String termsAndConditions;
+    private ApprovalStatus approvalStatus;
     @NotNull
     private Set<Supplier> suppliers;
     @NotNull

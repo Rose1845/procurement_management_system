@@ -1,6 +1,7 @@
 package com.rose.procurement.items.controller;
 
 import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.items.dtos.ItemDto;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -70,4 +72,34 @@ public class ItemController {
             @RequestBody Item purchaseRequestItem) {
         return itemService.addPurchaseRequestItem(purchaseRequestId, purchaseRequestItem);
     }
+
+    @GetMapping("/pagination/items/")
+    public Page<Item> findAllItems(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(defaultValue = "ASC") String sortDirection,
+            @RequestParam(required = false) String itemName,
+            @RequestParam(required = false) String category
+    ) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        Page<Item> filteredItems = null;
+        if (itemName != null && !itemName.isEmpty() && category != null && !category.isEmpty()) {
+            // Search by item name and category name with pagination and sorting
+            filteredItems = itemRepository.findByItemNameContainingAndCategory_CategoryName(itemName, category, pageable);
+        } else if (itemName != null && !itemName.isEmpty()) {
+            // Search by item name with pagination and sorting
+            filteredItems = itemRepository.findByItemNameContaining(itemName, pageable);
+        } else if (category != null && !category.isEmpty()) {
+            // Search by category name with pagination and sorting
+            filteredItems = itemRepository.findByCategory_CategoryName(category, pageable);
+        } else {
+            // No filters applied, return all items with pagination and sorting
+            filteredItems = itemRepository.findAll(pageable);
+        }
+        return filteredItems;
+    }
+
 }
