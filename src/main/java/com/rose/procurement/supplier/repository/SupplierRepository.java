@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,4 +32,13 @@ public interface SupplierRepository extends JpaRepository<Supplier, String> {
     int deleteFirstBy();
 
     Page<Supplier> findByNameContaining(String name, Pageable pageable);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM supplier WHERE vendor_id = :vendorId", nativeQuery = true)
+    void deleteSupplierByVendorIdNative(@Param("vendorId") String vendorId);
+
+    Supplier findByEmail(String email);
+
+    Supplier findByPhoneNumber(String phoneNumber);
 }

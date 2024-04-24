@@ -51,6 +51,7 @@ public class PurchaseRequisitionService {
         // Save the updated contract in the database
         return purchaseRequisitionRepository.save(existingContract);
     }
+
     public List<PurchaseRequisition> getAllPurchaseRequisitions() {
         return purchaseRequisitionRepository.findAll();
     }

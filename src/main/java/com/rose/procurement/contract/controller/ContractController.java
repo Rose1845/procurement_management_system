@@ -3,6 +3,7 @@ package com.rose.procurement.contract.controller;
 
 import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.contract.dtos.ContractDto;
+import com.rose.procurement.contract.dtos.RenewDto;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.repository.ContractRepository;
 import com.rose.procurement.contract.service.ContractService;
@@ -145,17 +146,18 @@ public class ContractController {
     @PatchMapping("/renew/{contractId}")
     public ResponseEntity<Contract> renewContract(
             @PathVariable String contractId,
-            @RequestBody LocalDate contractEndDate) throws ProcureException {
+            @RequestBody RenewDto renewDto) throws ProcureException {
         // Implement logic to update the contract approval status
-        Contract updatedContract = contractService.renewContract(contractId,contractEndDate);
+        Contract updatedContract = contractService.renewContract(contractId,renewDto);
         return ResponseEntity.ok(updatedContract);
     }
+
     @PatchMapping("/editDate/{contractId}")
     public ResponseEntity<Contract> editDueDate(
             @PathVariable String contractId,
-            @RequestBody LocalDate contractEndDate) throws ProcureException {
+            @RequestBody RenewDto renewDto) throws ProcureException {
         // Implement logic to update the contract approval status
-        Contract updatedContract = contractService.editDueDate(contractId,contractEndDate);
+        Contract updatedContract = contractService.editDueDate(contractId,renewDto);
         return ResponseEntity.ok(updatedContract);
     }
 

@@ -2,6 +2,7 @@ package com.rose.procurement.contract.service;
 
 import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.contract.dtos.ContractDto;
+import com.rose.procurement.contract.dtos.RenewDto;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.mappers.ContractMapper;
 import com.rose.procurement.contract.repository.ContractRepository;
@@ -189,20 +190,46 @@ public class ContractService {
         // Save the updated contract in the database
         return contractRepository.save(existingContract);
     }
-    public Contract renewContract(String contractId, LocalDate contractEndDate) throws ProcureException {
+    public Contract renewContract(String contractId, RenewDto renewDto) throws ProcureException {
         // Retrieve the existing contract from the database
         Contract existingContract = contractRepository.findById(contractId).orElseThrow(()->new ProcureException("id already exists"));
-        existingContract.setContractEndDate(contractEndDate);
+        existingContract.setContractEndDate(renewDto.getContractEndDate());
         // Update the approval status
         existingContract.setContractStatus(ContractStatus.RENEW);
+        sendRenewalRequestEmail(existingContract);
         // Save the updated contract in the database
         return contractRepository.save(existingContract);
     }
 
-    public Contract editDueDate(String contractId, LocalDate contractEndDate) throws ProcureException {
+
+    private void sendRenewalRequestEmail(Contract contract) {
+
+        // Construct email subject and body
+
+        String subject = "Renewal Request: Contract #" + contract.getContractTitle();
+        String renewalLink = "http://192.168.1.106:3000/public/contract/approve/" + contract.getContractId();
+        String text = "Dear Supplier, \n\n"
+                + "We would like to request a renewal for contract\n\n"
+                + "Contract Title: " + contract.getContractTitle() + "\n"
+                + "Contract Type: " + contract.getContractType() + "\n"
+                + "To approve or reject, click the following link: " + renewalLink + "\n"
+                + "\n\nBest Regards,\nProcureSwift Company";
+
+//        String emailSubject = "Renewal Request: Contract #" + contract.getContractTitle();
+//        String emailBody = "Dear Supplier,\n\nWe would like to request a renewal for contract #" +
+//                contract.getContractId() + ". Please review the details and provide your approval.";
+
+        // Get the supplier's email address from the contract (assuming it's stored in the contract entity)
+        String supplierEmail = contract.getSupplier().getEmail();
+
+        // Send the email
+        emailService.sendEmail(supplierEmail, subject, text);
+    }
+
+    public Contract editDueDate(String contractId, RenewDto renewDto) throws ProcureException {
         // Retrieve the existing contract from the database
         Contract existingContract = contractRepository.findById(contractId).orElseThrow(()->new ProcureException("id already exists"));
-        existingContract.setContractEndDate(contractEndDate);
+        existingContract.setContractEndDate(renewDto.getContractEndDate());
         // Update the approval status
         // Save the updated contract in the database
         return contractRepository.save(existingContract);

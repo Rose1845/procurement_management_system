@@ -275,10 +275,8 @@ public class PurchaseOrderService {
             PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
             // Update the purchase order status or perform any other necessary actions
             purchaseOrder.setApprovalStatus(ApprovalStatus.PENDING); // You can set the appropriate status
-
             // Save the updated purchase order
             PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.save(purchaseOrder);
-
             // Convert and return the updated purchase order as a DTO
             return purchaseOrderMapper.toDto(savedPurchaseOrder);
         } else {

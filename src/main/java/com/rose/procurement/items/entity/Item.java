@@ -44,7 +44,8 @@ public class Item {
     @Column(name = "item_number")
     private String itemNumber;
 
-    @Column(name = "item_description")
+    @Lob
+    @Column(name = "item_description",columnDefinition = "TEXT")
     private String itemDescription;
     @Min(value = 1, message = "minimum quantity required is 1")
     private int quantity = 1;

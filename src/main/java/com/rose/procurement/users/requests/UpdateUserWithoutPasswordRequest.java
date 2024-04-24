@@ -19,7 +19,8 @@ public class UpdateUserWithoutPasswordRequest {
     private String username;
     @NotBlank
     @NotNull
-    @Pattern(regexp = "\\+\\d{1,3}\\d{3,14}", message = "Phone number must start with a country code and contain only digits")    private String phoneNumber;
+    @Pattern(regexp = "\\+\\d{1,3}\\d{3,14}", message = "Phone number must start with a country code and contain only digits")
+    private String phoneNumber;
     @NotBlank
     @NotNull
     private String firstName;

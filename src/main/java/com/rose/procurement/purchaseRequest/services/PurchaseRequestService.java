@@ -55,6 +55,7 @@ public class PurchaseRequestService {
         this.purchaseRequestItemDetailRepository = purchaseRequestItemDetailRepository;
         this.purchaseOrderRepository = purchaseOrderRepository;
     }
+//    create request for items from suppliers
 
     public PurchaseRequestDto createPurchaseRequest(PurchaseRequestDto purchaseRequest) throws ProcureException {
         log.info("creating PR....");
@@ -198,9 +199,8 @@ public class PurchaseRequestService {
             purchaseOrder.setCreatedAt(LocalDateTime.now());
             // Save the Purchase Order
             purchaseOrderRepository.save(purchaseOrder);
+            sendCancellationEmailsToOtherSuppliers(purchaseRequest,supplierId);
             log.info("Purchase Order created and saved.");
-//            sendCancellationEmailsToOtherSuppliers(purchaseRequest, supplierId);
-
         } else {
             log.info("No offer accepted for the specified supplier.");
         }
@@ -211,16 +211,29 @@ public class PurchaseRequestService {
         Set<Supplier> otherSuppliers = purchaseRequest.getSuppliers().stream()
                 .filter(supplier -> !Objects.equals(supplier.getVendorId(), acceptedSupplierId))
                 .collect(Collectors.toSet());
+
+        Set<PurchaseRequestItemDetail> acceptedItemDetails = new HashSet<>();
+
         for (Supplier supplier : otherSuppliers) {
             log.info("sending email");
+            for (PurchaseRequestItemDetail itemDetail : purchaseRequest.getItemDetails()) {
+                log.info("Checking item detail for supplier's offer...");
+                if (itemDetail.getSupplier().getVendorId().equals(supplier.getVendorId())) {
+                    itemDetail.setQuoteStatus(QuoteStatus.BUYER_HAS_CANCELED);
+                    // Update item's unit price to offer unit price
+                    // Add accepted item detail to the set for the Purchase Order
+                }
+            }
+
             // Check if email, subject, and body are not null before sending the email
             if (supplier.getEmail() != null && purchaseRequest.getPurchaseRequestId() != null) {
                 String emailSubject = "Offer Cancellation Notice";
                 String emailBody = "Your offer for the purchase request " + purchaseRequest.getPurchaseRequestTitle() + " has been cancelled.";
                 emailService.sendEmail(supplier.getEmail(), emailSubject, emailBody);
+
                 log.info("email sent!");
             } else {
-                log.info("error occured");
+                log.info("error occurred");
                 // Handle the case where either email or purchaseRequestId is null
                 // This could include logging an error or skipping the email sending
                 // For example:
@@ -251,7 +264,6 @@ public class PurchaseRequestService {
                 existingItemDetail.setQuoteStatus(QuoteStatus.SUPPLIER_HAS_OFFERED);
             });
         }
-
         // Filter and save only the updated item details associated with the specified supplier
         List<PurchaseRequestItemDetail> updatedItemDetails = itemDetails.stream()
                 .filter(updatedItemDetail ->

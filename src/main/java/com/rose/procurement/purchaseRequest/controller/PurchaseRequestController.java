@@ -82,6 +82,20 @@ public class PurchaseRequestController {
         }
     }
 
+//    @PostMapping("/{purchaseRequestId}/send-cancellation-emails")
+//    public ResponseEntity<?> sendCancellationEmailsToOtherSuppliers(
+//            @RequestBody PurchaseRequest purchaseRequest,
+//            @RequestParam String acceptedSupplierId) {
+//
+//        try {
+//            // Call the service method to send cancellation emails
+//            purchaseRequestService.sendCancellationEmailsToOtherSuppliers(purchaseRequest, acceptedSupplierId);
+//            return ResponseEntity.ok("Cancellation emails sent successfully.");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send cancellation emails: " + e.getMessage());
+//        }
+//    }
+
     @PatchMapping("/{purchaseRequestId}/edit2-offer-unit-prices2")
     public ResponseEntity<List<PurchaseRequestItemDetail>> editOfferUnitPrices(
             @PathVariable Long purchaseRequestId,

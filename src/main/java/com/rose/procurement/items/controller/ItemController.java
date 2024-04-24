@@ -7,12 +7,17 @@ import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.items.service.ItemService;
 import jakarta.validation.Valid;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +37,21 @@ public class ItemController {
     public ItemDto createItem(@RequestBody @Valid ItemDto itemRequest) throws ProcureException {
         return itemService.createItem(itemRequest);
     }
+    @GetMapping("/export/items")
+    public ResponseEntity<ByteArrayResource> exportCategories() throws IOException {
+        byte[] csvData = itemService.exportItemsToCsv();
 
+        ByteArrayResource resource = new ByteArrayResource(csvData);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=items.csv");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(csvData.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
     @GetMapping("/item-details/{id}")
     public Optional<ItemDto> getItemDetails(@PathVariable("id") String itemId) {
         return itemService.getItemDetails(itemId);

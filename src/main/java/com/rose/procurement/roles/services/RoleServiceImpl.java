@@ -24,7 +24,6 @@ public class RoleServiceImpl implements RoleService {
             if (roles.toArray().length>0) {
                 throw ProcureException.builder().message("Roles already initialized").metadata("recurse/init").statusCode(500).build();
             }
-
             Role adminRole = Role.builder()
                     .name("ADMIN")
                     .description("Admin role")

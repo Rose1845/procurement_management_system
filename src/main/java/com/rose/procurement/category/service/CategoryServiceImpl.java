@@ -1,5 +1,6 @@
 package com.rose.procurement.category.service;
 
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
@@ -9,6 +10,7 @@ import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.entity.CategoryCsvRepresentation;
 import com.rose.procurement.category.mappers.CategoryMapper;
 import com.rose.procurement.category.repository.CategoryRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,10 +34,10 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) throws ProcureException {
-        if (categoryRepository.existsByCategoryName(categoryDto.getCategoryName())) {
-            throw ProcureException.builder().metadata("eixts").message("Category name   already exist").build();
+        Optional<Category> existingCategory = categoryRepository.findByCategoryName(categoryDto.getCategoryName());
+        if(existingCategory.isPresent()){
+            throw  ProcureException.builder().message("category name already exists").metadata("exists").build();
         }
-        log.info("Received category payload",categoryDto);
         Category category = CategoryMapper.MAPPER.toEntity(categoryDto);
         category.setCategoryName(categoryDto.getCategoryName());
         Category savedCategory = categoryRepository.save(category);
@@ -85,6 +88,27 @@ public class CategoryServiceImpl implements CategoryService{
             throw new RuntimeException(e);
         }
     }
+
+
+
+    @Transactional
+    public byte[] exportCategoriesToCsv() throws IOException {
+        List<Category> categories = getAllCategories();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream))) {
+            // Write header
+            writer.writeNext(new String[]{});
+
+            // Write data rows
+            for (Category category : categories) {
+                writer.writeNext(new String[]{category.getCategoryName(), /* Add other fields */});
+            }
+        }
+
+        return outputStream.toByteArray();
+    }
+
     private Set<Category> convertToEntities(Set<CategoryDto> categoryDtos) {
         return categoryDtos.stream()
                 .map(this::convertToEntity)

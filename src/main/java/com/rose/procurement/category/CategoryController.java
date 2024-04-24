@@ -9,6 +9,8 @@ import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.repo.Resource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -41,6 +44,22 @@ public class CategoryController {
         log.info("category");
         return categoryService.createCategory(categoryDto);
     }
+    @GetMapping("/export/categories")
+    public ResponseEntity<ByteArrayResource> exportCategories() throws IOException {
+        byte[] csvData = categoryService.exportCategoriesToCsv();
+
+        ByteArrayResource resource = new ByteArrayResource(csvData);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=categories.csv");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(csvData.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+
     @GetMapping("/all")
     public Page<Category> findAllPurchaseOrders1(@RequestParam(name = "page", defaultValue = "0") int page,
                                                 @RequestParam(name = "size", defaultValue = "10") int size) {
