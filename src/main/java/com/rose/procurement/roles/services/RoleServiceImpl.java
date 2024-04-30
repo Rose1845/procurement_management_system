@@ -24,13 +24,22 @@ public class RoleServiceImpl implements RoleService {
             if (roles.toArray().length>0) {
                 throw ProcureException.builder().message("Roles already initialized").metadata("recurse/init").statusCode(500).build();
             }
-
             Role adminRole = Role.builder()
                     .name("ADMIN")
                     .description("Admin role")
                     .isDefault(true)
                     .build();
-            return Optional.of(roleDao.saveAll(List.of(adminRole)));
+             Role employeeRole = Role.builder()
+                .name("EMPLOYEE")
+                .description("Employee role")
+                .isDefault(true)
+                .build();
+            Role approverRole = Role.builder()
+                .name("APPROVER")
+                .description("Approve role")
+                .isDefault(true)
+                .build();
+            return Optional.of(roleDao.saveAll(List.of(adminRole,employeeRole,approverRole)));
 
     }
 

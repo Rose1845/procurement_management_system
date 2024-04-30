@@ -22,30 +22,17 @@ public class DeliveryController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
-    public Delivery getDeliveryById(@PathVariable Long id) {
+//    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
+    public Delivery getDeliveryById(@PathVariable("id") Long id) {
         return deliveryService.getDeliveryById(id);
     }
+    @GetMapping("/order-delivery/{id}")
+    public Delivery getDeliveryByOrderId(@PathVariable("id") Long purchaseOrderId) {
+        return deliveryService.getDeliveryByOrderId(purchaseOrderId);
+    }
 
-//    @PostMapping("/add/{purchaseOrderId}")
-//    public Delivery createDelivery(@PathVariable Long purchaseOrderId, @RequestBody Delivery delivery) {
-//        return deliveryService.createDelivery(purchaseOrderId, delivery);
-//    }
-
-//    @PostMapping("/{purchaseOrderId}/deliveries")
-//    public ResponseEntity<String> createDeliveryForPurchaseOrder(
-//            @PathVariable Long purchaseOrderId,
-//            @RequestBody DeliveryItemDTo itemDeliveries
-//    ) {
-//        try {
-//            deliveryService.createDeliveryForPurchaseOrder(purchaseOrderId, itemDeliveries);
-//            return ResponseEntity.ok("Delivery created successfully");
-//        } catch (EntityNotFoundException | IllegalStateException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
-@PostMapping("/{purchaseOrderId}/deliveries")
-@PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
+    @PostMapping("/{purchaseOrderId}/deliveries")
+@PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE'})")
 public Delivery createDeliveryForPurchaseOrder(
         @PathVariable Long purchaseOrderId,
         @RequestBody DeliveryDTo deliveryDTo

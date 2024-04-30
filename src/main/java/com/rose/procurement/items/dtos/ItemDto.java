@@ -22,9 +22,6 @@ public class ItemDto {
     private String itemName;
     @NotBlank
     @NotNull
-    private String itemNumber;
-    @NotBlank
-    @NotNull
     private String itemDescription;
     @NotNull
     @Min(value = 1, message = "minimum quantity required is 1")

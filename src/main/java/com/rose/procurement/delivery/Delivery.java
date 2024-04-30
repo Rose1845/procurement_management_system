@@ -19,15 +19,14 @@ public class Delivery {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String receivedBy;
+    private String deliveredVia;
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL)
     private Set<DeliveryItem> items;
     @OneToOne
     @JoinColumn(name = "purchase_order_id")
     private PurchaseOrder purchaseOrder;
-    private LocalDateTime deliveredDate;
-    private LocalDateTime receivedDate;
+    private LocalDateTime deliveredOn;
     private LocalDateTime expectedOn;
     private LocalDateTime receivedOn;
-
 
 }

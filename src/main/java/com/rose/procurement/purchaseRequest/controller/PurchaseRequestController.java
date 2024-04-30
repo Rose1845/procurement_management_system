@@ -2,6 +2,7 @@ package com.rose.procurement.purchaseRequest.controller;
 
 
 import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.purchaseOrder.repository.PurchaseOrderRepository;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequestDto;
@@ -14,10 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -79,6 +82,20 @@ public class PurchaseRequestController {
         }
     }
 
+//    @PostMapping("/{purchaseRequestId}/send-cancellation-emails")
+//    public ResponseEntity<?> sendCancellationEmailsToOtherSuppliers(
+//            @RequestBody PurchaseRequest purchaseRequest,
+//            @RequestParam String acceptedSupplierId) {
+//
+//        try {
+//            // Call the service method to send cancellation emails
+//            purchaseRequestService.sendCancellationEmailsToOtherSuppliers(purchaseRequest, acceptedSupplierId);
+//            return ResponseEntity.ok("Cancellation emails sent successfully.");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send cancellation emails: " + e.getMessage());
+//        }
+//    }
+
     @PatchMapping("/{purchaseRequestId}/edit2-offer-unit-prices2")
     public ResponseEntity<List<PurchaseRequestItemDetail>> editOfferUnitPrices(
             @PathVariable Long purchaseRequestId,
@@ -110,5 +127,40 @@ public class PurchaseRequestController {
 
         return purchaseRequestDetails.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/paginations")
+    public Page<PurchaseRequest> findAllPurchaseOrders1(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(required = false) ApprovalStatus approvalStatus,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(defaultValue = "ASC") String sortDirection,
+            @RequestParam(required = false) String purchaseRequestTitle,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate
+    ) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+
+        Page<PurchaseRequest> filteredOrders = null;
+        if (purchaseRequestTitle != null && !purchaseRequestTitle.isEmpty() && startDate != null && endDate != null) {
+            // Search by name and createdAt date range with pagination and sorting
+            filteredOrders = purchaseRequestRepository.findByPurchaseRequestTitleContainingAndCreatedAtBetween(
+                    purchaseRequestTitle, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay(), pageable);
+        } else if (purchaseRequestTitle != null && !purchaseRequestTitle.isEmpty()) {
+            // Search by name with pagination and sorting
+            filteredOrders = purchaseRequestRepository.findByPurchaseRequestTitleContaining(purchaseRequestTitle, pageable);
+        } else if (startDate != null && endDate != null) {
+            // Search by createdAt date range with pagination and sorting
+            filteredOrders = purchaseRequestRepository.findByCreatedAtBetween(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay(), pageable);
+        } else if (approvalStatus != null) {
+            // Filter only by approval status with pagination and sorting
+            filteredOrders = purchaseRequestRepository.findByApprovalStatus(approvalStatus, pageable);
+        } else {
+            // No filters applied, return all orders with pagination and sorting
+            filteredOrders = purchaseRequestRepository.findAll(pageable);
+        }
+        return filteredOrders;
     }
 }

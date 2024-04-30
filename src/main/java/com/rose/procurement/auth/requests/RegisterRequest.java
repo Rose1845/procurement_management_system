@@ -1,9 +1,6 @@
 package com.rose.procurement.auth.requests;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +21,7 @@ public class RegisterRequest {
         private String username;
         @NotNull
         @NotEmpty
+        @Pattern(regexp = "\\+\\d{1,3}\\d{3,14}", message = "Phone number must start with a country code and contain only digits")
         private String phoneNumber;
         @NotNull
         @NotEmpty

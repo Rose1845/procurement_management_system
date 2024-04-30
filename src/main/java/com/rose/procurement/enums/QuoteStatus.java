@@ -9,6 +9,7 @@ public enum QuoteStatus {
      */
     Waiting_for_offer,
     SUPPLIER_HAS_OFFERED,
-    BUYER_ACCEPTED
+    BUYER_ACCEPTED,
+    BUYER_HAS_CANCELED
 }
 

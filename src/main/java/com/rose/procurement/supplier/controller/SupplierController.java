@@ -1,6 +1,7 @@
 package com.rose.procurement.supplier.controller;
 
 import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.repository.SupplierRepository;
@@ -8,11 +9,13 @@ import com.rose.procurement.supplier.services.ReportService;
 import com.rose.procurement.supplier.services.SupplierService;
 import jakarta.validation.Valid;
 import net.sf.jasperreports.engine.JRException;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,7 +53,21 @@ public class SupplierController {
 //        }
         return supplierService.createSupplier(supplierRequest);
     }
+    @GetMapping("/export/suppliers")
+    public ResponseEntity<ByteArrayResource> exportCategories() throws IOException {
+        byte[] csvData = supplierService.exportSuppliersToCsv();
 
+        ByteArrayResource resource = new ByteArrayResource(csvData);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=suppliers.csv");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(csvData.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
     @GetMapping("/all")
     public Page<Supplier> findAllPurchaseOrders1(@RequestParam(name = "page", defaultValue = "0") int page,
                                                  @RequestParam(name = "size", defaultValue = "10") int size) {
@@ -104,11 +121,33 @@ public class SupplierController {
         return supplierService.updateSupplier(vendorId, supplierRequest);
     }
 
-    @DeleteMapping("{id}")
-    public String deleteSupplier(@PathVariable("id") String vendorId) {
-        return supplierService.deleteSupplier(vendorId);
+    @DeleteMapping("/{vendorId}")
+    public ResponseEntity<String> deleteSupplierByVendorId(@PathVariable String vendorId) {
+        supplierService.deleteSupplierByVendorIdNative(vendorId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Supplier deleted successfully");
     }
+    @GetMapping("/pagination")
+    public Page<Supplier> findAllCategories(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(defaultValue = "ASC") String sortDirection
+    ) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
+        Pageable pageable = PageRequest.of(page, size,Sort.by(direction, sortField));
+        Page<Supplier> filteredSuppliers = null;
+        if (name != null && !name.isEmpty()) {
+            // Search by name with pagination and sorting
+            filteredSuppliers = supplierRepository.findByNameContaining(name, pageable);
+        }
+        else {
+            // No filters applied, return all orders with pagination and sorting
+            filteredSuppliers = supplierRepository.findAll(pageable);
+        }
+        return filteredSuppliers;
+    }
     @DeleteMapping
     public String deleteSupplier() {
         return supplierService.deleteAll();

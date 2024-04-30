@@ -20,7 +20,4 @@ public class CategoryDto{
     @NotBlank
     private String categoryName;
 
-    public CategoryDto() {
-        // Default constructor
-    }
 }

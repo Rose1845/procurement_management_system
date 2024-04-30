@@ -21,15 +21,10 @@ public class DemoRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String firstName;
     private String lastName;
-
+    private String companyName;
+    private String description;
     private String email;
     private String phoneNumber;
-    private Date requestDate;
-
-    // Getters and setters
-
-
 }

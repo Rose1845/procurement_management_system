@@ -1,5 +1,7 @@
 package com.rose.procurement.purchaseRequisition.controller;
 
+import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisition;
 import com.rose.procurement.purchaseRequisition.entities.PurchaseRequisitionDto;
 import com.rose.procurement.purchaseRequisition.repository.PurchaseRequisitionRepository;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,10 +33,13 @@ public class PurchaseRequisitionController {
     public PurchaseRequisitionDto createPurchaseRequisition(@RequestBody @Valid PurchaseRequisitionDto purchaseRequisitionDto) {
         return purchaseRequisitionService.createPurchaseRequistion(purchaseRequisitionDto);
     }
-
+    @PatchMapping("/approve/{id}")
+    @PreAuthorize("hasAuthority({'APPROVER'})")
+    public PurchaseRequisition ApproveRequisition(@PathVariable("id") Long requisitionId,@RequestParam ApprovalStatus approvalStatus) throws ProcureException {
+        return purchaseRequisitionService.updateApprovalStatus(requisitionId,approvalStatus);
+    }
     @GetMapping("/all-by-pagination")
-    public Page<PurchaseRequisition> findAllRequestByPagination(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                                @RequestParam(name = "size", defaultValue = "10") int size) {
+    public Page<PurchaseRequisition> findAllRequestByPagination(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return purchaseRequisitionRepository.findAll(pageable);
     }

@@ -18,15 +18,13 @@ import com.rose.procurement.users.requests.CreateUserWithRolesRequest;
 import com.rose.procurement.users.requests.UpdateUserPasswordRequest;
 import com.rose.procurement.users.requests.UpdateUserWithoutPasswordRequest;
 import com.rose.procurement.utils.MD5UserAvatar;
+import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,7 +120,6 @@ public class UserServiceImpl implements UserService {
         }
         return user;
     }
-
     @Override
     public User findUserByUsername(String username) throws ProcureException {
 
@@ -138,40 +135,48 @@ public class UserServiceImpl implements UserService {
         }
         return userDao.findById(id);
     }
-
     @Override
-    public User removeRolesFromUser(Long userId,Set<Long> roles) throws ProcureException {
-        if (!userDao.existsById(userId)) {
-            throw ProcureException.builder().message("No user record").build();
-        }
-        User user = userDao.findById(userId).get();
-        roles.forEach(role -> {
-            if (roleDao.existsById(role)) {
-                Optional<Role> role1 = roleDao.findById(role);
-                if (user.getRoles().contains(role1)) {
-                    user.getRoles().remove(role1);
-                }
+    public User removeRolesFromUser(Long userId, Set<Long> roleIds) throws ProcureException {
+        // Check if the user exists
+        User user = userDao.findById(userId)
+                .orElseThrow(() -> ProcureException.builder().message("No user record").build());
+
+        // Remove roles from the user
+        for (Long roleId : roleIds) {
+            Role roleToRemove = roleDao.findById(roleId)
+                    .orElseThrow(() -> ProcureException.builder().message("Role not found").build());
+
+            // Check if the user has the role before removing
+            if (user.getRoles().contains(roleToRemove)) {
+                user.getRoles().remove(roleToRemove);
             }
-        });
+        }
+
+        // Save the updated user with removed roles
         return userDao.save(user);
     }
 
+
     @Override
-    public User addRolesToUser(Long userId, Set<Long> roles) throws ProcureException {
-        if (!userDao.existsById(userId)) {
-            throw ProcureException.builder().message("No user record").build();
-        }
-        User user = userDao.findById(userId).get();
-        Arrays.stream(roles.toArray()).toList().forEach(role -> {
-            if (roleDao.existsById((Long) role)) {
-                Optional<Role> role1 = roleDao.findById((Long) role);
-                if (!user.getRoles().contains(role1)) {
-                    user.getRoles().add(role1.get());
-                }
+    @Transactional
+    public User addRolesToUser(Long userId, Set<Long> roleIds) throws ProcureException {
+        User user = userDao.findById(userId)
+                .orElseThrow(() -> ProcureException.builder().message("User not found").build());
+
+        List<Role> rolesToAdd = new ArrayList<>();
+        for (Long roleId : roleIds) {
+            Role role = roleDao.findById(roleId)
+                    .orElseThrow(() -> ProcureException.builder().message("Role not found").build());
+            if (!user.getRoles().contains(role)) {
+                rolesToAdd.add(role);
             }
-        });
+        }
+
+        user.getRoles().addAll(rolesToAdd);
         return userDao.save(user);
     }
+
+
 
     @Override
     public User createUserWithRoles(CreateUserWithRolesRequest request) throws ProcureException {
@@ -185,6 +190,7 @@ public class UserServiceImpl implements UserService {
         User newUser= User.builder()
                 .firstname(request.getFirstName())
                 .lastname(request.getLastName())
+                .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))

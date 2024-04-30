@@ -1,18 +1,26 @@
 package com.rose.procurement.items.service;
 
+import com.opencsv.CSVWriter;
 import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.category.repository.CategoryRepository;
+import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.items.dtos.ItemDto;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.mappers.ItemMapper;
 import com.rose.procurement.items.repository.ItemRepository;
 import com.rose.procurement.purchaseRequest.entities.PurchaseRequest;
 import com.rose.procurement.purchaseRequest.repository.PurchaseRequestRepository;
+import com.rose.procurement.supplier.entities.Supplier;
+import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.repository.SupplierRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +46,16 @@ public class ItemService {
     }
 
     public ItemDto createItem(ItemDto itemRequest) throws ProcureException {
-        if (itemRepository.existsByItemName(itemRequest.getItemName())) {
-            throw ProcureException.builder().message("Item Name already exist").build();
+//        if (itemRepository.existsByItemName(itemRequest.getItemName())) {
+//            throw ProcureException.builder().message("Item Name already exist").build();
+//        }
+        Optional<Item> existingItem = itemRepository.findByItemName(itemRequest.getItemName());
+        if(existingItem.isPresent()){
+            throw ProcureException.builder().message("item name already exists").metadata("exists").build();
         }
         log.info("Received ItemDto: {}", itemRequest);
         Optional<Category> category = categoryRepository.findById(itemRequest.getCategoryId());
         Item item1 = ItemMapper.MAPPER.toEntity(itemRequest);
-        item1.setItemNumber(itemRequest.getItemNumber());
         item1.setItemName(itemRequest.getItemName());
         item1.setQuantity(itemRequest.getQuantity());
         item1.setUnitPrice(itemRequest.getUnitPrice());
@@ -93,4 +104,33 @@ public class ItemService {
 
         return itemRepository.save(purchaseRequestItem);
     }
-}
+    public Item updateItem(String itemId, ItemDto supplierRequest) {
+        Item supplier1 = itemRepository.findById(itemId).orElseThrow(() -> new IllegalStateException("item do not exist"));
+        supplier1.setItemName(supplierRequest.getItemName());
+        supplier1.setQuantity(supplierRequest.getQuantity());
+        supplier1.setItemDescription(supplierRequest.getItemDescription());
+        supplier1.setUnitPrice(supplierRequest.getUnitPrice());
+        BigDecimal totalPrice = BigDecimal.valueOf(supplier1.getQuantity()).multiply(supplier1.getUnitPrice());
+        supplier1.setTotalPrice(totalPrice);
+        Optional<Category> category =  categoryRepository.findById(supplierRequest.getCategoryId());
+        supplier1.setCategory(category.get());
+        return itemRepository.save(supplier1);
+    }
+
+    @Transactional
+    public byte[] exportItemsToCsv() throws IOException {
+        List<Item> items =getAllItems();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream))) {
+            // Write header
+            writer.writeNext(new String[]{"Item Name", "Item Number", "Unit Price", "Quantity"});
+
+            // Write data rows
+            for (Item item : items) {
+                writer.writeNext(new String[]{item.getItemName(), item.getItemNumber(), String.valueOf(item.getUnitPrice()), String.valueOf(item.getQuantity())});
+        }
+        return outputStream.toByteArray();
+    }
+
+} }

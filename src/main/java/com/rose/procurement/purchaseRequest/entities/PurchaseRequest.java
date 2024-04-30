@@ -34,6 +34,8 @@ public class PurchaseRequest {
     private String purchaseRequestTitle;
     private LocalDate dueDate;
     private LocalDate deliveryDate;
+    @Lob
+    @Column(name = "terms_and_conditions", columnDefinition = "TEXT")
     private String termsAndConditions;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

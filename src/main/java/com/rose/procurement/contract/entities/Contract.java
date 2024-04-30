@@ -33,6 +33,8 @@ public class Contract {
     private LocalDate contractStartDate;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate contractEndDate;
+    @Lob
+    @Column(name = "terms_and_conditions", columnDefinition = "TEXT")
     private String termsAndConditions;
     @Enumerated
     private ContractStatus contractStatus;

@@ -3,16 +3,25 @@ package com.rose.procurement.contract.controller;
 
 import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.contract.dtos.ContractDto;
+import com.rose.procurement.contract.dtos.RenewDto;
 import com.rose.procurement.contract.entities.Contract;
+import com.rose.procurement.contract.repository.ContractRepository;
 import com.rose.procurement.contract.service.ContractService;
+import com.rose.procurement.enums.ApprovalStatus;
 import com.rose.procurement.enums.ContractStatus;
 import com.rose.procurement.items.entity.Item;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,11 +30,15 @@ import java.util.Set;
 @RequestMapping("api/v1/contract")
 public class ContractController {
     private final ContractService contractService;
-    public ContractController(ContractService contractService) {
+    private final ContractRepository contractRepository;
+
+    public ContractController(ContractService contractService,
+                              ContractRepository contractRepository) {
         this.contractService = contractService;
+        this.contractRepository = contractRepository;
     }
     @PostMapping
-//    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE','APPROVER'})")
+//    @PreAuthorize("hasAuthority({'ADMIN','EMPLOYEE'})")
     public ContractDto createContract(@RequestBody @Valid ContractDto contractRequest){
         return contractService.createContract(contractRequest);
     }
@@ -48,8 +61,50 @@ public class ContractController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/paginations")
+    public Page<Contract> findAllContracts(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(required = false) ContractStatus contractStatus,
+            @RequestParam(required = false) String supplierId,
+            @RequestParam(required = false) String sortField,
+            @RequestParam(defaultValue = "ASC") String sortDirection,
+            @RequestParam(required = false) String contractTitle,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate
+    ) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
 
-//    @GetMapping("send-contract/{id}")
+        Page<Contract> filteredContracts = null;
+        if (contractTitle != null && !contractTitle.isEmpty() && startDate != null && endDate != null) {
+            // Search by name and createdAt date range with pagination and sorting
+            filteredContracts = contractRepository.findByContractTitleContainingAndCreatedAtBetween(
+                    contractTitle, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay(), pageable);
+        } else if (contractTitle != null && !contractTitle.isEmpty()) {
+            // Search by name with pagination and sorting
+            filteredContracts = contractRepository.findByContractTitleContaining(contractTitle, pageable);
+        } else if (startDate != null && endDate != null) {
+            // Search by createdAt date range with pagination and sorting
+            filteredContracts = contractRepository.findByCreatedAtBetween(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay(), pageable);
+        } else if (contractStatus != null && supplierId != null) {
+            // Filter by both approval status and supplier with pagination and sorting
+            filteredContracts = contractRepository.findByContractStatusAndSupplier_VendorId(contractStatus, supplierId, pageable);
+        } else if (contractStatus != null) {
+            // Filter only by approval status with pagination and sorting
+            filteredContracts = contractRepository.findByContractStatus(contractStatus,pageable);
+        } else if (supplierId != null) {
+            // Filter only by supplier with pagination and sorting
+            filteredContracts = contractRepository.findBySupplier_VendorId(supplierId, pageable);
+        } else {
+            // No filters applied, return all orders with pagination and sorting
+            filteredContracts = contractRepository.findAll(pageable);
+        }
+        return filteredContracts;
+    }
+
+
+    //    @GetMapping("send-contract/{id}")
 //    public Contract contractApproval(@PathVariable("id") String contractId) throws ProcureException {
 //        return contractService.sendContractForApproval(contractId);
 //    }
@@ -66,6 +121,7 @@ public class ContractController {
         return contractService.cloneContract(contractId);
     }
     @PutMapping("{id}")
+
     public Contract updateContract(@PathVariable("id") String contractId,@RequestBody ContractDto contractRequest) throws ProcureException {
         return contractService.updateContract(contractId,contractRequest);
     }
@@ -87,7 +143,28 @@ public class ContractController {
         Contract updatedContract = contractService.updateApprovalStatus(contractId, ContractStatus.valueOf(contractStatus));
         return ResponseEntity.ok(updatedContract);
     }
+    @PatchMapping("/renew/{contractId}")
+    public ResponseEntity<Contract> renewContract(
+            @PathVariable String contractId,
+            @RequestBody RenewDto renewDto) throws ProcureException {
+        // Implement logic to update the contract approval status
+        Contract updatedContract = contractService.renewContract(contractId,renewDto);
+        return ResponseEntity.ok(updatedContract);
+    }
 
+    @PatchMapping("/editDate/{contractId}")
+    public ResponseEntity<Contract> editDueDate(
+            @PathVariable String contractId,
+            @RequestBody RenewDto renewDto) throws ProcureException {
+        // Implement logic to update the contract approval status
+        Contract updatedContract = contractService.editDueDate(contractId,renewDto);
+        return ResponseEntity.ok(updatedContract);
+    }
+
+    @GetMapping("co/{month}")
+    public List<Contract> findContractsByMonth(@PathVariable("month") int month) {
+        return contractService.findContractsByMonth(month);
+    }
     // Step 4: Alert Organization of Supplier's Response (This could be done asynchronously in a real application)
     // This is just an example, you may want to use a message queue for real-world scenarios.
     @Async

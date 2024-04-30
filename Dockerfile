@@ -1,9 +1,9 @@
 
-FROM openjdk:17-jdk
+FROM openjdk:17-alpine
 
 LABEL authors="nyaugenya"
 
-ENTRYPOINT ["top", "-b"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=k8s", "-jar", "app.jar"]
 
 WORKDIR /app
 

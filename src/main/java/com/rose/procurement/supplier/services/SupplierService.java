@@ -1,9 +1,11 @@
 package com.rose.procurement.supplier.services;
 
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 import com.rose.procurement.advice.ProcureException;
+import com.rose.procurement.category.entity.Category;
 import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierCsvRepresentation;
@@ -33,15 +35,28 @@ public class SupplierService {
     }
 
     public SupplierDto createSupplier(SupplierDto supplierRequest) throws ProcureException {
-        if (supplierRepository.existsByEmail(supplierRequest.getEmail())) {
-            throw ProcureException.builder().message("User email already exist").build();
+//        if (!supplierRepository.existsByEmail(supplierRequest.getEmail())) {
+//            throw ProcureException.builder().message("User email already exist").build();
+//        }
+//        if (!supplierRepository.existsByName(supplierRequest.getName())) {
+//            throw ProcureException.builder().message("Supplier with that name  already exist").metadata("eists").build();
+//        }
+//        if (!supplierRepository.existsByPhoneNumber(supplierRequest.getPhoneNumber())) {
+//            throw ProcureException.builder().message("Phone number   already exist").build();
+//        }
+        Optional<Supplier> existingSupplier = Optional.ofNullable(supplierRepository.findByName(supplierRequest.getName()));
+        Optional<Supplier> existingSupplier1 = Optional.ofNullable(supplierRepository.findByEmail(supplierRequest.getEmail()));
+        Optional<Supplier> existingSupplier2 = Optional.ofNullable(supplierRepository.findByPhoneNumber(supplierRequest.getPhoneNumber()));
+        if(existingSupplier2.isPresent()){
+            throw ProcureException.builder().metadata("exists").message("Phone Number already exists").build();
         }
-        if (supplierRepository.existsByName(supplierRequest.getName())) {
-            throw ProcureException.builder().message("Supplier with that name  already exist").build();
+        if(existingSupplier.isPresent()){
+            throw ProcureException.builder().metadata("exists").message("name already exists").build();
         }
-        if (supplierRepository.existsByPhoneNumber(supplierRequest.getPhoneNumber())) {
-            throw ProcureException.builder().message("Phone number   already exist").build();
+        if(existingSupplier1.isPresent()){
+            throw ProcureException.builder().metadata("exists").message("email already exists").build();
         }
+
 
         Address address = new Address();
         address.setBox(supplierRequest.getAddress().getBox());
@@ -93,6 +108,23 @@ public class SupplierService {
         return "supplier deleted successfully";
     }
 
+    @Transactional
+    public byte[] exportSuppliersToCsv() throws IOException {
+        List<Supplier> suppliers = getAllSuppliers();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream))) {
+            // Write header
+            writer.writeNext(new String[]{"Name", "Contact Person", "Contact Information", "PO Box", "City", "Location", "Country", "Email", "Phone Number", "Payment Type", "Terms and Conditions"});
+
+            // Write data rows
+            for (Supplier supplier : suppliers) {
+                writer.writeNext(new String[]{supplier.getName(), supplier.getContactPerson(), supplier.getContactInformation(), supplier.getAddress().getBox(), supplier.getAddress().getCity(), supplier.getAddress().getLocation(), supplier.getAddress().getCountry(), supplier.getEmail(), supplier.getPhoneNumber(), supplier.getPaymentType().toString(), supplier.getTermsAndConditions()});
+            }
+        }
+        return outputStream.toByteArray();
+    }
+
     public String deleteAll() {
         supplierRepository.deleteAll();
         return "deleted all suppliers";
@@ -127,6 +159,9 @@ public class SupplierService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    public void deleteSupplierByVendorIdNative(String vendorId) {
+        supplierRepository.deleteSupplierByVendorIdNative(vendorId);
     }
 
     private Set<Supplier> convertToEntities(Set<SupplierDto> supplierDtos) {

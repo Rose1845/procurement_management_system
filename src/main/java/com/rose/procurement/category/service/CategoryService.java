@@ -7,6 +7,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -27,4 +28,6 @@ public interface CategoryService {
     InputStreamResource generateTemplate();
 
     Category getCategoryById(Long categoryId);
+
+    byte[] exportCategoriesToCsv() throws IOException;
 }

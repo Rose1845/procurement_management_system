@@ -2,6 +2,7 @@ package com.rose.procurement.contract.service;
 
 import com.rose.procurement.advice.ProcureException;
 import com.rose.procurement.contract.dtos.ContractDto;
+import com.rose.procurement.contract.dtos.RenewDto;
 import com.rose.procurement.contract.entities.Contract;
 import com.rose.procurement.contract.mappers.ContractMapper;
 import com.rose.procurement.contract.repository.ContractRepository;
@@ -9,6 +10,7 @@ import com.rose.procurement.email.service.EmailService;
 import com.rose.procurement.enums.ContractStatus;
 import com.rose.procurement.items.entity.Item;
 import com.rose.procurement.items.repository.ItemRepository;
+import com.rose.procurement.purchaseOrder.entities.PurchaseOrder;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.repository.SupplierRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,9 +32,6 @@ public class ContractService {
     private final ContractRepository contractRepository;
     private final EmailService emailService;
     private final ContractMapper contractMapper;
-
-
-
 
     public ContractService(SupplierRepository supplierRepository, ContractRepository contractRepository,
                            ItemRepository itemRepository, EmailService emailService, ContractMapper contractMapper) {
@@ -89,15 +88,15 @@ public class ContractService {
         return "contract deleted successfully";
     }
     public Optional<Contract> getContract(String contractId){
-
         return  contractRepository.findById(contractId);
     }
 
     public Contract updateContract(String contractId,ContractDto contractRequest) throws ProcureException {
         Contract contract = contractRepository.findById(contractId).orElseThrow(()-> new ProcureException("contract id do not exists"));
         contract.setContractStatus(checkContractEndDateExpired(contractRequest.getContractEndDate()) ? ContractStatus.EXPIRED : ContractStatus.OPEN);
-
         contract.setContractEndDate(contractRequest.getContractEndDate());
+        Set<Item> items = contract.getItems();
+        contract.setItems(items);
             contract.setContractTitle(contractRequest.getContractTitle());
             contract.setContractType(contractRequest.getContractType());
             Supplier supplier = supplierRepository.findById(contractRequest.getVendorId()).orElseThrow(()->new RuntimeException("no supplier with id"+ contractRequest.getVendorId()));
@@ -106,38 +105,25 @@ public class ContractService {
             contract.setContractStartDate(contractRequest.getContractStartDate());
         return contractRepository.save(contract);
     }
+
     public Optional<ContractDto> getContractWithItems(String contractId) {
         Optional<Contract> contractOptional = contractRepository.findByIdWithItems(contractId);
+        if(contractOptional.get().checkContractEndDateExpired())
+            contractOptional.get().setContractStatus(ContractStatus.EXPIRED);
         return contractOptional.map(contractMapper::toDto);
     }
     public Set<Item> getContractItems(String contractId) {
         Contract contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new EntityNotFoundException("contract  not found with id: " + contractId));
-
         return contract.getItems();
 //        return contractRepository.findItemsByContractId(contractId);
     }
+    public List<Contract> findContractsByMonth(int month) {
+        return contractRepository.findContractByMonth(month);
+    }
+
      /** send email to supplier for contract approval **/
-//    public Contract sendContractForApproval(String contractId) throws ProcureException {
-//        // Retrieve the contract from the database
-//        Contract contract = contractRepository.findById(contractId)
-//                .orElseThrow(() -> new ProcureException("Contract not found with id: " + contractId));
-//
-//        // Check if the contract is not already approved
-//        if (contract.getApprovalStatus() != ApprovalStatus.APPROVED) {
-//            // Send email to the supplier
-//            sendApprovalEmailToSupplier(contractId);
-//
-//            // Update the contract status
-//            contract.setApprovalStatus(ApprovalStatus.APPROVED); // or whatever status is appropriate
-//
-//            // Save the updated contract to the database
-//            return contractRepository.save(contract);
-//        } else {
-//            // Contract is already approved, handle accordingly (throw an exception or return null, for example)
-//            return null;
-//        }
-//    }
+
 
      public String sendApprovalEmailToSupplier(String contractId) throws ProcureException {
          log.info("\"sending contract....",contractId);
@@ -152,7 +138,7 @@ public class ContractService {
 
              // Specify the email content
              String subject = "Contract Approval Request";
-             String editLink = "http://localhost:3001/dashboard/contract/approve/" + contractId;
+             String editLink = "http://192.168.221.202:3000/public/contract/approve/" + contractId;
              String text = "Dear Supplier, \n\n"
                      + "A contract requires your approval. Please review and take appropriate action.\n\n"
                      + "Contract Title: " + contract.getContractTitle() + "\n"
@@ -177,12 +163,55 @@ public class ContractService {
 
          }
 
-
     public Contract updateApprovalStatus(String contractId, ContractStatus contractStatus) throws ProcureException {
         // Retrieve the existing contract from the database
         Contract existingContract = contractRepository.findById(contractId).orElseThrow(()->new ProcureException("id already exists"));
         // Update the approval status
         existingContract.setContractStatus(contractStatus);
+        // Save the updated contract in the database
+        return contractRepository.save(existingContract);
+    }
+    public Contract renewContract(String contractId, RenewDto renewDto) throws ProcureException {
+        // Retrieve the existing contract from the database
+        Contract existingContract = contractRepository.findById(contractId).orElseThrow(()->new ProcureException("id already exists"));
+        existingContract.setContractEndDate(renewDto.getContractEndDate());
+        // Update the approval status
+        existingContract.setContractStatus(ContractStatus.RENEW);
+        sendRenewalRequestEmail(existingContract);
+        // Save the updated contract in the database
+        return contractRepository.save(existingContract);
+    }
+
+
+    private void sendRenewalRequestEmail(Contract contract) {
+
+        // Construct email subject and body
+
+        String subject = "Renewal Request: Contract #" + contract.getContractTitle();
+        String renewalLink = "http://192.168.221.202:3000/public/contract/approve/" + contract.getContractId();
+        String text = "Dear Supplier, \n\n"
+                + "We would like to request a renewal for contract\n\n"
+                + "Contract Title: " + contract.getContractTitle() + "\n"
+                + "Contract Type: " + contract.getContractType() + "\n"
+                + "To approve or reject, click the following link: " + renewalLink + "\n"
+                + "\n\nBest Regards,\nProcureSwift Company";
+
+//        String emailSubject = "Renewal Request: Contract #" + contract.getContractTitle();
+//        String emailBody = "Dear Supplier,\n\nWe would like to request a renewal for contract #" +
+//                contract.getContractId() + ". Please review the details and provide your approval.";
+
+        // Get the supplier's email address from the contract (assuming it's stored in the contract entity)
+        String supplierEmail = contract.getSupplier().getEmail();
+
+        // Send the email
+        emailService.sendEmail(supplierEmail, subject, text);
+    }
+
+    public Contract editDueDate(String contractId, RenewDto renewDto) throws ProcureException {
+        // Retrieve the existing contract from the database
+        Contract existingContract = contractRepository.findById(contractId).orElseThrow(()->new ProcureException("id already exists"));
+        existingContract.setContractEndDate(renewDto.getContractEndDate());
+        // Update the approval status
         // Save the updated contract in the database
         return contractRepository.save(existingContract);
     }
@@ -198,8 +227,9 @@ public class ContractService {
                     .contractStartDate(originalContract.getContractStartDate())
                     .contractEndDate(originalContract.getContractEndDate())
                     .termsAndConditions(originalContract.getTermsAndConditions())
-                    .contractStatus(ContractStatus.OPEN) // Set approval status for the clone
-                    .items(originalContract.getItems()) // Copy items
+                    .contractStatus(ContractStatus.OPEN)
+                    // Set approval status for the clone
+                    .items(new HashSet<>(originalContract.getItems())) // Copy items
                     .supplier(originalContract.getSupplier()) // Copy supplier
                     .createdAt(LocalDateTime.now()) // Reset creation timestamp
                     .updatedAt(LocalDateTime.now()) // Reset update timestamp
