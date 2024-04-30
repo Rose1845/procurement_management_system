@@ -40,8 +40,8 @@ public class PurchaseOrder {
     private String purchaseOrderTitle;
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;
-    @Lob
-    @Column(name = "terms_and_conditions", columnDefinition = "TEXT")
+//    @Lob
+    @Column(name = "terms_and_conditions")
     private String termsAndConditions;
     @Enumerated
     @Column(name = "payment_type")

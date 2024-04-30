@@ -123,26 +123,7 @@ public class ContractService {
     }
 
      /** send email to supplier for contract approval **/
-//    public Contract sendContractForApproval(String contractId) throws ProcureException {
-//        // Retrieve the contract from the database
-//        Contract contract = contractRepository.findById(contractId)
-//                .orElseThrow(() -> new ProcureException("Contract not found with id: " + contractId));
-//
-//        // Check if the contract is not already approved
-//        if (contract.getApprovalStatus() != ApprovalStatus.APPROVED) {
-//            // Send email to the supplier
-//            sendApprovalEmailToSupplier(contractId);
-//
-//            // Update the contract status
-//            contract.setApprovalStatus(ApprovalStatus.APPROVED); // or whatever status is appropriate
-//
-//            // Save the updated contract to the database
-//            return contractRepository.save(contract);
-//        } else {
-//            // Contract is already approved, handle accordingly (throw an exception or return null, for example)
-//            return null;
-//        }
-//    }
+
 
      public String sendApprovalEmailToSupplier(String contractId) throws ProcureException {
          log.info("\"sending contract....",contractId);
@@ -157,7 +138,7 @@ public class ContractService {
 
              // Specify the email content
              String subject = "Contract Approval Request";
-             String editLink = "http://192.168.1.106:3000/public/contract/approve/" + contractId;
+             String editLink = "http://192.168.221.202:3000/public/contract/approve/" + contractId;
              String text = "Dear Supplier, \n\n"
                      + "A contract requires your approval. Please review and take appropriate action.\n\n"
                      + "Contract Title: " + contract.getContractTitle() + "\n"
@@ -207,7 +188,7 @@ public class ContractService {
         // Construct email subject and body
 
         String subject = "Renewal Request: Contract #" + contract.getContractTitle();
-        String renewalLink = "http://192.168.1.106:3000/public/contract/approve/" + contract.getContractId();
+        String renewalLink = "http://192.168.221.202:3000/public/contract/approve/" + contract.getContractId();
         String text = "Dear Supplier, \n\n"
                 + "We would like to request a renewal for contract\n\n"
                 + "Contract Title: " + contract.getContractTitle() + "\n"

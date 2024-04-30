@@ -33,6 +33,12 @@ public class AuthController {
     ) throws ProcureException {
         return ResponseEntity.ok().body(authService.register(request)).getBody();
     }
+
+    /**
+     * login
+     * @param request
+     * @return
+     */
 //    @SneakyThrows
     @PostMapping("/login")
     public ResponseEntity<Object> authenticate(
@@ -48,12 +54,21 @@ public class AuthController {
         }
     }
 
+    /**
+     * initialize roles before registration
+     * @return
+     * @throws ProcureException
+     */
+
     @PostMapping("/init")
     public ResponseEntity<Optional<List<Role>>> initializeApp() throws ProcureException {
         return ResponseEntity.ok().body(roleService.initializeRoles());
     }
 
-    @PreAuthorize("hasAnyAuthority({'LAWYER','USER','ADMIN'})")
+    /***
+     * show profile based on username
+     * @return
+     */
     @GetMapping("/profile/{username}")
     public ResponseEntity<User> getUserProfile(@PathVariable("username") @NotNull @NotEmpty @NotBlank String username) {
         try {

@@ -295,7 +295,7 @@ public class PurchaseOrderService {
 
         if (optionalPurchaseOrder.isPresent()) {
             PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
-            String approvalLink = "http://192.168.1.106:3000/public/order/approve/" + purchaseOrder.getPurchaseOrderId();
+            String approvalLink = "http://192.168.221.202:3000/public/order/approve/" + purchaseOrder.getPurchaseOrderId();
 
             // Assuming you have a method to send an email to the supplier
 

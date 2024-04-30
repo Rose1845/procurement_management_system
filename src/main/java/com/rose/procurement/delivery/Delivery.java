@@ -29,5 +29,4 @@ public class Delivery {
     private LocalDateTime expectedOn;
     private LocalDateTime receivedOn;
 
-
 }

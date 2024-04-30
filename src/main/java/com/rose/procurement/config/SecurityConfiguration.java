@@ -47,6 +47,7 @@ public class SecurityConfiguration {
             "/api/v1/contract/send-to-supplier/**",
             "/api/v1/purchase-order/get/order-items/**",
             "/api/v1/purchase-order/approve/**",
+            "/api/v2/purchase-order/{purchaseOrderId}/edit2-offer-unit-prices2/**",
             "/api/v1/purchase-order/send-order-to-supplier/**",
             "/api/v1/purchase-request/**",
             "api/send-to-supplier/**",

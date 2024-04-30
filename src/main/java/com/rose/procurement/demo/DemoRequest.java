@@ -27,6 +27,4 @@ public class DemoRequest {
     private String description;
     private String email;
     private String phoneNumber;
-
-    // Getters and setters
 }

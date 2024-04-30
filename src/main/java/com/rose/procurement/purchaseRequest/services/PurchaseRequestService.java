@@ -72,7 +72,7 @@ public class PurchaseRequestService {
         List<PurchaseRequestItemDetail> purchaseRequestItemDetails = createOfferForPurchaseRequest2(savedRequest.getPurchaseRequestId(), purchaseRequest.getItemDetails());
         // Associate the offer with the purchase request
         savedRequest.setItemDetails(purchaseRequestItemDetails);
-        sendApprovalEmailToSuppliers(savedRequest.getPurchaseRequestId());
+//        sendApprovalEmailToSuppliers(savedRequest.getPurchaseRequestId());
         // Additional logic or validation can be added here before saving
         return PurchaseRequestMapper.INSTANCE.toDto(savedRequest);
     }
@@ -82,12 +82,13 @@ public class PurchaseRequestService {
         if (purchaseRequestId == null) {
             throw ProcureException.builder().message("Purchase request ID not found").metadata("id").build();
         }
+
         Optional<PurchaseRequest> optionalPurchaseRequest = purchaseRequestRepository.findById(purchaseRequestId);
 
         if (optionalPurchaseRequest.isPresent()) {
             PurchaseRequest purchaseRequest = optionalPurchaseRequest.get();
 
-            String approvalLinkBase = "http://192.168.1.106:3000/public/quotes/view/"+purchaseRequest.getPurchaseRequestId()+"?supplierId=";
+            String approvalLinkBase = "http://192.168.221.202:3000/public/quotes/view/"+purchaseRequest.getPurchaseRequestId()+"?supplierId=";
 
             for (Supplier supplier : purchaseRequest.getSuppliers()) {
                 String approvalLink = approvalLinkBase + supplier.getVendorId();

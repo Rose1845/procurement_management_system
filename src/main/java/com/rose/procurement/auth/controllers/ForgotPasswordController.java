@@ -38,6 +38,11 @@ public class ForgotPasswordController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     *  send mail for email verification
+     * @return
+     * @throws ProcureException
+     */
     // send mail for email verification
     @PostMapping("/verifyMail")
     public ResponseEntity<String> verifyEmail(@RequestBody EmailInput emailInput) throws ProcureException {
@@ -60,11 +65,21 @@ public class ForgotPasswordController {
                     .expirationTime(new Date(System.currentTimeMillis() + 300 * 1000))
                     .user(user)
                     .build();
-            emailService.sendEmail(user.getEmail(), "OTP for Forgot Password Request", String.valueOf(otp));
+
+            String text = "This OTP expires in 5 minutes" + otp;
+            emailService.sendEmail(user.getEmail(), "OTP for Forgot Password Request", text);
             forgotPasswordRepository.save(fp);
         }
         return ResponseEntity.ok("Email sent for verification!");
     }
+
+    /**
+     * Verify otp
+     * @param optInput
+     * @param email
+     * @return
+     * @throws ProcureException
+     */
 
     @PostMapping("/verifyOtp/{otp}/{email}")
     public ResponseEntity<String> verifyOtp(@RequestBody OptInput optInput, @PathVariable String email) throws ProcureException {
@@ -85,6 +100,12 @@ public class ForgotPasswordController {
         return ResponseEntity.ok("OTP verified!");
     }
 
+    /**
+     * chnage password with otp verification for email
+     * @param changePassword
+     * @param email
+     * @return
+     */
     @PostMapping("/changePassword/{email}")
     public ResponseEntity<String> changePasswordHandler(@RequestBody ChangePassword changePassword,
                                                         @PathVariable String email) {
@@ -98,6 +119,10 @@ public class ForgotPasswordController {
         return ResponseEntity.ok("Password has been changed!");
     }
 
+    /**
+     * generate 6 digit otp
+     * @return
+     */
     private Integer otpGenerator() {
         Random random = new Random();
         return random.nextInt(100_000, 999_999);

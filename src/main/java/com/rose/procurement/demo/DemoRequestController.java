@@ -1,5 +1,6 @@
 package com.rose.procurement.demo;
 
+import com.rose.procurement.email.service.EmailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,16 +8,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
-
 @RestController
 @RequestMapping("/api/v1/demo")
 public class DemoRequestController {
 
     private final DemoRequestRepository demoRequestRepository;
+    private final EmailService emailService;
 
-    public DemoRequestController(DemoRequestRepository demoRequestRepository) {
+    public DemoRequestController(DemoRequestRepository demoRequestRepository, EmailService emailService) {
         this.demoRequestRepository = demoRequestRepository;
+        this.emailService = emailService;
     }
 
     @PostMapping("/request")
@@ -31,7 +32,9 @@ public class DemoRequestController {
         demoRequest1.setCompanyName(demoRequest.getCompanyName());
         // Save demo request to the database
         demoRequestRepository.save(demoRequest1);
-        // Return a success response
+        emailService.sendEmail(demoRequest.getEmail(),"REQUEST DEMO", demoRequest.getDescription());
+
+        //response body -success message
         return new ResponseEntity<>("Demo request submitted successfully", HttpStatus.OK);
     }
 
