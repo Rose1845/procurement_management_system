@@ -177,7 +177,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
     @Override
     public User createUserWithRoles(CreateUserWithRolesRequest request) throws ProcureException {
         if (userDao.existsByUsername(request.getUsername())){
