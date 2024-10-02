@@ -17,7 +17,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - "8081:8081"
+      - "8086:8086"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/procure
       SPRING_DATASOURCE_USERNAME: rose

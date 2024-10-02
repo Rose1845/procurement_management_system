@@ -6,7 +6,6 @@ import com.rose.procurement.enums.PaymentType;
 import com.rose.procurement.supplier.entities.Supplier;
 import com.rose.procurement.supplier.entities.SupplierDto;
 import com.rose.procurement.supplier.repository.SupplierRepository;
-import com.rose.procurement.test.StudentDto;
 import com.rose.procurement.utils.address.Address;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.WithBy;

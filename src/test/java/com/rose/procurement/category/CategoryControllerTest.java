@@ -65,6 +65,16 @@ class CategoryControllerTest {
            }
 
            @Override
+           public Page<Category> findByCategoryNameContaining(String categoryName, Pageable pageable) {
+               return null;
+           }
+
+           @Override
+           public Optional<Category> findByCategoryName(String categoryName) {
+               return Optional.empty();
+           }
+
+           @Override
            public void flush() {
 
            }
