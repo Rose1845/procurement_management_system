@@ -46,7 +46,7 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: [ ip-172-31-47-55  ]
+    runs-on: [self-hosted, ip-172-31-47-55  ]
     steps:
       - name: Pull Image from Docker Hub
         run: docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/procument:latest
