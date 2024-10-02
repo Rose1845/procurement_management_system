@@ -57,4 +57,4 @@ jobs:
           docker rm procurement_system || true
 
       - name: Run new Docker container
-        run: docker run -d -p 80:80 --name procurement_system ${{ secrets.DOCKER_HUB_USERNAME }}/procurement_system:latest
+        run: docker run -d -p 8085:8080 --name procurement_system ${{ secrets.DOCKER_HUB_USERNAME }}/procurement_system:latest
