@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build-deploy:
-    name: Build and Deploy Spring boot for beginner
+  build:
+    name: Build and Deploy PMS(Procurement Management System)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -43,3 +43,18 @@ jobs:
           dockerfile: Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/procurement_system:latest
+
+  deploy:
+    needs: build
+    runs-on: [ ip-172-31-47-55  ]
+    steps:
+      - name: Pull Image from Docker Hub
+        run: docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/procument:latest
+
+      - name: Delete old container
+        run: |
+          docker stop procurement_system || true
+          docker rm procurement_system || true
+
+      - name: Run new Docker container
+        run: docker run -d -p 8085:8080 --name procurement_system ${{ secrets.DOCKER_HUB_USERNAME }}/procurement_system:latest
