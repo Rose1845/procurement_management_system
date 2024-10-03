@@ -53,8 +53,8 @@ jobs:
 
       - name: Delete old container
         run: |
-          docker stop procurement_system || true
-          docker rm procurement_system || true
+          docker stop procurement_management_system || true
+          docker rm procurement_management_system || true
 
       - name: Run new Docker container
-        run: docker run -d -p 8085:8080 --name procurement_system ${{ secrets.DOCKER_HUB_USERNAME }}/procurement_system:latest
+        run: docker run -d -p 8085:8080 --name procurement_management_system ${{ secrets.DOCKER_HUB_USERNAME }}/procurement_system:latest
