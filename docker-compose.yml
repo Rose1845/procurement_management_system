@@ -12,16 +12,14 @@ services:
       - mysql_data:/var/lib/mysql  # Mount a volume for MySQL data on the host
 
   procure-app:
-    image: nyaugenya/procument:latest # This is the image of spring-boot app pulling from docker-hub repo
+    image: nyaugenya/procurement_system:latest # This is the image of spring-boot app pulling from docker-hub repo
     container_name: procurement_management_system
     depends_on:
       - mysql
     ports:
       - "8086:8086"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3307/procure
-      SPRING_DATASOURCE_USERNAME: rose
-      SPRING_DATASOURCE_PASSWORD: Atieno18_
+      SPRING_PROFILES_ACTIVE: dev  # Reference the 'dev' profile
     volumes:
       - backend_data:/app/data  # Mount a volume for application data
 
