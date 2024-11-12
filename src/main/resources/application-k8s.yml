@@ -1,13 +1,23 @@
-#spring:
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://mysql-service:3306/procure
-#    username: rose
-#    password: Atieno18_
-#  jpa:
-#    show-sql: true
-#    hibernate:
-#      ddl-auto: none
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.MySQLDialect
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database-1.clsyysuk0c5d.us-east-1.rds.amazonaws.com:3306/procure
+    username: rose
+    password: Atieno18_
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    #      naming:
+    #          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    baseline-description: "init"
+    baseline-version: 0
+    user: rose
+    password: Atieno18_
+    default-schema: procure
