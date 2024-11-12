@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/procure
+    url: jdbc:mysql://database-1.clsyysuk0c5d.us-east-1.rds.amazonaws.com:3306/procure
     username: rose
     password: Atieno18_
   jpa:
