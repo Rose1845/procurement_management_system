@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 ),
                 @Server(
                         description = "PROD ENV",
-                        url = "odhiamborose466@gmail.com"
+                        url = "http://ec2-3-90-28-37.compute-1.amazonaws.com:8080"
                 )
         },
         security = {
