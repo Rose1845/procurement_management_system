@@ -12,6 +12,7 @@
 	<artifactId>procurement</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>procurement</name>
+	<packaging>jar</packaging>
 	<description>procurement Management System</description>
 	<properties>
 		<java.version>17</java.version>
@@ -175,6 +176,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 			</plugin>
+
 		</plugins>
 	</build>
 
